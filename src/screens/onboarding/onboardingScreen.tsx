@@ -1,0 +1,65 @@
+import React, { useEffect, useRef } from 'react';
+import { View, Text, ImageBackground, Image, StatusBar, Dimensions, Animated, StyleSheet } from 'react-native';
+
+import PrimaryButton from '../../components/bottomButton';
+import onBoardingStyles from '../../assets/styles/onBoardingStyles';
+import { images } from '../../constants/image';
+
+
+
+const OnboardingScreen = ({ navigation }) => {
+  const textAnim = useRef(new Animated.Value(50)).current;
+  const buttonAnim = useRef(new Animated.Value(50)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(textAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+        delay: 200,
+      }),
+    ]).start();
+  }, []);
+
+  return (
+    <>
+      <View style={onBoardingStyles.container}>
+        <View style={onBoardingStyles.topSection}>
+          <ImageBackground 
+            source={images.mapBackground} 
+            style={onBoardingStyles.imageBackground} 
+            resizeMode="cover"
+          >
+            <StatusBar hidden={false} barStyle='dark-content' backgroundColor={'transparent'} translucent={true} />
+            <View style={onBoardingStyles.overlay} />
+            <Image 
+              source={images.onBoardingImage} 
+              style={onBoardingStyles.foregroundImage} 
+              resizeMode="contain" 
+            />
+          </ImageBackground>
+        </View>
+
+        <Animated.View style={[onBoardingStyles.middleSection, { transform: [{ translateY: textAnim }] }]}>
+          <Text style={onBoardingStyles.title}>Find Players In</Text>
+          <Text style={onBoardingStyles.title}>Your Neighbourhood</Text>
+          <Text style={onBoardingStyles.subtitle}>Just Like You Did as a Kid!</Text>
+        </Animated.View>
+
+        <Animated.View style={[onBoardingStyles.bottomSection, { transform: [{ translateY: buttonAnim }] }]}>
+          <Text style={onBoardingStyles.bottomText}>Let's Get Playing!</Text>
+          <PrimaryButton title={'GO'} onPress={() => navigation.navigate('OTP')} disabled={undefined} />
+        </Animated.View>
+      </View>
+    </>
+  );
+};
+
+
+export default OnboardingScreen;
