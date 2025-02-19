@@ -5,10 +5,7 @@ import { FONTS } from "../../constants/fontConstant";
 const { height } = Dimensions.get('window');
 
 export default styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: COLORS.secondary,
-      },
+    
       topSection: {
         height: height / 2.2,
       },
@@ -25,6 +22,8 @@ export default styles = StyleSheet.create({
       foregroundImage: {
         width: moderateScale(170),
         height: moderateVerticalScale(170),
+        borderRadius: moderateScale(50),
+        marginTop: verticalScale(50),
       },
       middleSection: {
         flex: 2,
@@ -47,9 +46,10 @@ export default styles = StyleSheet.create({
       },
       bottomSection: {
         position: 'absolute',
-        width: '100%',
+        width: '95%',
         bottom: verticalScale(25),
         alignItems: 'center',
+        alignSelf:'center'
       },
       bottomText: {
         fontFamily: FONTS.inriaSansRegular,

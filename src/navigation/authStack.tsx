@@ -1,10 +1,12 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView, StatusBar } from 'react-native';
-import login from '../screens/login/login';
-import otp from '../screens/otp/otp';
-import profileName from '../screens/profile/profileName';
 import OnboardingScreen from '../screens/onboarding/onboardingScreen';
+import Login from '../screens/login/login';
+import Otp from '../screens/otp/otp';
+import TermsAndCondition from '../screens/policy/termsAndCondition';
+import PrivacyPolicy from '../screens/policy/privacyPolicy';
+import ProfileName from '../screens/profile/profileName';
 
 
 
@@ -27,14 +29,28 @@ const AuthStack = () => {
         />
         <Stack.Screen
           name="Login"
-          component={login}
+          component={Login}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="OTP"
-          component={otp}
+          component={Otp}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="TermsAndConditions"
+          component={TermsAndCondition}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicy}
           options={{
             headerShown: false,
           }}
@@ -42,9 +58,11 @@ const AuthStack = () => {
        
         <Stack.Screen
           name="ProfileName"
-          component={profileName}
+          component={ProfileName}
+         
           options={{
-            headerShown: false,
+            headerShown:false,
+           
           }}
         />
       </Stack.Navigator>

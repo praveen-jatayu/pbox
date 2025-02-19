@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView, StatusBar } from 'react-native';
 import BottomNav from './bottomNav';
+import SelectCity from '../screens/selectCity/selectCity';
 
 
 
@@ -18,6 +19,13 @@ const AppStack = () => {
         <Stack.Screen
           name="BottomNav"
           component={BottomNav}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SelectCity"
+          component={SelectCity}
           options={{
             headerShown: false,
           }}

@@ -23,7 +23,7 @@ function AppNav() {
         {isSplashVisible ? (
           <SplashScreen /> // Show splash if loading
         ) : (
-          <AuthStack /> // Show main navigation after 3 sec
+          <AppStack /> // Show main navigation after 3 sec
         )}
       </NavigationContainer>
     </SafeAreaProvider>

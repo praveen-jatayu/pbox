@@ -4,6 +4,12 @@ import homeIconActive from '../assets/icons/homeIconActive.png'
 import homeIconInactive from '../assets/icons/homeIconInactive.png'
 import heartIconInactive from '../assets/icons/heartIconInactive.png'
 import bookingIconInactive from '../assets/icons/bookingIconInactive.png'
+import cross from '../assets/icons/cross.png'
+import backIcon from '../assets/icons/backIcon.png'
+import locationIcon from '../assets/icons/locationIcon.png'
+import notificationIcon from '../assets/icons/notificationIcon.png'
+import userIcon from '../assets/icons/userIcon.png'
+import downArrowIcon from '../assets/icons/downArrowIcon.png'
 
 
 
@@ -13,6 +19,12 @@ export const icons={
     homeIconActive,
     homeIconInactive,
     bookingIconInactive ,
-    heartIconInactive
+    heartIconInactive,
+    cross,
+    backIcon,
+    locationIcon,
+    userIcon,
+    notificationIcon,
+    downArrowIcon
 
 }

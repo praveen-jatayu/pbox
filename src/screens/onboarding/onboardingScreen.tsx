@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, ImageBackground, Image, StatusBar, Dimensions, Animated, StyleSheet } from 'react-native';
 
-import PrimaryButton from '../../components/bottomButton';
+import PrimaryButton from '../../components/primaryButton';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import { images } from '../../constants/image';
+import mainStyles from '../../assets/styles/mainStyles';
 
 
 
@@ -22,14 +23,14 @@ const OnboardingScreen = ({ navigation }) => {
         toValue: 0,
         duration: 800,
         useNativeDriver: true,
-        delay: 200,
+        // delay: 200,
       }),
     ]).start();
   }, []);
 
   return (
     <>
-      <View style={onBoardingStyles.container}>
+      <View style={mainStyles.container}>
         <View style={onBoardingStyles.topSection}>
           <ImageBackground 
             source={images.mapBackground} 
@@ -54,7 +55,7 @@ const OnboardingScreen = ({ navigation }) => {
 
         <Animated.View style={[onBoardingStyles.bottomSection, { transform: [{ translateY: buttonAnim }] }]}>
           <Text style={onBoardingStyles.bottomText}>Let's Get Playing!</Text>
-          <PrimaryButton title={'GO'} onPress={() => navigation.navigate('OTP')} disabled={undefined} />
+          <PrimaryButton title={'GO'} onPress={() => navigation.navigate('Login')} disabled={undefined} />
         </Animated.View>
       </View>
     </>

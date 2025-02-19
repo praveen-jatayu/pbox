@@ -7,36 +7,51 @@ import { FONTS } from '../constants/fontConstant';
 const PrimaryButton = ({ title, disabled, onPress }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, disabled && styles.disabledButton]}
+      style={[
+        styles.button, 
+        disabled ? styles.disabledButton : styles.enabledButton
+      ]}
       onPress={onPress}
       disabled={disabled}
     >
-      <Text style={styles.buttonText}>{title}</Text>
+      <Text style={[styles.buttonText, disabled && styles.disabledText]}>{title}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: COLORS.primary,
     paddingVertical: verticalScale(12),
-    width:'90%',
+    width: '95%',
     paddingHorizontal: scale(20),
     borderRadius: moderateScale(8),
     alignItems: 'center',
-    alignSelf:'center',
-    justifyContent:'center',
-    elevation:7
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
+  enabledButton: {
+    backgroundColor: COLORS.primary,
+    elevation: 7,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
   },
   disabledButton: {
     backgroundColor: COLORS.disabled, // Light gray for disabled state
+    elevation: 0, // Removes shadow
+    shadowColor: 'transparent', // Ensures no shadow effect
   },
   buttonText: {
-    color: COLORS.secondary,
     fontSize: scale(16),
-    fontFamily:FONTS.inriaSansBold,
-    lineHeight:verticalScale(17)
+    fontFamily: FONTS.inriaSansBold,
+    lineHeight: verticalScale(17),
+    color: COLORS.secondary,
   },
+  disabledText: {
+    color: COLORS.lightText, // Lighter text when disabled
+  },
+  
 });
 
 export default PrimaryButton;
