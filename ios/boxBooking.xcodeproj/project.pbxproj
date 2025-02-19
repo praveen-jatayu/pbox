@@ -10,13 +10,13 @@
 		0C80B921A6F3F58F76C31292 /* libPods-boxBooking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-boxBooking.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		20B2889E3922F5DAC84B9C9A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		7135F0AAF44C42B085C6DBD8 /* InriaSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E657E8FDEA594B508F6E6B71 /* InriaSans-Regular.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8A245367F7E3457F9DD1DF58 /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE0FEAB2E4E64B23A3C304D2 /* Nunito-Regular.ttf */; };
+		9379CE659EEC4D42B0F92949 /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B7796FEB6F6040AF87058065 /* Nunito-Bold.ttf */; };
 		D61267F9B66848A7BDE80A43 /* InriaSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F7E9752B64D4B80816F380D /* InriaSans-Bold.ttf */; };
 		E49B84D8433C41A380AD1508 /* InriaSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 850CA454EA0A456AA52BEF2F /* InriaSans-Light.ttf */; };
-		7135F0AAF44C42B085C6DBD8 /* InriaSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E657E8FDEA594B508F6E6B71 /* InriaSans-Regular.ttf */; };
-		9379CE659EEC4D42B0F92949 /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B7796FEB6F6040AF87058065 /* Nunito-Bold.ttf */; };
-		8A245367F7E3457F9DD1DF58 /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE0FEAB2E4E64B23A3C304D2 /* Nunito-Regular.ttf */; };
 		EC0C9A7004E6407BA280E815 /* Nunito-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D79271147DD344C6B14B5BD1 /* Nunito-SemiBold.ttf */; };
 /* End PBXBuildFile section */
 
@@ -25,18 +25,18 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = boxBooking/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = boxBooking/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = boxBooking/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2F7E9752B64D4B80816F380D /* InriaSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "InriaSans-Bold.ttf"; path = "../src/assets/fonts/InriaSans-Bold.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-boxBooking.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boxBooking.debug.xcconfig"; path = "Target Support Files/Pods-boxBooking/Pods-boxBooking.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-boxBooking.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boxBooking.release.xcconfig"; path = "Target Support Files/Pods-boxBooking/Pods-boxBooking.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-boxBooking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-boxBooking.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = boxBooking/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = boxBooking/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		850CA454EA0A456AA52BEF2F /* InriaSans-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "InriaSans-Light.ttf"; path = "../src/assets/fonts/InriaSans-Light.ttf"; sourceTree = "<group>"; };
+		B7796FEB6F6040AF87058065 /* Nunito-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Bold.ttf"; path = "../src/assets/fonts/Nunito-Bold.ttf"; sourceTree = "<group>"; };
+		D79271147DD344C6B14B5BD1 /* Nunito-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-SemiBold.ttf"; path = "../src/assets/fonts/Nunito-SemiBold.ttf"; sourceTree = "<group>"; };
+		E657E8FDEA594B508F6E6B71 /* InriaSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "InriaSans-Regular.ttf"; path = "../src/assets/fonts/InriaSans-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		2F7E9752B64D4B80816F380D /* InriaSans-Bold.ttf */ = {isa = PBXFileReference; name = "InriaSans-Bold.ttf"; path = "../src/assets/fonts/InriaSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		850CA454EA0A456AA52BEF2F /* InriaSans-Light.ttf */ = {isa = PBXFileReference; name = "InriaSans-Light.ttf"; path = "../src/assets/fonts/InriaSans-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		E657E8FDEA594B508F6E6B71 /* InriaSans-Regular.ttf */ = {isa = PBXFileReference; name = "InriaSans-Regular.ttf"; path = "../src/assets/fonts/InriaSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		B7796FEB6F6040AF87058065 /* Nunito-Bold.ttf */ = {isa = PBXFileReference; name = "Nunito-Bold.ttf"; path = "../src/assets/fonts/Nunito-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		EE0FEAB2E4E64B23A3C304D2 /* Nunito-Regular.ttf */ = {isa = PBXFileReference; name = "Nunito-Regular.ttf"; path = "../src/assets/fonts/Nunito-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D79271147DD344C6B14B5BD1 /* Nunito-SemiBold.ttf */ = {isa = PBXFileReference; name = "Nunito-SemiBold.ttf"; path = "../src/assets/fonts/Nunito-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EE0FEAB2E4E64B23A3C304D2 /* Nunito-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Regular.ttf"; path = "../src/assets/fonts/Nunito-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,17 +102,8 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				3B4392A12AC88292D35C810B /* Pods-boxBooking.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-boxBooking.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		AB3AF039ABBB47CF9E3E2932 /* Resources */ = {
-			isa = "PBXGroup";
+			isa = PBXGroup;
 			children = (
 				2F7E9752B64D4B80816F380D /* InriaSans-Bold.ttf */,
 				850CA454EA0A456AA52BEF2F /* InriaSans-Light.ttf */,
@@ -122,8 +113,17 @@
 				D79271147DD344C6B14B5BD1 /* Nunito-SemiBold.ttf */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
 			path = "";
+			sourceTree = "<group>";
+		};
+		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3B4392A12AC88292D35C810B /* Pods-boxBooking.debug.xcconfig */,
+				5709B34CF0A7D63546082F79 /* Pods-boxBooking.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
