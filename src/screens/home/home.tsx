@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,18 @@ import {
   FlatList,
   Image,
   StyleSheet,
+  Animated,
+  Platform,
 } from 'react-native';
 import HomeCustomHeader from './components/homeCustomHeader';
 import BottomModal from '../../components/bottomModal';
 import ImageSlider from './components/imageSlider';
 import mainStyles from '../../assets/styles/mainStyles';
-import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
+import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import SearchBar from '../../components/searchBar';
-import {FONTS} from '../../constants/fontConstant';
-import {COLORS} from '../../constants/colorConstant';
-import {images} from '../../constants/image';
+import { FONTS } from '../../constants/fontConstant';
+import { COLORS } from '../../constants/colorConstant';
+import { images } from '../../constants/image';
 import BoxCard from '../../components/boxCard';
 
 // Sample sports data
@@ -26,9 +28,7 @@ const sportsData = [
   { id: '4', name: 'Tennis', logo: images.tennis },
   { id: '5', name: 'Baseball', logo: images.baseball },
   { id: '6', name: 'Badminton', logo: images.badminton },
-  // Add more items as needed...
 ];
-
 
 const boxCourtData = [
   {
@@ -37,8 +37,9 @@ const boxCourtData = [
     rating: 4.5,
     address: '123 Cricket Lane, Sportstown',
     startingPrice: '₹500',
-    offers: '20% OFF',
+    offers: 'Upto 20% Off',
     images: [
+      images.scenic,
       images.scenic,
       images.scenic,
       images.scenic,
@@ -50,11 +51,12 @@ const boxCourtData = [
     rating: 4.2,
     address: '456 Sporty Ave, Game City',
     startingPrice: '₹450',
-    offers: '15% OFF',
+    offers: 'Upto 15% Off',
     images: [
-    images.scenic,
-    images.scenic,
-    images.scenic,
+      images.scenic,
+      images.scenic,
+      images.scenic,
+      images.scenic,
     ],
   },
   // Add more items as needed...
@@ -65,22 +67,18 @@ const Home = () => {
   const [showAllSports, setShowAllSports] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const headerHeight = verticalScale(200); // Adjust based on your slider height
+
   const handleSearchChange = text => {
     setSearch(text);
   };
 
-  const renderBoxCard = ({ item }) => (
-    <BoxCard
-      data={item}
-    />
-  );
-
-  
   const sportsToShow = showAllSports ? sportsData : sportsData.slice(0, 4);
 
   const handleCategoryPress = item => {
     setSelectedCategory(item.id === selectedCategory ? null : item.id);
-    // Here you can also call a filtering function based on the selected category
+    // Here you can also filter boxCourtData based on the category
   };
 
   const renderSportCategory = item => (
@@ -98,40 +96,73 @@ const Home = () => {
     </TouchableOpacity>
   );
 
+  const renderBoxCard = ({ item }) => (
+    <BoxCard data={item} />
+  );
+
+  // Interpolate scrollY to control the slider's scale and opacity
+  const sliderScale = scrollY.interpolate({
+    inputRange: [0, headerHeight],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+
+  const sliderOpacity = scrollY.interpolate({
+    inputRange: [0, headerHeight * 0.8],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+
   return (
     <View style={mainStyles.container}>
-      {/* <HomeCustomHeader />
-      <ImageSlider onSlidePress={undefined} /> */}
-      <View style={{ paddingHorizontal: scale(14), marginTop: verticalScale(3),flex:1 }}>
-      <View style={styles.headerRow}>
-          <Text style={styles.headerText}>Sports</Text>
-          <TouchableOpacity onPress={() => setShowAllSports(!showAllSports)}>
-            <Text style={styles.seeAllText}>
-              {showAllSports ? 'Show Less' : 'See All'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {/* Category Filter */}
-        <View style={styles.sportsContainer}>
-          {sportsToShow.map(item => renderSportCategory(item))}
-          {/* If expanded and there are more items than the collapsed count, show remaining in a new row */}
-          {showAllSports &&
-            sportsData.length > sportsToShow.length &&
-            sportsData.slice(sportsToShow.length).map(item => renderSportCategory(item))}
-        </View>
-        <View style={{ marginTop: verticalScale(5),width:'100%',paddingHorizontal:-30 }}>
-          <SearchBar value={search} onChangeText={handleSearchChange} />
-         
-          <FlatList
-        data={boxCourtData}
-        renderItem={renderBoxCard}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.flatListContainer}
+      <HomeCustomHeader />
+      <Animated.ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
-      />
-      
-      </View>
-      </View>
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+      >
+        {/* Animated Slider */}
+        <Animated.View
+          style={{
+            transform: [{ scale: sliderScale }],
+            opacity: sliderOpacity,
+          }}
+        >
+          <ImageSlider onSlidePress={() => {}} />
+        </Animated.View>
+
+        <View style={{ paddingHorizontal: scale(14), marginTop: verticalScale(3) }}>
+          <View style={styles.headerRow}>
+            <Text style={styles.headerText}>Sports</Text>
+            <TouchableOpacity onPress={() => setShowAllSports(!showAllSports)}>
+              <Text style={styles.seeAllText}>
+                {showAllSports ? 'Show Less' : 'See All'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {/* Category Filter */}
+          <View style={styles.sportsContainer}>
+            {sportsToShow.map(item => renderSportCategory(item))}
+            {showAllSports &&
+              sportsData.length > sportsToShow.length &&
+              sportsData.slice(sportsToShow.length).map(item => renderSportCategory(item))}
+          </View>
+          <View style={styles.searchAndListContainer}>
+            <SearchBar value={search} onChangeText={handleSearchChange} />
+            <FlatList
+              data={boxCourtData}
+              renderItem={renderBoxCard}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.flatListContainer}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+        </View>
+      </Animated.ScrollView>
       <BottomModal />
     </View>
   );
@@ -156,16 +187,13 @@ const styles = StyleSheet.create({
   sportsContainer: {
     marginTop: verticalScale(10),
     flexDirection: 'row',
-    width:'100%',
-    flexWrap: 'wrap', // Allows items to wrap into a new row when needed
+    flexWrap: 'wrap',
   },
   sportItem: {
-    
     alignItems: 'center',
     marginRight: scale(17),
-    marginLeft:scale(10),
-    marginBottom:verticalScale(10)
-    
+    marginLeft: scale(10),
+    marginBottom: verticalScale(10),
   },
   sportItemSelected: {
     borderColor: COLORS.primary,
@@ -193,14 +221,14 @@ const styles = StyleSheet.create({
     color: COLORS.darkText,
     textAlign: 'center',
   },
+  searchAndListContainer: {
+    marginTop: verticalScale(5),
+    width: '100%',
+  },
   flatListContainer: {
     paddingHorizontal: scale(16),
     paddingBottom: verticalScale(200),
-    
-    
   },
 });
 
 export default Home;
-
-

@@ -11,10 +11,10 @@ import notificationIcon from '../assets/icons/notificationIcon.png'
 import userIcon from '../assets/icons/userIcon.png'
 import downArrowIcon from '../assets/icons/downArrowIcon.png'
 import offerIcon from '../assets/icons/offerIcon.png'
-import heartOutline from '../assets/icons/heartOutline.png'
 import baseballOutline from '../assets/icons/baseballOutline.png'
 import badmintonOutline from '../assets/icons/badmintonOutline.png'
 import rightArrowIcon from '../assets/icons/rightArrow.png'
+import heartIconFilled from '../assets/icons/heartIconFilled.png'
 
 
 
@@ -33,8 +33,8 @@ export const icons={
     downArrowIcon,
     rightArrowIcon,
     offerIcon,
-    heartOutline,
     baseballOutline,
-    badmintonOutline
+    badmintonOutline,
+    heartIconFilled
 
 }
