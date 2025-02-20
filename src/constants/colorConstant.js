@@ -6,7 +6,9 @@ const COLORS = {
     disabled:"#F1F3F2",
     borderColor:'#C0C0C0',
     linkingColor:'#0070FF',
-    errorColor:'red'
+    errorColor:'red',
+    lightBorder:'#E1E1E1',
+    itemBackground:"#FFE8E3"
    
   };
 

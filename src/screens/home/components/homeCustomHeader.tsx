@@ -1,7 +1,7 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 
-import {scale, verticalScale} from 'react-native-size-matters';
+import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
 import {COLORS} from '../../../constants/colorConstant';
 import {icons} from '../../../constants/Icon';
 import {FONTS} from '../../../constants/fontConstant';
@@ -15,11 +15,12 @@ const HomeCustomHeader = () => {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: COLORS.secondary,
-        height: verticalScale(70),
+        height: moderateVerticalScale(65,0.8),
         width: '100%',
         justifyContent:'space-between',
         paddingHorizontal: scale(13),
         paddingTop: verticalScale(25),
+        paddingBottom :verticalScale(15),
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.3,
@@ -40,10 +41,13 @@ const HomeCustomHeader = () => {
         </View>
       </TouchableOpacity>
       <View style={{flexDirection:'row',gap:scale(10)}}>
+        <TouchableOpacity onPress={()=>navigation.navigate('NotificationScreen')} activeOpacity={0.5}>
         <Image source={icons.notificationIcon}
-        style={{width:scale(22),height:verticalScale(22)}}/>
-        <Image source={icons.userIcon} style={{width:scale(22),height:verticalScale(22)}}/>
-
+        style={{width:moderateScale(23),height:moderateVerticalScale(23)}}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate('ProfileScreen')} activeOpacity={0.5}>
+        <Image source={icons.userIcon} style={{width:moderateScale(23),height:moderateVerticalScale(23)}}/>
+        </TouchableOpacity>
       </View>
     </View>
   );
