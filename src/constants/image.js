@@ -6,8 +6,12 @@ import liveNotification from '../assets/images/liveNotification.png'
 import scenic from '../assets/images/scenic.png'
 import badminton from '../assets/images/badminton.png'
 import tennis from '../assets/images/tennis.png'
-import football from '../assets/images/football.png'
 import baseball from '../assets/images/baseball.png'
+import football from '../assets/images/football.png'
+import noData1 from '../assets/images/noData-1.png'
+import noData2 from '../assets/images/noData-2.png'
+import noData3 from '../assets/images/noData-3.png'
+
 
 
 
@@ -22,6 +26,9 @@ export const images={
     baseball,
     football,
     tennis,
-    badminton
+    badminton,
+    noData1,
+    noData2,
+    noData3
 
 }

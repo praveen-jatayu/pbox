@@ -1,37 +1,20 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
-import {icons} from '../constants/Icon';
-import {COLORS} from '../constants/colorConstant';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {FONTS} from '../constants/fontConstant';
+import { icons } from '../constants/Icon';
+import { COLORS } from '../constants/colorConstant';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { FONTS } from '../constants/fontConstant';
 
-const CustomHeader = ({title,onPress}) => {
+const CustomHeader = ({ title, onPress, style }) => {
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: COLORS.secondary,
-        height: verticalScale(90),
-        width: '100%',
-        gap: scale(70),
-        paddingHorizontal: scale(13),
-        paddingTop: verticalScale(25),
-        elevation: 10,
-      }}>
-        <TouchableOpacity onPress={onPress}>
-      <Image
-        source={icons.backIcon}
-        style={{width: scale(24), height: verticalScale(24)}}
-      />
+    <View style={[styles.container, style]}>
+      <TouchableOpacity onPress={onPress}>
+        <Image
+          source={icons.backIcon}
+          style={styles.icon}
+        />
       </TouchableOpacity>
-      <Text
-        style={{
-          color: COLORS.darkText,
-          fontFamily: FONTS.inriaSansRegular,
-          fontSize: scale(18),
-          textAlign: 'center',
-        }}>
+      <Text style={styles.title}>
         {title}
       </Text>
     </View>
@@ -39,3 +22,27 @@ const CustomHeader = ({title,onPress}) => {
 };
 
 export default CustomHeader;
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.secondary,
+    height: verticalScale(60),
+    width: '100%',
+    gap: moderateScale(100),
+    paddingHorizontal: scale(13),
+    paddingVertical: verticalScale(18),
+    elevation: 10,
+  },
+  icon: {
+    width: scale(24),
+    height: verticalScale(24),
+  },
+  title: {
+    color: COLORS.darkText,
+    fontFamily: FONTS.inriaSansRegular,
+    fontSize: scale(18),
+    textAlign: 'center',
+  },
+});

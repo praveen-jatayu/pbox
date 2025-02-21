@@ -10,5 +10,21 @@ export default mainStyles= StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.secondary,
       },
+      darkTextColor:{
+        color:COLORS.darkText
+      },
+      lightTextColor:{
+        color:COLORS.lightText,
+      },
+      primaryBorderColor:{
+        borderColor:COLORS.borderColor
+      },
+      secondaryBorderColor:{
+       borderColor:COLORS.lightBorder
+      },
+      primaryColor:{
+        
+      }
+
   
 })

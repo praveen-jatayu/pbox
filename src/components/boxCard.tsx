@@ -66,6 +66,7 @@ const BoxCard = ({ data }) => {
   };
 
   return (
+    <Pressable onPress={()=>navigation.navigate('CourtDetail',{courtData:data})}>
     <Animated.View
       style={[
         boxCardStyles.cardContainer,
@@ -143,6 +144,7 @@ const BoxCard = ({ data }) => {
         </View>
       </View>
     </Animated.View>
+    </Pressable>
   );
 };
 

@@ -14,11 +14,12 @@ import BottomModal from '../../components/bottomModal';
 import ImageSlider from './components/imageSlider';
 import mainStyles from '../../assets/styles/mainStyles';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
-import SearchBar from '../../components/searchBar';
+import SearchBar from '../../components/searchInput';
 import { FONTS } from '../../constants/fontConstant';
 import { COLORS } from '../../constants/colorConstant';
 import { images } from '../../constants/image';
 import BoxCard from '../../components/boxCard';
+import SearchInput from '../../components/searchInput';
 
 // Sample sports data
 const sportsData = [
@@ -152,7 +153,7 @@ const Home = () => {
               sportsData.slice(sportsToShow.length).map(item => renderSportCategory(item))}
           </View>
           <View style={styles.searchAndListContainer}>
-            <SearchBar value={search} onChangeText={handleSearchChange} />
+           <SearchInput value={search} onChangeText={handleSearchChange} onPress={()=>setSearch('')}/>
             <FlatList
               data={boxCourtData}
               renderItem={renderBoxCard}

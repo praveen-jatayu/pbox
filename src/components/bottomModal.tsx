@@ -22,8 +22,12 @@ const BottomModal = () => {
       statusBarTranslucent={true}
       style={styles.modal}>
       <View style={styles.container}>
+        {/* highlight dots */}
+      <View style={{width:scale(7),height:verticalScale(7),backgroundColor:'#C7C700',borderRadius:moderateScale(7)}}></View>
+      <View style={{width:scale(7),height:verticalScale(7),backgroundColor:'#C1F5CF',borderRadius:moderateScale(10),position:'absolute',zIndex:1,top:verticalScale(80), left:100}}></View>
         <View style={styles.imageContainer}>
           <Image source={images.liveNotification} style={styles.image} />
+          
         </View>
 
         <View style={styles.textContainer}>
@@ -56,18 +60,18 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     backgroundColor: COLORS.primary,
-    width: moderateScale(81),
-    height: moderateVerticalScale(80),
+    width: moderateScale(83,0.3),
+    height: moderateVerticalScale(79,0.4),
     borderRadius: moderateScale(60, 0.3),
-    padding: scale(20),
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 10,
+    // paddingTop:verticalScale(10),
     marginTop: verticalScale(16),
   },
   image: {
-    width: scale(44),
+    width: scale(50),
     height: verticalScale(50),
   },
   textContainer: {
