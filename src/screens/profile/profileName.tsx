@@ -1,7 +1,7 @@
 import { View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import CustomHeader from '../../components/customHeader';
-import { COLORS } from '../../constants/colorConstant';
+import { COLORS } from '../../constants/color';
 import TextInputComponent from '../../components/textInputComponent';
 import PrimaryButton from '../../components/primaryButton';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';

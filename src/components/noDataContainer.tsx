@@ -4,7 +4,7 @@ import mainStyles from '../assets/styles/mainStyles'
 import { images } from '../constants/image'
 import { scale, verticalScale } from 'react-native-size-matters'
 import { FONTS } from '../constants/font'
-import { COLORS } from '../constants/colorConstant'
+import { COLORS } from '../constants/color'
 
 const NoDataContainer = () => {
   return (

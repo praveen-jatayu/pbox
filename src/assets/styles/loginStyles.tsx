@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet } from "react-native";
-import { COLORS } from "../../constants/colorConstant";
+import { COLORS } from "../../constants/color";
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from "react-native-size-matters";
 import { FONTS } from "../../constants/font";
 

@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet } from "react-native";
-import { COLORS } from "../../constants/colorConstant";
+import { COLORS } from "../../constants/color";
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from "react-native-size-matters";
 import { FONTS } from "../../constants/font";
 
@@ -87,6 +87,9 @@ export default mainStyles= StyleSheet.create({
       },
       marginTop10:{
         marginTop:verticalScale(10)
+      },
+      marginTop20:{
+        marginTop:verticalScale(20)
       }
       
 

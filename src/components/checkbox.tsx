@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { scale, verticalScale } from 'react-native-size-matters';
-import { COLORS } from '../constants/colorConstant';
+import { COLORS } from '../constants/color';
 
 const CustomCheckBox = ({ value, onValueChange }) => {
   return (

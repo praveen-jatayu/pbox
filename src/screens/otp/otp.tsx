@@ -15,7 +15,7 @@ import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import loginStyles from '../../assets/styles/loginStyles';
 
 import { images } from '../../constants/image';
-import { COLORS } from '../../constants/colorConstant';
+import { COLORS } from '../../constants/color';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Label from '../../components/label';
 import PrimaryButton from '../../components/primaryButton';

@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import {images} from '../../constants/image';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {COLORS} from '../../constants/colorConstant';
+import {COLORS} from '../../constants/color';
 import Label from '../../components/label';
 import CustomCheckBox from '../../components/checkbox';
 import PrimaryButton from '../../components/primaryButton';

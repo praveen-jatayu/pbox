@@ -2,7 +2,7 @@ import {View, Text, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 
 import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
-import {COLORS} from '../../../constants/colorConstant';
+import {COLORS} from '../../../constants/color';
 import {icons} from '../../../constants/Icon';
 import {FONTS} from '../../../constants/font';
 import { useNavigation } from '@react-navigation/native';

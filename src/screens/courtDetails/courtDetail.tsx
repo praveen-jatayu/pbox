@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import mainStyles from '../../assets/styles/mainStyles';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
 import boxCardStyles from '../../assets/styles/boxCardStyles';
 import {icons} from '../../constants/Icon';
 import {images} from '../../constants/image';
@@ -37,6 +37,32 @@ const dummyAmenitiesData=[
   {id: '5', name: 'Flood Lights' },
   {id: '6', name: 'Parking' },
 ]
+
+
+const dummyReviews = [
+  {
+    id: '1',
+    profilePic: images.profile, // update with your image
+    name: 'John Doe',
+    review: 'Great facility and well maintained.',
+    date: '2025-01-10'
+  },
+  {
+    id: '2',
+    profilePic: images.profile, // update with your image
+    name: 'Jane Smith',
+    review: 'Had an amazing experience here.',
+    date: '2025-01-12'
+  },
+  {
+    id: '3',
+    profilePic: images.profile, // update with your image
+    name: 'Alex Johnson',
+    review: 'Good value for money!',
+    date: '2025-01-15'
+  },
+  // ... add more reviews as needed
+];
 
 const CourtDetail = ({navigation,route}) => {
   const courtData = route.params.courtData;
@@ -72,7 +98,7 @@ const CourtDetail = ({navigation,route}) => {
 
   const amenitiesToShow = showAllAmenities ? dummyAmenitiesData : dummyAmenitiesData.slice(0, 4);
 
-
+  const reviewsToShow = dummyReviews.slice(0, 2);
   return (
     <View style={mainStyles.container}>
       {/* Make StatusBar transparent */}
@@ -104,7 +130,7 @@ const CourtDetail = ({navigation,route}) => {
           inactiveDotScale={1}
         />
       </View>
-      <ScrollView contentContainerStyle={{flexGrow:1}}>
+      <ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}}>
       {/* You can add more content below the slider */}
       <View style={styles.content}>
         <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
@@ -195,24 +221,49 @@ const CourtDetail = ({navigation,route}) => {
                    </View>
                 
        </View>
-
+{/* Cancelation Policy Container */}
        <View >
         <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize18]}>Cancellation Policy</Text>
-        <View style={[mainStyles.marginTop10]}>
+        <View style={[mainStyles.marginTop10,{marginLeft:scale(10)}]}>
       
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(10)}}>{'\u2B24'}</Text> Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(10)}}>{'\u2B24'}</Text> Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}>. Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}>. Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}>. Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}>. Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}>. Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}>. Lorem ipsum, dolorsit amet,cons</Text>
+          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(9)}}>{'\u2B24'}</Text>{' '} Lorem ipsum, dolorsit amet,cons</Text>
+          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(9)}}>{'\u2B24'}</Text>{' '} Lorem ipsum, dolorsit amet,cons</Text>
+          
          
         </View>
        </View>
        
-      
+      {/* Client review and comments container */}
+      <View style={[mainStyles.marginTop20]}>
+       <View style={[mainStyles.flexContainer]}>
+         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize18]}>What Client Says</Text>
+         <TouchableOpacity onPress={()=>navigation.navigate('ClientReview',{ reviews: dummyReviews })}>
+         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.primaryTextColor,mainStyles.fontSize16]}>   {showAllAmenities ? 'Show Less' : 'See All'}</Text>
+         </TouchableOpacity>
+            
+         </View>
+         {reviewsToShow.map((review,index) => (
+              <View key={review.id} style={[styles.reviewContainer,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:1.5}]}>
+               <View style={{flexDirection:'row',alignItems:'center',gap:scale(20)}}>
+                
+                <Image source={review.profilePic} style={styles.profilePic} />
+                <View style={{width:'59%'}}>
+                  <Text style={[mainStyles.fontNunitoMedium, mainStyles.darkTextColor,mainStyles.fontSize16]}>
+                    {review.name}
+                  </Text>
+                  <View style={[mainStyles.flexContainer,{gap:scale(12)}]}>
+                  <Text style={[mainStyles.fontNunitoMedium, mainStyles.fontSize14, mainStyles.lightTextColor]} numberOfLines={2}>
+                    {review.review}
+                  </Text>
+                  <Text style={[mainStyles.fontNunitoMedium,mainStyles.fontSize12,mainStyles.lightTextColor]}>
+                    {review.date}
+                  </Text>
+                  </View>
+                </View>
+                </View>
+              </View>
+            ))}
+      </View>
       </View>
     </ScrollView>
       <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('Login')} disabled={undefined} style={{position:'absolute',bottom:verticalScale(10),width:'90%'}} />
@@ -300,6 +351,18 @@ const styles = StyleSheet.create({
     marginRight: scale(20),
     gap:scale(10),
     marginBottom: verticalScale(10),
+  },
+  reviewContainer:{
+    paddingTop:verticalScale(5),
+    paddingBottom:verticalScale(10),
+    paddingHorizontal:scale(12),
+    marginTop:verticalScale(16),
+    borderRadius:moderateScale(9),
+  },
+  profilePic:{
+    width:moderateScale(32),
+    height:moderateVerticalScale(32),
+    borderRadius:moderateScale(20)
   }
 
 });

@@ -14,7 +14,7 @@ import BottomModal from '../../components/bottomModal';
 import ImageSlider from './components/imageSlider';
 import mainStyles from '../../assets/styles/mainStyles';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
-import { COLORS } from '../../constants/colorConstant';
+import { COLORS } from '../../constants/color';
 import { images } from '../../constants/image';
 import BoxCard from '../../components/boxCard';
 import SearchInput from '../../components/searchInput';

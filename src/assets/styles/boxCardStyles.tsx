@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native"
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from "react-native-size-matters"
-import { COLORS } from "../../constants/colorConstant"
+import { COLORS } from "../../constants/color"
 import { FONTS } from "../../constants/font"
 
 export default boxCardStyles=StyleSheet.create({

@@ -5,7 +5,7 @@ import PrimaryButton from './primaryButton';
 import {verticalScale, scale, moderateScale, moderateVerticalScale} from 'react-native-size-matters';
 import SecondaryButton from './secondaryButton';
 import {images} from '../constants/image';
-import {COLORS} from '../constants/colorConstant';
+import {COLORS} from '../constants/color';
 import {FONTS} from '../constants/font';
 
 const BottomModal = () => {

@@ -4,7 +4,7 @@ import { Image, StyleSheet, View, Animated, StatusBar } from 'react-native';
 import Home from '../screens/home/home';
 import Bookings from '../screens/bookings/bookings';
 import Bookmarks from '../screens/bookmarks/bookmarks';
-import { COLORS } from '../constants/colorConstant';
+import { COLORS } from '../constants/color';
 import { icons } from '../constants/Icon';
 import { FONTS } from '../constants/font';
 import responsive from '../constants/responsive';

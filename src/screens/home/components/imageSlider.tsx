@@ -7,7 +7,7 @@ import {
   moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
-import {COLORS} from '../../../constants/colorConstant';
+import {COLORS} from '../../../constants/color';
 import {images} from '../../../constants/image';
 import {icons} from '../../../constants/Icon';
 

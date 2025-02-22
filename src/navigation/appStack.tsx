@@ -6,6 +6,7 @@ import SelectCity from '../screens/selectCity/selectCity';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
 import CourtDetail from '../screens/courtDetails/courtDetail';
+import ClientReview from '../screens/clientReview/clientReview';
 
 
 const Stack = createNativeStackNavigator();
@@ -49,6 +50,13 @@ const AppStack = () => {
         <Stack.Screen
           name="CourtDetail"
           component={CourtDetail}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ClientReview"
+          component={ClientReview}
           options={{
             headerShown: false,
           }}

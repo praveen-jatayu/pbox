@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { COLORS } from '../constants/colorConstant'; // Adjust path based on your project structure
+import { COLORS } from '../constants/color'; // Adjust path based on your project structure
 import { FONTS } from '../constants/font';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 

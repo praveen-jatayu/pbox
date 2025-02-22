@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { scale } from 'react-native-size-matters';
-import { COLORS } from '../constants/colorConstant';
+import { COLORS } from '../constants/color';
 import { FONTS } from '../constants/font';
 
 const Label = ({ text, required = false }) => {

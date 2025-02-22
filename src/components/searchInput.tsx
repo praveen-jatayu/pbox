@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {COLORS} from '../constants/colorConstant';
+import {COLORS} from '../constants/color';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import { FONTS } from '../constants/font';
 const SearchInput = ({ value, onChangeText ,onPress}) => {
