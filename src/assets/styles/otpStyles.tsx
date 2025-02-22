@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { COLORS } from '../../constants/colorConstant';
-import { FONTS } from '../../constants/fontConstant';
+import { FONTS } from '../../constants/font';
 
 const otpStyles = StyleSheet.create({
   foregroundImage: {

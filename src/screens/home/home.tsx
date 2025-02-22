@@ -14,8 +14,6 @@ import BottomModal from '../../components/bottomModal';
 import ImageSlider from './components/imageSlider';
 import mainStyles from '../../assets/styles/mainStyles';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
-import SearchBar from '../../components/searchInput';
-import { FONTS } from '../../constants/fontConstant';
 import { COLORS } from '../../constants/colorConstant';
 import { images } from '../../constants/image';
 import BoxCard from '../../components/boxCard';
@@ -87,13 +85,13 @@ const Home = () => {
       key={item.id}
       style={[
         styles.sportItem,
-        selectedCategory === item.id && styles.sportItemSelected,
+        selectedCategory === item.id && [styles.sportItemSelected,mainStyles.primaryBorderColor],
       ]}
       onPress={() => handleCategoryPress(item)}>
       <View style={styles.sportLogoBackground}>
         <Image source={item.logo} style={styles.sportLogo} />
       </View>
-      <Text style={styles.sportName}>{item.name}</Text>
+      <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize14,{textAlign:'center'}]}>{item.name}</Text>
     </TouchableOpacity>
   );
 
@@ -137,10 +135,10 @@ const Home = () => {
         </Animated.View>
 
         <View style={{ paddingHorizontal: scale(14), marginTop: verticalScale(3) }}>
-          <View style={styles.headerRow}>
-            <Text style={styles.headerText}>Sports</Text>
+          <View style={[mainStyles.flexContainer]}>
+            <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize18]}>Sports</Text>
             <TouchableOpacity onPress={() => setShowAllSports(!showAllSports)}>
-              <Text style={styles.seeAllText}>
+              <Text style={[mainStyles.fontInriaSansRegular,mainStyles.fontSize14,mainStyles.primaryTextColor]}>
                 {showAllSports ? 'Show Less' : 'See All'}
               </Text>
             </TouchableOpacity>
@@ -170,21 +168,6 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerText: {
-    fontFamily: FONTS.inriaSansRegular,
-    color: COLORS.darkText,
-    fontSize: scale(19),
-  },
-  seeAllText: {
-    fontFamily: FONTS.inriaSansRegular,
-    color: COLORS.primary,
-    fontSize: scale(15),
-  },
   sportsContainer: {
     marginTop: verticalScale(10),
     flexDirection: 'row',
@@ -197,7 +180,6 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(10),
   },
   sportItemSelected: {
-    borderColor: COLORS.primary,
     borderWidth: 1,
     borderRadius: moderateScale(8),
     padding: scale(4),
@@ -215,12 +197,6 @@ const styles = StyleSheet.create({
     width: scale(24),
     height: scale(24),
     resizeMode: 'contain',
-  },
-  sportName: {
-    fontFamily: FONTS.inriaSansRegular,
-    fontSize: scale(14),
-    color: COLORS.darkText,
-    textAlign: 'center',
   },
   searchAndListContainer: {
     marginTop: verticalScale(5),

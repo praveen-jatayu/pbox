@@ -4,7 +4,7 @@ import React from 'react';
 import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
 import {COLORS} from '../../../constants/colorConstant';
 import {icons} from '../../../constants/Icon';
-import {FONTS} from '../../../constants/fontConstant';
+import {FONTS} from '../../../constants/font';
 import { useNavigation } from '@react-navigation/native';
 
 const HomeCustomHeader = () => {

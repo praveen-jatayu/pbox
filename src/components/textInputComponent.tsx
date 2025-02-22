@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/colorConstant'; // Adjust path based on your project structure
-import { FONTS } from '../constants/fontConstant';
+import { FONTS } from '../constants/font';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 
 const TextInputComponent = ({

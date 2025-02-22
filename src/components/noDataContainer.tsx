@@ -3,7 +3,7 @@ import React from 'react'
 import mainStyles from '../assets/styles/mainStyles'
 import { images } from '../constants/image'
 import { scale, verticalScale } from 'react-native-size-matters'
-import { FONTS } from '../constants/fontConstant'
+import { FONTS } from '../constants/font'
 import { COLORS } from '../constants/colorConstant'
 
 const NoDataContainer = () => {

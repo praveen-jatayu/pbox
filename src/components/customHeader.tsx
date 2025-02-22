@@ -3,7 +3,7 @@ import React from 'react';
 import { icons } from '../constants/Icon';
 import { COLORS } from '../constants/colorConstant';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { FONTS } from '../constants/fontConstant';
+import { FONTS } from '../constants/font';
 
 const CustomHeader = ({ title, onPress, style }) => {
   return (

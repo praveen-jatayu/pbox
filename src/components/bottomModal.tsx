@@ -6,7 +6,7 @@ import {verticalScale, scale, moderateScale, moderateVerticalScale} from 'react-
 import SecondaryButton from './secondaryButton';
 import {images} from '../constants/image';
 import {COLORS} from '../constants/colorConstant';
-import {FONTS} from '../constants/fontConstant';
+import {FONTS} from '../constants/font';
 
 const BottomModal = () => {
   const [isBottomModalVisible, setIsBottomModalVisible] = useState(true);

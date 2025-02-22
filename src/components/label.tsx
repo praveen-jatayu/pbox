@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import { COLORS } from '../constants/colorConstant';
-import { FONTS } from '../constants/fontConstant';
+import { FONTS } from '../constants/font';
 
 const Label = ({ text, required = false }) => {
   return (

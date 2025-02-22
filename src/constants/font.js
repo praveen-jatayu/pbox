@@ -6,12 +6,6 @@ const FONTS = {
    nunitoRegular:'Nunito-Regular',
    nunitoSemiBold:'Nunito-SemiBold',
    nunitoMedium:'Nunito-Medium',
-    // size: {
-    //   small: 12,
-    //   medium: 16,
-    //   large: 20,
-    //   xLarge: 24,
-    // },
   };
 
   export {FONTS}

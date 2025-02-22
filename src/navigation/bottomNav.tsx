@@ -6,7 +6,7 @@ import Bookings from '../screens/bookings/bookings';
 import Bookmarks from '../screens/bookmarks/bookmarks';
 import { COLORS } from '../constants/colorConstant';
 import { icons } from '../constants/Icon';
-import { FONTS } from '../constants/fontConstant';
+import { FONTS } from '../constants/font';
 import responsive from '../constants/responsive';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 

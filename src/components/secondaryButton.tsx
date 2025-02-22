@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { COLORS } from '../constants/colorConstant';
-import { FONTS } from '../constants/fontConstant';
+import { FONTS } from '../constants/font';
 
 const SecondaryButton = ({title,onPress,disabled}) => {
 return (

@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {COLORS} from '../constants/colorConstant';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import { FONTS } from '../constants/fontConstant';
+import { FONTS } from '../constants/font';
 const SearchInput = ({ value, onChangeText ,onPress}) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);

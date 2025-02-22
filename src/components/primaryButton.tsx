@@ -2,14 +2,14 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/colorConstant';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { FONTS } from '../constants/fontConstant';
+import { FONTS } from '../constants/font';
 
-const PrimaryButton = ({ title, disabled, onPress }) => {
+const PrimaryButton = ({ title, disabled, onPress,style }) => {
   return (
     <TouchableOpacity
       style={[
         styles.button, 
-        disabled ? styles.disabledButton : styles.enabledButton
+        disabled ? styles.disabledButton : styles.enabledButton,style
       ]}
       onPress={onPress}
       disabled={disabled}
@@ -21,7 +21,7 @@ const PrimaryButton = ({ title, disabled, onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: verticalScale(12),
+    paddingVertical: verticalScale(13),
     width: '95%',
     paddingHorizontal: scale(20),
     borderRadius: moderateScale(8),

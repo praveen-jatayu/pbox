@@ -3,7 +3,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/colorConstant';
 import { images } from '../../constants/image';
-import { FONTS } from '../../constants/fontConstant';
+import { FONTS } from '../../constants/font';
 import { scale } from 'react-native-size-matters';
 
 const SplashScreen = () => {
