@@ -17,6 +17,8 @@ import {icons} from '../../constants/Icon';
 import {images} from '../../constants/image';
 import PrimaryButton from '../../components/primaryButton';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import EvilIcons from 'react-native-vector-icons/EvilIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
@@ -129,6 +131,32 @@ const CourtDetail = ({navigation,route}) => {
           inactiveDotOpacity={1}
           inactiveDotScale={1}
         />
+        {/* top navigating icons container */}
+        <View style={styles.topIconsContainer}>
+      <TouchableOpacity
+        style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
+        onPress={() => navigation.goBack()}
+        activeOpacity={0.8}
+      >
+        <EvilIcons name="chevron-left" size={28} />
+      </TouchableOpacity>
+      <View style={styles.rightIconsContainer}>
+        <TouchableOpacity
+          style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.8}
+        >
+          <EvilIcons name="heart" size={22} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.8}
+        >
+          <MaterialCommunityIcons name="share-outline" size={20} />
+        </TouchableOpacity>
+      </View>
+    </View>
       </View>
       <ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}}>
       {/* You can add more content below the slider */}
@@ -363,6 +391,27 @@ const styles = StyleSheet.create({
     width:moderateScale(32),
     height:moderateVerticalScale(32),
     borderRadius:moderateScale(20)
-  }
+  },
+  topIconsContainer: {
+    position: 'absolute',
+    top: verticalScale(36),
+    left: scale(20),
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  rightIconsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scale(10), // Note: if 'gap' is not supported, use margin on children
+  },
+  iconButton: {
+    width: moderateScale(26),
+    height: moderateVerticalScale(26),
+    borderRadius: moderateScale(20),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
 });

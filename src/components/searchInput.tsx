@@ -1,38 +1,52 @@
 import React, { useRef, useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {COLORS} from '../constants/color';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import { COLORS } from '../constants/color';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { FONTS } from '../constants/font';
-const SearchInput = ({ value, onChangeText ,onPress}) => {
+
+const SearchInput = ({ value, onChangeText, onSearchPress }) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
 
-  // Clear input text and re-focus the input
+  // Clear input text and re-focus the input (keeps keyboard open)
   const handleClear = () => {
     onChangeText(''); // Update parent state
     if (inputRef.current) {
       inputRef.current.clear();
-      inputRef.current.focus();
+      // Delay the focus call to ensure the keyboard stays open.
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 100);
     }
   };
 
   // Decide which icon to show: search or close
-  const iconName = isFocused && value ? 'close' : 'search1';
-  const handleIconPress = iconName === 'close' ? handleClear : null;
+  const showClearIcon = isFocused && value && value.length > 0;
+  const iconName = showClearIcon ? 'close' : 'search1';
+
+  // If the clear icon is shown, then clear text on press, otherwise call onSearchPress if provided.
+  const handleIconPress = () => {
+    if (showClearIcon) {
+      handleClear();
+    } else if (onSearchPress) {
+      onSearchPress();
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
-       ref={inputRef}
+        ref={inputRef}
         style={styles.input}
         placeholder="Search"
         value={value}
         onChangeText={onChangeText}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-      placeholderTextColor={COLORS.lightText}
+        placeholderTextColor={COLORS.lightText}
       />
-     <TouchableOpacity style={styles.iconContainer} onPress={onPress}>
+      <TouchableOpacity style={styles.iconContainer} onPress={handleIconPress}>
         <AntDesign name={iconName} size={22} color={COLORS.borderColor} />
       </TouchableOpacity>
     </View>
@@ -44,19 +58,20 @@ export default SearchInput;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.secondary,
-        borderColor: COLORS.lightBorder,
-        borderWidth: 1,
-        borderRadius: moderateScale(10),
-        // height:verticalScale(49),
-        paddingVertical:verticalScale(3),
-        width:'100%',
-        flexDirection:'row',
-        alignItems:'center',
-        paddingHorizontal:scale(12)
+    borderColor: COLORS.lightBorder,
+    borderWidth: 1,
+    borderRadius: moderateScale(10),
+    paddingVertical: verticalScale(3),
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: scale(12),
   },
   input: {
     flex: 1,
-    color: COLORS.darkText,fontSize:moderateScale(15),fontFamily:FONTS.nunitoMedium
+    color: COLORS.darkText,
+    fontSize: moderateScale(15),
+    fontFamily: FONTS.nunitoMedium,
   },
   iconContainer: {
     padding: 4,

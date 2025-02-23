@@ -112,6 +112,11 @@ const Home = () => {
     extrapolate: 'clamp',
   });
 
+  const handleSearchPress = () => {
+    // For example, submit the search query
+    console.log('Search query submitted: ', search);
+  };
+
   return (
     <View style={mainStyles.container}>
       <HomeCustomHeader />
@@ -151,7 +156,7 @@ const Home = () => {
               sportsData.slice(sportsToShow.length).map(item => renderSportCategory(item))}
           </View>
           <View style={styles.searchAndListContainer}>
-           <SearchInput value={search} onChangeText={handleSearchChange} onPress={()=>setSearch('')}/>
+           <SearchInput value={search} onChangeText={handleSearchChange} onSearchPress={handleSearchPress} />
             <FlatList
               data={boxCourtData}
               renderItem={renderBoxCard}

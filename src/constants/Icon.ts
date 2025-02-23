@@ -15,6 +15,7 @@ import baseballOutline from '../assets/icons/baseballOutline.png'
 import badmintonOutline from '../assets/icons/badmintonOutline.png'
 import rightArrowIcon from '../assets/icons/rightArrow.png'
 import heartIconFilled from '../assets/icons/heartIconFilled.png'
+// import shareIcon from '../assets/icons/shareIcon.png'
 
 
 
@@ -35,6 +36,7 @@ export const icons={
     offerIcon,
     baseballOutline,
     badmintonOutline,
-    heartIconFilled
+    heartIconFilled,
+    // shareIcon
 
 }
