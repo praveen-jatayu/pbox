@@ -7,9 +7,9 @@ import {
   moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
-import {COLORS} from '../../../constants/color';
-import {images} from '../../../constants/image';
-import {icons} from '../../../constants/Icon';
+import { images } from '../../constants/image';
+import { icons } from '../../constants/Icon';
+import { COLORS } from '../../constants/color';
 
 const {width: screenWidth} = Dimensions.get('window');
 

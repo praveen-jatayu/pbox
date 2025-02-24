@@ -9,15 +9,18 @@ import {
   Animated,
   Platform,
 } from 'react-native';
-import HomeCustomHeader from './components/homeCustomHeader';
+
 import BottomModal from '../../components/bottomModal';
-import ImageSlider from './components/imageSlider';
+
 import mainStyles from '../../assets/styles/mainStyles';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import { COLORS } from '../../constants/color';
 import { images } from '../../constants/image';
 import BoxCard from '../../components/boxCard';
 import SearchInput from '../../components/searchInput';
+import ImageSlider from './imageSlider';
+import CustomTopHeader from '../../components/mainHeader';
+import MainHeader from '../../components/mainHeader';
 
 // Sample sports data
 const sportsData = [
@@ -119,7 +122,8 @@ const Home = () => {
 
   return (
     <View style={mainStyles.container}>
-      <HomeCustomHeader />
+      {/* home top header */}
+     <MainHeader headerType='home'/>
       <Animated.ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         scrollEventThrottle={16}

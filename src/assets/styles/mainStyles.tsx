@@ -5,7 +5,7 @@ import { FONTS } from "../../constants/font";
 
 const { height } = Dimensions.get('window');
 
-export default mainStyles= StyleSheet.create({
+const mainStyles= StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.secondary,
@@ -14,6 +14,10 @@ export default mainStyles= StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'space-between'
+      },
+      contentCenter:{
+        alignItems:'center',
+        justifyContent:'center'
       },
       widthFull:{
         width:'100%'
@@ -34,6 +38,15 @@ export default mainStyles= StyleSheet.create({
       primaryTextColor:{
         color:COLORS.primary
       },
+      successTextColor:{
+        color:COLORS.success
+      },
+      errotTextColor:{
+        color:COLORS.errorColor
+      },
+      warningTextColor:{
+        color:COLORS.warning
+      },
       primaryBorderColor:{
         borderColor:COLORS.borderColor
       },
@@ -46,6 +59,16 @@ export default mainStyles= StyleSheet.create({
       secondaryBackgroundColor:{
         backgroundColor:COLORS.secondary
       },
+      disabledBackgroundColor:{
+        backgroundColor:COLORS.disabled
+      },
+      successBackgroudColor:{
+        backgroundColor:COLORS.success
+      },
+      iconBackgroundColor:{
+        backgroundColor:COLORS.lightBorder
+      },
+    
       fontNunitoBold:{
         fontFamily:FONTS.nunitoBold
       },
@@ -71,7 +94,7 @@ export default mainStyles= StyleSheet.create({
         fontSize:scale(22)
       },
       fontSize20:{
-        fontSize:scale(22)
+        fontSize:scale(20)
       },
       fontSize18:{
         fontSize:scale(18)
@@ -85,16 +108,31 @@ export default mainStyles= StyleSheet.create({
       fontSize12:{
         fontSize:scale(12)
       },
+      fontSize11:{
+        fontSize:scale(11)
+      },
+    
       marginTop10:{
         marginTop:verticalScale(10)
       },
       marginTop20:{
         marginTop:verticalScale(20)
-      }
-      
+      },
+      paddingTop10:{
+        paddingTop:verticalScale(10)
+      },
 
-
-
-
+      scrollToTopButton: {
+        position: 'absolute',
+        bottom: verticalScale(20),
+        backgroundColor: 'rgba(52, 52, 52, 0.54)',
+        paddingVertical: verticalScale(7),
+        paddingHorizontal: scale(12),
+        borderRadius: moderateScale(10),
+        zIndex: 15,
+        alignSelf: 'center',
+      },
+  
   
 })
+export default mainStyles

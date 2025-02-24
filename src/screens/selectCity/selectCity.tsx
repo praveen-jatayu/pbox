@@ -1,15 +1,14 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 import mainStyles from '../../assets/styles/mainStyles'
-import CustomHeader from '../../components/customHeader'
 import SearchInput from '../../components/searchInput'
 import { scale } from 'react-native-size-matters'
-import NoDataContainer from '../../components/noDataContainer'
+import SubHeader from '../../components/subHeader'
 
 const SelectCity = ({navigation}) => {
   return (
     <View style={mainStyles.container}>
-        <CustomHeader title={'Select City'} onPress={() => navigation.goBack()}  />
+        <SubHeader title={'Select City'} onPress={() => navigation.goBack()} style={undefined}  />
           <View style={{padding:scale(12)}}>
           <SearchInput value={undefined} onChangeText={undefined} onPress={undefined}/>
         

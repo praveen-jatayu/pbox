@@ -17,10 +17,10 @@ import boxCardStyles from '../assets/styles/boxCardStyles';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-const BoxCard = ({ data }) => {
+const BoxCard = ({ data ,isBookmarked='false'}) => {
   const carouselRef = useRef(null);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [bookmarkToggle, setBookmarkToggle] = useState(false);
+  const [bookmarkToggle, setBookmarkToggle] = useState(isBookmarked);
   const navigation = useNavigation();
 
   // Entrance Animation (fade in & slide up)

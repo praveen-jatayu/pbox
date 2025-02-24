@@ -8,7 +8,9 @@ const COLORS = {
     linkingColor:'#0070FF',
     errorColor:'red',
     lightBorder:'#E1E1E1',
-    itemBackground:"#FFE8E3"
+    itemBackground:"#FFE8E3",
+    success:"#09A863",
+    warning:'#FBBC04',
    
   };
 

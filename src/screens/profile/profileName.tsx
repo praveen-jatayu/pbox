@@ -1,12 +1,11 @@
 import { View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
-import CustomHeader from '../../components/customHeader';
-import { COLORS } from '../../constants/color';
 import TextInputComponent from '../../components/textInputComponent';
 import PrimaryButton from '../../components/primaryButton';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import { scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../../assets/styles/mainStyles';
+import SubHeader from '../../components/subHeader';
 
 const ProfileName = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -29,7 +28,7 @@ const ProfileName = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={mainStyles.container}>
-        <CustomHeader title={'Fill Out Your Profile'} onPress={()=>navigation.goBack()} />
+        <SubHeader title={'Fill Out Your Profile'} onPress={() => navigation.goBack()} style={undefined} />
 
         <View style={{ paddingHorizontal: scale(16), marginTop: verticalScale(60) }}>
           {/* First Name Input */}

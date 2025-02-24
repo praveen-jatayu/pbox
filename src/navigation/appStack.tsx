@@ -1,13 +1,14 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaView, StatusBar } from 'react-native';
+import { SafeAreaView, Settings, StatusBar } from 'react-native';
 import BottomNav from './bottomNav';
 import SelectCity from '../screens/selectCity/selectCity';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
 import CourtDetail from '../screens/courtDetails/courtDetail';
 import ClientReview from '../screens/clientReview/clientReview';
-
+import EditProfile from '../screens/profile/editProfile';
+import SettingsScreen from '../screens/profile/settings';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,20 @@ const AppStack = () => {
         <Stack.Screen
           name="ProfileScreen"
           component={ProfileScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
           options={{
             headerShown: false,
           }}

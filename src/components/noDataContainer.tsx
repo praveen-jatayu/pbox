@@ -3,16 +3,15 @@ import React from 'react'
 import mainStyles from '../assets/styles/mainStyles'
 import { images } from '../constants/image'
 import { scale, verticalScale } from 'react-native-size-matters'
-import { FONTS } from '../constants/font'
-import { COLORS } from '../constants/color'
 
-const NoDataContainer = () => {
+const NoDataContainer = ({style}) => {
   return (
-    <View style={[mainStyles.container,{justifyContent:'center',alignItems:'center'}]}>
+    <View style={[mainStyles.container,{justifyContent:'center',alignItems:'center'},style]}>
      <Image source={images.noData1} style={{height:verticalScale(200),width:scale(200)}}/>
      
-        <Text style={{fontFamily:FONTS.nunitoMedium,fontSize:scale(19),color:COLORS.darkText}}> Data Not found!!..</Text>
-        <Text style={{fontFamily:FONTS.nunitoMedium,fontSize:scale(14),color:COLORS.lightText,textAlign:'center'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa necessitatibus fuga sunt reprehenderit deleniti odit soluta totam </Text>
+        <Text style={[mainStyles.fontNunitoMedium,mainStyles.fontSize18,mainStyles.darkTextColor]}> Data Not found!!..</Text>
+        
+        <Text style={[mainStyles.fontNunitoMedium,mainStyles.fontSize14,mainStyles.lightTextColor,{textAlign:'center'}]}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa necessitatibus fuga sunt reprehenderit deleniti odit soluta totam </Text>
     
     </View>
   )

@@ -15,7 +15,13 @@ import baseballOutline from '../assets/icons/baseballOutline.png'
 import badmintonOutline from '../assets/icons/badmintonOutline.png'
 import rightArrowIcon from '../assets/icons/rightArrow.png'
 import heartIconFilled from '../assets/icons/heartIconFilled.png'
-// import shareIcon from '../assets/icons/shareIcon.png'
+import settingsIcon from '../assets/icons/settingsIcon.png'
+import privacyPolicyIcon from '../assets/icons/privacyPolicyIcon.png'
+import logoutIcon from '../assets/icons/logoutIcon.png'
+import userPrimaryIcon from '../assets/icons/userPrimaryIcon.png'
+import helpIcon from '../assets/icons/helpIcon.png'
+import editIcon from '../assets/icons/editIcon.png'
+
 
 
 
@@ -37,6 +43,11 @@ export const icons={
     baseballOutline,
     badmintonOutline,
     heartIconFilled,
-    // shareIcon
+    settingsIcon,
+    userPrimaryIcon,
+    privacyPolicyIcon,
+    logoutIcon,
+    helpIcon,
+    editIcon
 
 }

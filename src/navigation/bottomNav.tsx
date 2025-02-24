@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, StyleSheet, View, Animated, StatusBar } from 'react-native';
 import Home from '../screens/home/home';
-import Bookings from '../screens/bookings/bookings';
+import Bookings from '../screens/bookings/bookingList';
 import Bookmarks from '../screens/bookmarks/bookmarks';
 import { COLORS } from '../constants/color';
 import { icons } from '../constants/Icon';
