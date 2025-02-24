@@ -19,7 +19,6 @@ import { images } from '../../constants/image';
 import BoxCard from '../../components/boxCard';
 import SearchInput from '../../components/searchInput';
 import ImageSlider from './imageSlider';
-import CustomTopHeader from '../../components/mainHeader';
 import MainHeader from '../../components/mainHeader';
 
 // Sample sports data
@@ -68,6 +67,10 @@ const Home = () => {
   const [search, setSearch] = useState('');
   const [showAllSports, setShowAllSports] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isNotificationPermissionModalVisible, setIsNotificationPermissionModalVisible] = useState(true);
+  const toggleNotificationPermissionModal = () => {
+    setIsNotificationPermissionModalVisible(!isNotificationPermissionModalVisible);
+  };
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const headerHeight = verticalScale(200); // Adjust based on your slider height
@@ -171,7 +174,7 @@ const Home = () => {
           </View>
         </View>
       </Animated.ScrollView>
-      <BottomModal />
+      <BottomModal isModalVisible={isNotificationPermissionModalVisible} toggleModal={toggleNotificationPermissionModal} type={'notification'} />
     </View>
   );
 };

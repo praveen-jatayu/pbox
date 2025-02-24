@@ -9,6 +9,7 @@ import CourtDetail from '../screens/courtDetails/courtDetail';
 import ClientReview from '../screens/clientReview/clientReview';
 import EditProfile from '../screens/profile/editProfile';
 import SettingsScreen from '../screens/profile/settings';
+import DeleteAccount from '../screens/profile/deleteAccount';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,13 @@ const AppStack = () => {
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="DeleteAccount"
+          component={DeleteAccount}
           options={{
             headerShown: false,
           }}

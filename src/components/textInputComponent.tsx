@@ -1,10 +1,19 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { COLORS } from '../constants/color'; // Adjust path based on your project structure
+import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { COLORS } from '../constants/color';
 import { FONTS } from '../constants/font';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 
-const TextInputComponent = ({
+interface TextInputComponentProps extends TextInputProps {
+  value: string;
+  label?: string;
+  onChangeText: (text: string) => void;
+  placeholder?: string;
+  error?: string;
+  required?: boolean;
+}
+
+const TextInputComponent: React.FC<TextInputComponentProps> = ({
   value,
   label,
   onChangeText,
@@ -14,12 +23,12 @@ const TextInputComponent = ({
   maxLength,
   error,
   required = false,
-  ...props // Allows additional props like autoCapitalize, returnKeyType, etc.
+  ...props
 }) => {
   return (
     <View style={styles.container}>
-        {/* Label */}
-        {label && (
+      {/* Label */}
+      {label && (
         <Text style={styles.label}>
           {label} {required && <Text style={styles.required}>*</Text>}
         </Text>
@@ -30,12 +39,13 @@ const TextInputComponent = ({
         style={[styles.input, error ? styles.inputError : {}]}
         value={value}
         onChangeText={onChangeText}
+        onBlur={props.onBlur} // Ensure onBlur can be passed down from react-hook-form
         placeholder={placeholder}
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
         maxLength={maxLength}
         placeholderTextColor={COLORS.lightText}
-        {...props} // Spread additional props
+        {...props} // Spread additional props (e.g., autoCapitalize, returnKeyType)
       />
 
       {/* Error Message */}
@@ -47,15 +57,15 @@ const TextInputComponent = ({
 const styles = StyleSheet.create({
   container: {
     marginBottom: verticalScale(7),
-    paddingHorizontal:scale(12),
-    paddingVertical:verticalScale(6),
-    width:'100%'
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    width: '100%',
   },
   label: {
     fontFamily: FONTS.nunitoSemiBold,
     fontSize: scale(13),
     color: COLORS.lightText,
-    marginBottom:verticalScale(6)
+    marginBottom: verticalScale(6),
   },
   required: {
     color: COLORS.errorColor,

@@ -8,37 +8,65 @@ import {images} from '../constants/image';
 import {COLORS} from '../constants/color';
 import {FONTS} from '../constants/font';
 
-const BottomModal = () => {
-  const [isBottomModalVisible, setIsBottomModalVisible] = useState(true);
-  const toggleModal = () => {
-    setIsBottomModalVisible(!isBottomModalVisible);
-  };
+
+
+const modalContentMapping = {
+  notification: {
+    image: images.liveNotification,
+    title: 'Can We Notify You?',
+    subtitle: 'Please allow us to send you Notifications',
+    primaryButtonTitle:"ALLOW",
+    secondaryButtonTitle:'NO,OTHER TIME'
+  },
+  imageUpload: {
+    image: images.uploadImage, // Replace with appropriate image
+    title: 'Upload Your Profile',
+    subtitle: 'Choose Your Profile  from Gallery Or Take a photo in camera',
+    primaryButtonTitle:"UPLOAD FROM GALLERY",
+    secondaryButtonTitle:'OPEN,CAMERA'
+  },
+  deleteAccount: {
+    image: images.deleteImage, // Replace with appropriate image
+    title: 'Delete Account?',
+    subtitle: 'Are Your Sure You Want To Delete Your Account?',
+     primaryButtonTitle:"DELETE",
+    secondaryButtonTitle:'NO,KEEP MY ACCOUNT'
+  },
+  other: {
+    image: images.scenic, // Replace as needed
+    title: 'Default Title',
+    subtitle: 'Default message goes here.',
+  },
+};
+
+const BottomModal = ({isModalVisible,toggleModal,type}) => {
+  const content = modalContentMapping[type] || modalContentMapping.other;
 
   return (
     <Modal
-      isVisible={isBottomModalVisible}
+      isVisible={isModalVisible}
       onBackdropPress={toggleModal}
       backdropOpacity={0.4}
       statusBarTranslucent={true}
       style={styles.modal}>
       <View style={styles.container}>
         {/* highlight dots */}
-      <View style={{width:scale(7),height:verticalScale(7),backgroundColor:'#C7C700',borderRadius:moderateScale(7)}}></View>
-      <View style={{width:scale(7),height:verticalScale(7),backgroundColor:'#C1F5CF',borderRadius:moderateScale(10),position:'absolute',zIndex:1,top:verticalScale(80), left:100}}></View>
+      <View style={{width:scale(7),height:verticalScale(7),backgroundColor:'#C7C700',borderRadius:moderateScale(7)}}/>
+      <View style={{width:scale(7),height:verticalScale(7),backgroundColor:'#C1F5CF',borderRadius:moderateScale(10),position:'absolute',zIndex:1,top:verticalScale(80), left:100}}/>
         <View style={styles.imageContainer}>
-          <Image source={images.liveNotification} style={styles.image} />
+          <Image source={content.image} style={styles.image} />
           
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Can We Notify You?</Text>
+          <Text style={styles.title}>{content.title}</Text>
           <Text style={styles.subtitle}>
-            Please Allow us to send you Notifications
+           {content.subtitle}
           </Text>
         </View>
 
-        <PrimaryButton onPress={toggleModal} title={'ALLOW'} disabled={undefined} />
-        <SecondaryButton onPress={toggleModal} title={'NO, OTHER TIME'} disabled={undefined} />
+        <PrimaryButton onPress={toggleModal} title={content.primaryButtonTitle} disabled={undefined} style={undefined} />
+        <SecondaryButton onPress={toggleModal} title={content.secondaryButtonTitle} disabled={undefined} />
       </View>
     </Modal>
   );
@@ -76,20 +104,22 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginTop: verticalScale(12),
-    alignSelf: 'center',
-    alignItems: 'center',
     marginBottom: verticalScale(35),
+    alignSelf:'center',
+    width:'80%'
   },
   title: {
     fontFamily: FONTS.inriaSansRegular,
     fontSize: scale(20),
     color: COLORS.darkText,
     marginVertical: verticalScale(5),
+    textAlign:'center'
   },
   subtitle: {
     fontFamily: FONTS.nunitoMedium,
     fontSize: scale(13),
     color: COLORS.lightText,
+     textAlign:'center'
   },
 });
 

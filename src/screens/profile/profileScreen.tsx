@@ -96,7 +96,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           </View>
         </Pressable>
         {/* Delete Account option */}
-        <Pressable style={profileStyles.menuItem}>
+        <Pressable style={profileStyles.menuItem} onPress={()=>navigation.navigate('DeleteAccount')}>
           <View style={[profileStyles.menuIconContainer, mainStyles.contentCenter, mainStyles.iconBackgroundColor]}>
             <Image
               source={icons.userPrimaryIcon}
