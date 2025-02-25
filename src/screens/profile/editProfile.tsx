@@ -86,15 +86,28 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     setIsImagePickerModalVisible(!isImagePickerModalVisible)
   }
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // Prevent default behavior of going back
+      e.preventDefault();
+
+      // Navigate explicitly to 'My Lorry'
+      navigation.navigate('ProfileScreen');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+
   return (
     <KeyboardAvoidingView
     style={[mainStyles.container]}
     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+    // keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
   >
       <SubHeader
         title={'Account'}
-        onPress={() => navigation.goBack()}
+        onPress={() => navigation.navigate('ProfileScreen')}
         style={undefined}
       />
       <ScrollView

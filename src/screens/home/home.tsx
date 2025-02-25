@@ -63,17 +63,22 @@ const boxCourtData = [
   // Add more items as needed...
 ];
 
+
+const HEADER_HEIGHT = verticalScale(80); // height of the header   
+  const SCROLL_THRESHOLD = verticalScale(60);
+
+
 const Home = () => {
   const [search, setSearch] = useState('');
   const [showAllSports, setShowAllSports] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isNotificationPermissionModalVisible, setIsNotificationPermissionModalVisible] = useState(true);
+  const [isNotificationPermissionModalVisible, setIsNotificationPermissionModalVisible] = useState(false);
   const toggleNotificationPermissionModal = () => {
     setIsNotificationPermissionModalVisible(!isNotificationPermissionModalVisible);
   };
-
+  
   const scrollY = useRef(new Animated.Value(0)).current;
-  const headerHeight = verticalScale(200); // Adjust based on your slider height
+   const flatListRef = useRef(null);
 
   const handleSearchChange = text => {
     setSearch(text);
@@ -105,47 +110,50 @@ const Home = () => {
     <BoxCard data={item} />
   );
 
-  // Interpolate scrollY to control the slider's scale and opacity
-  const sliderScale = scrollY.interpolate({
-    inputRange: [0, headerHeight],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-
-  const sliderOpacity = scrollY.interpolate({
-    inputRange: [0, headerHeight * 0.8],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-
   const handleSearchPress = () => {
     // For example, submit the search query
     console.log('Search query submitted: ', search);
   };
 
+const headerTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [0, -HEADER_HEIGHT],
+    extrapolate: 'clamp',
+  });
+
+  const sliderTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [0, -HEADER_HEIGHT+verticalScale(15)],
+    extrapolate: 'clamp',
+  });
+
+  // Animate the filter container similarly to search input.
+  // For example, it can move up along with the search input.
+  const filterTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [0, -HEADER_HEIGHT+verticalScale(15)],
+    extrapolate: 'clamp',
+  });
+  const searchTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [0, -HEADER_HEIGHT+verticalScale(15)],
+    extrapolate: 'clamp',
+  });
+
+
   return (
     <View style={mainStyles.container}>
       {/* home top header */}
+       <Animated.View
+              style={[
+                styles.animatedHeader,
+                { transform: [{ translateY: headerTranslateY }] },
+              ]}
+            >
      <MainHeader headerType='home'/>
-      <Animated.ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-      >
-        {/* Animated Slider */}
-        <Animated.View
-          style={{
-            transform: [{ scale: sliderScale }],
-            opacity: sliderOpacity,
-          }}
-        >
+     </Animated.View>
           <ImageSlider onSlidePress={() => {}} />
-        </Animated.View>
-
+    
         <View style={{ paddingHorizontal: scale(14), marginTop: verticalScale(3) }}>
           <View style={[mainStyles.flexContainer]}>
             <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize18]}>Sports</Text>
@@ -164,16 +172,21 @@ const Home = () => {
           </View>
           <View style={styles.searchAndListContainer}>
            <SearchInput value={search} onChangeText={handleSearchChange} onSearchPress={handleSearchPress} />
-            <FlatList
+            <Animated.FlatList
+             ref={flatListRef}
               data={boxCourtData}
               renderItem={renderBoxCard}
               keyExtractor={(item) => item.id}
               contentContainerStyle={styles.flatListContainer}
               showsVerticalScrollIndicator={false}
+                onScroll={Animated.event(
+                          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                          { useNativeDriver: true }
+                        )}
+                        scrollEventThrottle={16}
             />
           </View>
         </View>
-      </Animated.ScrollView>
       <BottomModal isModalVisible={isNotificationPermissionModalVisible} toggleModal={toggleNotificationPermissionModal} type={'notification'} />
     </View>
   );
@@ -216,7 +229,15 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     paddingHorizontal: scale(16),
-    paddingBottom: verticalScale(200),
+    paddingBottom: verticalScale(400),
+  },
+  animatedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_HEIGHT,
+    zIndex: 10,
   },
 });
 

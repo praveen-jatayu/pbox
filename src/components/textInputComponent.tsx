@@ -22,6 +22,7 @@ const TextInputComponent: React.FC<TextInputComponentProps> = ({
   secureTextEntry = false,
   maxLength,
   error,
+  style,
   required = false,
   ...props
 }) => {
@@ -36,7 +37,7 @@ const TextInputComponent: React.FC<TextInputComponentProps> = ({
 
       {/* Text Input */}
       <TextInput
-        style={[styles.input, error ? styles.inputError : {}]}
+        style={[styles.input, style, error ? styles.inputError : {}]}
         value={value}
         onChangeText={onChangeText}
         onBlur={props.onBlur} // Ensure onBlur can be passed down from react-hook-form

@@ -17,12 +17,12 @@ type ProfileScreenProps = {
   route: ProfileScreenRouteProp;
 };
 
-const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
   return (
     <View style={[mainStyles.container]}>
       <SubHeader
         title={'Account'}
-        onPress={() => navigation.goBack()} style={undefined}      />
+        onPress={() => navigation.navigate('BottomNav')} style={undefined}      />
       {/* Profile pic and name container */}
       <View style={[profileStyles.profileContainer, mainStyles.secondaryBorderColor, mainStyles.secondaryBackgroundColor,mainStyles.flexContainer]}>
         <View style={[profileStyles.profileInfoContainer]}>

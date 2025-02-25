@@ -1,103 +1,159 @@
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image, StyleSheet, View, Animated, StatusBar } from 'react-native';
+import React, { useEffect, useRef } from 'react'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native'
+import {COLORS} from '../constants/color'
+import * as Animatable from 'react-native-animatable'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from '../screens/home/home';
 import Bookings from '../screens/bookings/bookingList';
 import Bookmarks from '../screens/bookmarks/bookmarks';
-import { COLORS } from '../constants/color';
-import { icons } from '../constants/Icon';
-import { FONTS } from '../constants/font';
-import responsive from '../constants/responsive';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
+import mainStyles from '../assets/styles/mainStyles';
+
 
 const Tab = createBottomTabNavigator();
+const animate1 = { 0: { scale: .5, translateY: 7 }, .92: { translateY: -34 }, 1: { scale: 1.2, translateY: -24 } }
+const animate2 = { 0: { scale: 1.2, translateY: -24 }, 1: { scale: 1, translateY: 7 } }
+const circle1 = { 0: { scale: 1 }, 0.2: { scale: .10 }, 0.5: { scale: .2 }, 0.10: { scale: .7 }, 1: { scale: 1 } }
+const circle2 = { 0: { scale: 1 }, 1: { scale: 0 } }
+const TabButton = (props) => {
+    const { item, onPress, accessibilityState } = props;
+    const focused = accessibilityState.selected;
+    const viewRef = useRef(null);
+    const circleRef = useRef(null);
+    const textRef = useRef(null);
 
-const BottomNav = () => {
-  return (
-    <>
-      <StatusBar backgroundColor={COLORS.secondary} barStyle="dark-content" />
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused }) => {
-          let iconSource;
-
-          switch (route.name) {
-            case 'Home':
-              iconSource = focused ? icons.homeIconActive : icons.homeIconInactive;
-              break;
-            case 'Booking':
-              iconSource = focused ? icons.bookingIconActive : icons.bookingIconInactive;
-              break;
-            case 'Bookmarks':
-              iconSource = focused ? icons.heartIconActive : icons.heartIconInactive;
-              break;
-            default:
-              iconSource = icons.homeIconInactive;
-              break;
-          }
-
-          return (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Image source={iconSource} style={[styles.icon,focused && styles.activeIcon]} />
-            </View>
-          );
-        },
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.lightText,
-        tabBarLabelStyle: {
-        paddingBottom:responsive.padding(10),
-          fontSize: responsive.fontSize(13),
-          fontFamily: FONTS.nunitoMedium,
-        },
-        tabBarStyle: {
-          height: responsive.height(65),
-          paddingTop: responsive.padding(7),
-          backgroundColor: COLORS.secondary, // Background color for the bottom bar
-          elevation: 20, // Adds shadow effect
-        },
-        headerShown: false,
-      })}
-    >
-      <Tab.Screen name="Home" component={Home} options={{ headerShown: false }} />
-      <Tab.Screen name="Booking" component={Bookings} options={{ headerShown: false }} />
-      <Tab.Screen name="Bookmarks" component={Bookmarks} options={{ headerShown: false }} />
-    </Tab.Navigator>
-    </>
-  );
-};
-
+    useEffect(() => {
+        if (focused) {
+            viewRef.current.animate(animate1);
+            circleRef.current.animate(circle1);
+            textRef.current.transitionTo({ scale: 1 });
+        } else {
+            viewRef.current.animate(animate2);
+            circleRef.current.animate(circle2);
+            textRef.current.transitionTo({ scale: 0 });
+        }
+    }, [focused])
+    return (
+        <TouchableOpacity
+            onPress={onPress}
+            activeOpacity={1}
+            style={styles.container}>
+            <Animatable.View
+                ref={viewRef}
+                duration={1000}
+                style={styles.container}>
+                <View style={[styles.btn]}>
+                    <Animatable.View
+                        ref={circleRef}
+                        style={styles.circle} />
+                    <Ionicons name={item.icon} color={focused ? COLORS.secondary : COLORS.primary} size={24} />
+                </View>
+                <Animatable.Text
+                    ref={textRef}
+                    style={[mainStyles.fontNunitoMedium,mainStyles.primaryTextColor,mainStyles.fontSize12]}>
+                    {item.label}
+                </Animatable.Text>
+            </Animatable.View>
+        </TouchableOpacity>
+    )
+}
+export default function AnimTab1() {
+    return (
+        <SafeAreaView style={{ flex: 1 }}>
+            <Tab.Navigator
+                screenOptions={{
+                    headerShown: false,
+                    tabBarStyle: styles.tabBar,
+                }}
+            >
+                <Tab.Screen
+                    name="Home"
+                    component={Home}
+                    options={{
+                        tabBarShowLabel: false,
+                        tabBarButton: (props) => (
+                            <TabButton {...props} item={{
+                                route: 'Home',
+                                label: 'Home',
+                                icon: 'home',
+                            }} />
+                        )
+                    }}
+                />
+                <Tab.Screen
+                    name="Booking"
+                    component={Bookings}
+                    options={{
+                        tabBarShowLabel: false,
+                        tabBarButton: (props) => (
+                            <TabButton {...props} item={{
+                                route: 'Booking',
+                                label: 'Booking',
+                                icon: 'newspaper-outline'
+                                ,
+                            }} />
+                        )
+                    }}
+                />
+                <Tab.Screen
+                    name="Bookmark"
+                    component={Bookmarks}
+                    options={{
+                        tabBarShowLabel: false,
+                        tabBarButton: (props) => (
+                            <TabButton {...props} item={{
+                                route: 'Bookmark',
+                                label: 'Bookmarks',
+                                icon: 'bookmarks-outline',
+                            }} />
+                        )
+                    }}
+                />
+            </Tab.Navigator>
+        </SafeAreaView>
+    )
+}
 const styles = StyleSheet.create({
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: scale(9),
-    width:moderateScale(48,0.7),
-    height:moderateScale(48,0.7)
-    // padding: responsive.padding(9),
-    // width:responsive.width(45),
-    // height:responsive.height(48)
-   
-  },
-  activeIconContainer: {
-    backgroundColor: COLORS.primary,
-    borderRadius: responsive.borderRadius(100),
-    padding: responsive.padding(8),
-    elevation: 5, // Adds shadow for the bump effect
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: verticalScale(60),
+    },
+    tabBar: {
+    //   position:'absolute',
+    //   bottom:verticalScale(10),
+    //   marginHorizontal:scale(15),
+      borderTopLeftRadius:moderateScale(16),
+      borderTopRightRadius:moderateScale(16),
+    borderRadius:moderateScale(10),
+        height: moderateVerticalScale(60),
+        // borderColor:COLORS.primary,
+        // borderWidth:1,
+        backgroundColor: COLORS.secondary,
+         // iOS shadow properties
     shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    transform: [{ translateY: -20 }], // Moves the icon up slightly
-  },
-  icon: {
-    width: responsive.width(25),
-    height: responsive.height(25),
-    resizeMode: 'contain',
-  },
-  activeIcon:{
-    width: responsive.width(28),
-    height: responsive.height(28),
-  }
-});
+    // Android shadow
+    elevation: 10,
 
-export default BottomNav;
+    },
+    btn: {
+        width: moderateScale(40),
+        height: moderateVerticalScale(40),
+        borderRadius: moderateScale(25),
+        backgroundColor: COLORS.secondary,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    circle: {
+        ...StyleSheet.absoluteFillObject,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor:COLORS.primary ,
+        borderRadius: moderateScale(30),
+    },
+})

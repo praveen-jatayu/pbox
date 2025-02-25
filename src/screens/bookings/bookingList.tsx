@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
-import CustomTopHeader from '../../components/mainHeader';
 import SearchInput from '../../components/searchInput';
 import { images } from '../../constants/image';
 import NoDataContainer from '../../components/noDataContainer';

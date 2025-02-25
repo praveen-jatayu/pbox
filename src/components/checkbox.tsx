@@ -1,36 +1,66 @@
+// CustomCheckBox.js
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
-import { scale, verticalScale } from 'react-native-size-matters';
-import { COLORS } from '../constants/color';
+import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import mainStyles from '../assets/styles/mainStyles';
 
-const CustomCheckBox = ({ value, onValueChange }) => {
+const CustomCheckBox = ({
+  value = false,
+  onValueChange = () => {},
+  disabled = false,
+  style,
+}) => {
+  const handlePress = () => {
+    if (!disabled) {
+      onValueChange(!value);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <CheckBox
-        value={value}
-        onValueChange={onValueChange}
-        tintColors={{ true: '#A3D9A5', false: COLORS.borderColor }} // Light green when checked
-        boxType="square"
-        onCheckColor="white" // White tick
-        onFillColor="#A3D9A5" // Light green background
-        onTintColor="#A3D9A5" // Light green outline
-        style={styles.checkbox}
-      />
-    </View>
+    <TouchableOpacity
+      style={[styles.container, style]}
+      onPress={handlePress}
+      disabled={disabled}
+      activeOpacity={0.8}
+    >
+      <View
+        style={[
+          styles.checkBoxSquare,
+          mainStyles.primaryBorderColor,
+          value && mainStyles.successBackgroudColor,
+          disabled && styles.disabledBox,
+        ]}
+      >
+        {value && (
+          <Icon
+            type="material-community"
+            name="check"
+            color="#FFF"
+            size={20}
+          />
+        )}
+      </View>
+    </TouchableOpacity>
   );
 };
 
+export default CustomCheckBox;
+
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems:'center'
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  checkbox: {
-    width: scale(23),
-    height: verticalScale(23),
-    marginBottom:verticalScale(11)
+  checkBoxSquare: {
+    width: scale(20),
+    height: verticalScale(20),
+    borderWidth: 1,
+    borderRadius: moderateScale(5),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  disabledBox: {
+    opacity: 0.5,
   },
 });
-
-export default CustomCheckBox;
