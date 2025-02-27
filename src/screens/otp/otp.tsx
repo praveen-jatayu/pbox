@@ -9,8 +9,10 @@ import {
   Keyboard,
   Pressable,
   Linking,
+  TextInput,
+  Animated,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import loginStyles from '../../assets/styles/loginStyles';
 
@@ -23,13 +25,32 @@ import SecondaryButton from '../../components/secondaryButton';
 import { icons } from '../../constants/Icon';
 import otpStyles from '../../assets/styles/otpStyles';
 import mainStyles from '../../assets/styles/mainStyles';
+import { verticalScale } from 'react-native-size-matters';
 
 const OTP = ({ navigation, route }) => {
   const [resendTimer, setResendTimer] = useState(0);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '']);
   const [errorMessage, setErrorMessage] = useState('');
   const [isVerifiedPressed, setIsVerifiedPressed] = useState(false);
+  const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+const translateY = useRef(new Animated.Value(80)).current;
+    const opacity = useRef(new Animated.Value(0.7)).current;
 
+    useEffect(()=>{
+      Animated.parallel([
+              Animated.timing(translateY, {
+                toValue: 0, // Move button down
+                duration: 500,
+                useNativeDriver: true,
+              }),
+              Animated.timing(opacity, {
+                toValue: 1, // Fade out
+                duration: 500,
+                useNativeDriver: true,
+              }),
+            ]).start()
+    },[])
   useEffect(() => {
     if (resendTimer > 0) {
       const intervalId = setInterval(() => {
@@ -39,12 +60,55 @@ const OTP = ({ navigation, route }) => {
     }
   }, [resendTimer]);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   const handleResendOtp = () => {
     if (resendTimer === 0) {
       setResendTimer(120);
     }
   };
+  const handleOtpChange = (value, index) => {
+    const otpArray = [...otp];
+    otpArray[index] = value;
+    setOtp(otpArray);
 
+    if (value && index < inputRefs.length - 1) {
+      inputRefs[index + 1].current.focus();
+    } else if (!value && index > 0) {
+      inputRefs[index - 1].current.focus();
+    }
+    if (otpArray.every(digit => digit !== '')) {
+      checkOtp(otpArray.join(''));
+    }
+
+  };
+  const checkOtp = (enteredOtp) => {
+    // const enteredOtp = otp.join('');
+    if (enteredOtp === route.params.actualOtp) {
+      // login(route.params.mobileNo, loginUser, UserVerification);
+    } else {
+      };
+      setErrorMessage('OTP does not match. Please try again!');
+    }
+ 
   const formatResendTimer = () => {
     const minutes = Math.floor(resendTimer / 60);
     const seconds = resendTimer % 60;
@@ -56,10 +120,35 @@ const OTP = ({ navigation, route }) => {
     if (otp !== "11111") {
       setErrorMessage('* OTP does not match. Please try again!');
     } else {
-      navigation.navigate('ProfileName')
       setErrorMessage('');
       console.log('OTP Verified Successfully'); // Replace with actual login function
     }
+  };
+
+  const renderOtpInputs = () => {
+    return otp.map((digit, index) => (
+      <TextInput
+        key={index}
+        value={digit}
+        onChangeText={value => handleOtpChange(value, index)}
+        maxLength={1}
+        keyboardType="number-pad"
+        style={otpStyles.otpField}
+  
+        ref={inputRefs[index]}
+        autoFocus={index === 0}
+        onKeyPress={({ nativeEvent }) => {
+          if (nativeEvent.key === 'Backspace') {
+            // If backspace is pressed and the current input is empty, focus the previous input
+            if (digit === '') {
+              if (index > 0) {
+                inputRefs[index - 1].current.focus();
+              }
+            }
+          }
+        }}
+      />
+    ));
   };
 
   return (
@@ -89,35 +178,20 @@ const OTP = ({ navigation, route }) => {
               </Pressable>
             </View>
 
-            {/* OTP Input */}
-            <OTPInputView
-              style={otpStyles.otpInputContainer}
-              pinCount={5}
-              autoFocusOnLoad={true}
-              code={otp}
-              onCodeChanged={(code) => {
-                setOtp(code);
-                setErrorMessage(''); // Remove error message when OTP starts typing
-              }}
-              codeInputFieldStyle={[
-                otpStyles.otpField,
-                isVerifiedPressed && errorMessage ? otpStyles.otpFieldError : null,
-              ]}
-              codeInputHighlightStyle={{ borderColor: COLORS.primary }}
-            />
-
+            <View style={otpStyles.otpInputContainer}>{renderOtpInputs()}</View>
             {/* Error Message */}
             {isVerifiedPressed && errorMessage ? <Text style={otpStyles.errorText}>{errorMessage}</Text> : null}
 
             {/* Buttons */}
-            <View style={loginStyles.buttonContainer}>
-              <PrimaryButton title={'VERIFY'} onPress={handleVerify} disabled={otp.length !== 5} />
+        <Animated.View style={{ transform: [{ translateY }], opacity }}>
+              <PrimaryButton title={'VERIFY'} onPress={handleVerify} disabled={otp.length !== 4} style={{marginTop:verticalScale(12)}} />
+              </Animated.View>
               <SecondaryButton
                 title={resendTimer > 0 ? `Resend OTP in ${formatResendTimer()}` : 'RESEND OTP'}
                 onPress={handleResendOtp}
                 disabled={resendTimer > 0}
               />
-            </View>
+         
           </View>
         </ImageBackground>
       </View>

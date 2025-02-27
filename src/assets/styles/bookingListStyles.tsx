@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native"
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from "react-native-size-matters"
 import mainStyles from "./mainStyles"
 
-export default bookingListStyles=StyleSheet.create({
+const bookingListStyles=StyleSheet.create({
     
     innerContainer: {
         paddingHorizontal: scale(12),
@@ -84,3 +84,4 @@ export default bookingListStyles=StyleSheet.create({
         width: '100%',
       },
 })
+export default bookingListStyles;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../assets/styles/mainStyles';
 
 const CustomCheckBox = ({
@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   checkBoxSquare: {
-    width: scale(20),
-    height: verticalScale(20),
+    width: moderateScale(20),
+    height: moderateVerticalScale(20),
     borderWidth: 1,
     borderRadius: moderateScale(5),
     justifyContent: 'center',

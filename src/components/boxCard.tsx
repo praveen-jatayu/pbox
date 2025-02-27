@@ -66,7 +66,7 @@ const BoxCard = ({ data ,isBookmarked='false'}) => {
   };
 
   return (
-    <Pressable onPress={()=>navigation.navigate('CourtDetail',{courtData:data})}>
+    <Pressable onPress={()=>navigation.navigate('BoxDetail',{boxData:data})}>
     <Animated.View
       style={[
         boxCardStyles.cardContainer,

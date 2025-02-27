@@ -4,7 +4,7 @@ import { moderateScale, moderateVerticalScale, scale, verticalScale } from "reac
 import { FONTS } from "../../constants/font";
 
 
-export default styles = StyleSheet.create({
+const loginStyles = StyleSheet.create({
     bottomSection: {
         position: 'absolute',
         bottom: 0,
@@ -94,3 +94,4 @@ export default styles = StyleSheet.create({
         width: moderateScale(24),
       },
 })
+export default loginStyles

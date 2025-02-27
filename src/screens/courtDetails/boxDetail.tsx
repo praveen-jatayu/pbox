@@ -7,7 +7,8 @@ import {
   StatusBar,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Animated
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -66,11 +67,32 @@ const dummyReviews = [
   // ... add more reviews as needed
 ];
 
-const CourtDetail = ({navigation,route}) => {
-  const courtData = route.params.courtData;
+const BoxDetail = ({navigation,route}) => {
+  const boxData = route.params.boxData;
   const [activeSlide, setActiveSlide] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const carouselRef = useRef(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Animate slider (opacity and scale)
+  const sliderOpacity = scrollY.interpolate({
+    inputRange: [0, sliderHeight / 2, sliderHeight],
+    outputRange: [1, 0.5, 0],
+    extrapolate: 'clamp',
+  });
+
+  const sliderScale = scrollY.interpolate({
+    inputRange: [0, sliderHeight],
+    outputRange: [1, 0.85],
+    extrapolate: 'clamp',
+  });
+
+  // Show header when slider disappears
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, sliderHeight - 80],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
 
   const renderItem = ({item}) => {
     return (
@@ -109,12 +131,20 @@ const CourtDetail = ({navigation,route}) => {
         backgroundColor="transparent"
         barStyle="light-content"
         />
+
+         {/* Sticky Header (Appears when slider disappears) */}
+      <Animated.View style={[styles.header, {opacity: headerOpacity}]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <EvilIcons name="chevron-left" size={28} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{boxData.title || 'Cricket Arena'}</Text>
+      </Animated.View>
         
       {/* Top slider  */}
-      <View style={styles.sliderContainer}>
+      <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity, transform: [{scale: sliderScale}]}]}>
         <Carousel
           ref={carouselRef}
-          data={courtData.images}
+          data={boxData.images}
           renderItem={renderItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}
@@ -123,7 +153,7 @@ const CourtDetail = ({navigation,route}) => {
           inactiveSlideOpacity={1}
         />
         <Pagination
-          dotsLength={courtData.images.length}
+          dotsLength={boxData.images.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.paginationContainer}
           dotStyle={[styles.paginationDot,mainStyles.primaryBackgroundColor]}
@@ -157,21 +187,23 @@ const CourtDetail = ({navigation,route}) => {
         </TouchableOpacity>
       </View>
     </View>
-      </View>
-      <ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}}>
+        </Animated.View>
+      <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}} showsVerticalScrollIndicator={false}
+       onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: false})}
+       scrollEventThrottle={16}>
       {/* You can add more content below the slider */}
       <View style={styles.content}>
         <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
           <View style={boxCardStyles.titleContainer}>
             <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
-              {courtData.title || 'Cricket Arena'}
+              {boxData.title || 'Cricket Arena'}
             </Text>
             <Text style={boxCardStyles.address} numberOfLines={2}>
-              {courtData.address || '123 Cricket Lane, Sportstown'}
+              {boxData.address || '123 Cricket Lane, Sportstown'}
             </Text>
           </View>
           <Text style={boxCardStyles.rating}>
-            ⭐ {courtData.rating || '4.5'}
+            ⭐ {boxData.rating || '4.5'}
           </Text>
         </View>
 
@@ -293,13 +325,13 @@ const CourtDetail = ({navigation,route}) => {
             ))}
       </View>
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
       <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('Login')} disabled={undefined} style={{position:'absolute',bottom:verticalScale(10),width:'90%'}} />
     </View>
   );
 };
 
-export default CourtDetail;
+export default BoxDetail;
 
 const styles = StyleSheet.create({
   sliderContainer: {
@@ -412,6 +444,27 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(20),
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  header: {
+    position: 'absolute',
+    top: 40,
+    left: 0,
+    right: 0,
+    height: 50,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    zIndex: 10,
+    elevation: 5,
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
 
 });

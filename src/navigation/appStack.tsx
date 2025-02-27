@@ -5,11 +5,12 @@ import BottomNav from './bottomNav';
 import SelectCity from '../screens/selectCity/selectCity';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
-import CourtDetail from '../screens/courtDetails/courtDetail';
+import CourtDetail from '../screens/courtDetails/boxDetail';
 import ClientReview from '../screens/clientReview/clientReview';
 import EditProfile from '../screens/profile/editProfile';
 import SettingsScreen from '../screens/profile/settings';
 import DeleteAccount from '../screens/profile/deleteAccount';
+import BoxDetail from '../screens/courtDetails/boxDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -71,8 +72,8 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="CourtDetail"
-          component={CourtDetail}
+          name="BoxDetail"
+          component={BoxDetail}
           options={{
             headerShown: false,
           }}

@@ -4,7 +4,7 @@ import { moderateScale, moderateVerticalScale, scale, verticalScale } from "reac
 import { FONTS } from "../../constants/font";
 const { height } = Dimensions.get('window');
 
-export default styles = StyleSheet.create({
+const onBoardingStyles = StyleSheet.create({
     
       topSection: {
         height: height / 2.2,
@@ -58,3 +58,4 @@ export default styles = StyleSheet.create({
         marginBottom: 10,
       },
 })
+export default onBoardingStyles;

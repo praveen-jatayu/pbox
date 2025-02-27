@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import { COLORS } from '../../constants/color';
 import { FONTS } from '../../constants/font';
 
@@ -20,17 +20,26 @@ const otpStyles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   otpInputContainer: {
-    width: '100%',
-    marginTop: verticalScale(1),
+    width: '90%',
+    marginTop: verticalScale(7),
+    marginBottom:verticalScale(12),
+    flexDirection:'row',
+    gap:scale(10),
+    // marginHorizontal:scale(10),
+    alignSelf:'center'
   },
   otpField: {
-    width: scale(49),
-    height: verticalScale(44),
+    width: moderateScale(48),
+    height: moderateVerticalScale(44),
     borderRadius: moderateScale(8),
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: COLORS.borderColor,
     fontFamily: FONTS.nunitoMedium,
     fontSize: scale(16),
+    marginRight:scale(20),
     color: COLORS.darkText,
   },
   otpFieldError: {

@@ -1,5 +1,5 @@
-import {View, Text, ImageBackground, StatusBar, Image, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import {View, Text, ImageBackground, StatusBar, Image, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Animated, Easing} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import {images} from '../../constants/image';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
@@ -9,18 +9,42 @@ import CustomCheckBox from '../../components/checkbox';
 import PrimaryButton from '../../components/primaryButton';
 import { icons } from '../../constants/Icon';
 import loginStyles from '../../assets/styles/loginStyles';
+import mainStyles from '../../assets/styles/mainStyles';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Login = ({navigation}) => {
   const [isTandCChecked, setIsTandCChecked] = useState(false);
   const [mobileNo, setMobileNo] = useState('');
-  const [isMobileValid, setIsMobileValid] = useState(true);
-
+  const [isMobileValid, setIsMobileValid] = useState(false);
+    // Animated values for opacity & translateY
+    const translateY = useRef(new Animated.Value(0)).current;
+    // const opacity = useRef(new Animated.Value(1)).current;
+  
+    const handleSendOtp = () => {
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 50, // Move button down
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        // Animated.timing(opacity, {
+        //   toValue: 0.1, // Fade out
+        //   duration: 500,
+        //   useNativeDriver: true,
+        // }),
+      ]).start(() => {
+        navigation.navigate('OTP',{mobileNo:mobileNo});
+        
+      });
+    };
   
  
-
-  const handleSendOtp=()=>{
-    navigation.navigate('OTP',{mobileNo:mobileNo})
-  }
+    useFocusEffect(
+      useCallback(() => {
+        translateY.setValue(0);
+      }, [])
+    );
+ 
 
   const formatPhoneNumber = (text) => {
     // Remove all non-numeric characters
@@ -38,7 +62,7 @@ const Login = ({navigation}) => {
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={onBoardingStyles.container}>
+    <View style={[mainStyles.container]}>
       <View style={onBoardingStyles.topSection}>
         <ImageBackground
           source={images.mapBackground}
@@ -103,7 +127,9 @@ const Login = ({navigation}) => {
 
               {/* Terms & Conditions Checkbox */}
               <View style={loginStyles.checkboxContainer}>
-                <CustomCheckBox value={undefined} onValueChange={undefined} />
+              <CustomCheckBox
+                  value={isTandCChecked}
+                  onValueChange={setIsTandCChecked} style={undefined}            />
                 <View>
                   <Text style={loginStyles.termsText}>
                     I agree to the{' '}
@@ -123,9 +149,9 @@ const Login = ({navigation}) => {
               </View>
 
               {/* Send OTP Button */}
-              <View style={loginStyles.buttonContainer}>
-                <PrimaryButton title={'SEND OTP'} onPress={handleSendOtp} disabled={!isMobileValid} />
-              </View>
+              <Animated.View style={[loginStyles.buttonContainer, { transform: [{ translateY }] }]}>
+                <PrimaryButton title={'SEND OTP'} onPress={handleSendOtp} disabled={!isMobileValid && !isTandCChecked} style={undefined} />
+              </Animated.View>
             </View>
         </ImageBackground>
       </View>
