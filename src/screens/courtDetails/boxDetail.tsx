@@ -77,13 +77,13 @@ const BoxDetail = ({navigation,route}) => {
   // Animate slider (opacity and scale)
   const sliderOpacity = scrollY.interpolate({
     inputRange: [0, sliderHeight / 2, sliderHeight],
-    outputRange: [1, 0.5, 0],
+    outputRange: [1, 0.6, 0],
     extrapolate: 'clamp',
   });
 
   const sliderScale = scrollY.interpolate({
     inputRange: [0, sliderHeight],
-    outputRange: [1, 0.85],
+    outputRange: [1, 0.5],
     extrapolate: 'clamp',
   });
 
@@ -120,9 +120,53 @@ const BoxDetail = ({navigation,route}) => {
     );
   }
 
+
+
+
   const amenitiesToShow = showAllAmenities ? dummyAmenitiesData : dummyAmenitiesData.slice(0, 4);
 
   const reviewsToShow = dummyReviews.slice(0, 2);
+
+
+  const AnimatedHeader = ({ scrollY, boxData }) => {
+    const headerTranslateY = scrollY.interpolate({
+      inputRange: [0, sliderHeight],
+      outputRange: [-150, 0],
+      extrapolate: 'clamp',
+    });
+  
+    return (
+      <Animated.View
+        style={[
+          {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: verticalScale(90),
+          flexDirection:'row',
+          alignItems:'center',
+          paddingHorizontal: scale(4),
+          paddingTop:verticalScale(17),
+          transform: [{ translateY: headerTranslateY }],
+          elevation: 5,
+          zIndex: 10,
+          gap:scale(7)
+          },
+          mainStyles.primaryBackgroundColor]}>
+          <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="light-content"
+        />
+        <EvilIcons name="chevron-left" size={38} color={'white'} />
+        <View>
+        <Text style={[mainStyles.fontSize16,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.title}</Text>
+        <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.address}</Text>
+        </View>
+      </Animated.View>
+    );
+  };
   return (
     <View style={mainStyles.container}>
       {/* Make StatusBar transparent */}
@@ -131,14 +175,10 @@ const BoxDetail = ({navigation,route}) => {
         backgroundColor="transparent"
         barStyle="light-content"
         />
-
-         {/* Sticky Header (Appears when slider disappears) */}
-      <Animated.View style={[styles.header, {opacity: headerOpacity}]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <EvilIcons name="chevron-left" size={28} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{boxData.title || 'Cricket Arena'}</Text>
-      </Animated.View>
+          <AnimatedHeader scrollY={scrollY} boxData={boxData} />
+          <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}} showsVerticalScrollIndicator={false}
+       onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: false})}
+       scrollEventThrottle={16}>
         
       {/* Top slider  */}
       <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity, transform: [{scale: sliderScale}]}]}>
@@ -188,9 +228,7 @@ const BoxDetail = ({navigation,route}) => {
       </View>
     </View>
         </Animated.View>
-      <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}} showsVerticalScrollIndicator={false}
-       onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: false})}
-       scrollEventThrottle={16}>
+    
       {/* You can add more content below the slider */}
       <View style={styles.content}>
         <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>

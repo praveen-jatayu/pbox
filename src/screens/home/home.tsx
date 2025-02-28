@@ -198,13 +198,13 @@ const Home = () => {
       </View>
 
        
-     <View>
+   
         <Animated.View  style={[
             styles.animatedSearch,
             { transform: [{ translateY: searchTranslateY }] },
           ]}>
       <SearchInput value={search} onChangeText={handleSearchChange} onSearchPress={handleSearchPress} />
-      </Animated.View>
+      
    
         {/* FlatList with scroll animation */}
         <Animated.FlatList
@@ -218,7 +218,8 @@ const Home = () => {
             useNativeDriver: true,
           })}
         />
-         </View>
+        </Animated.View>
+     
 
       <BottomModal isModalVisible={isNotificationPermissionModalVisible} toggleModal={toggleNotificationPermissionModal} type="notification" />
     </View>
