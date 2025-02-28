@@ -1,8 +1,8 @@
 const COLORS = {
     primary: '#FF4F0A', 
     secondary: '#FFFFFF', 
-    neutral:'#3986FF',
-    neutralBackground:'#E8EFF9',
+    infoColor:'#3986FF',
+    secondaryInfoColor:'#E8EFF9',
     darkText: '#181919',
     lightText: '#919191',
     disabled:"#F1F3F2",

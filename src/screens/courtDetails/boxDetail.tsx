@@ -211,7 +211,7 @@ const BoxDetail = ({navigation,route}) => {
         onPress={() => navigation.goBack()}
         activeOpacity={0.8}
       >
-        <EvilIcons name="chevron-left" size={28} />
+        <EvilIcons name="chevron-left" size={moderateScale(28)} />
       </TouchableOpacity>
       <View style={styles.rightIconsContainer}>
         <TouchableOpacity
@@ -219,7 +219,7 @@ const BoxDetail = ({navigation,route}) => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.8}
         >
-          <EvilIcons name="heart" size={22} />
+          <EvilIcons name="heart" size={moderateScale(20)} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
@@ -251,7 +251,7 @@ const BoxDetail = ({navigation,route}) => {
         <TouchableOpacity style={[styles.locationButton,mainStyles.primaryBorderColor]}>
           <Image
             source={images.googleMapsPin}
-            style={{width: scale(15), height: verticalScale(20)}}
+            style={{width: moderateScale(15,0.8), height: moderateVerticalScale(20)}}
           />
           <Text
             style={[
@@ -480,8 +480,8 @@ const styles = StyleSheet.create({
     gap: scale(10), // Note: if 'gap' is not supported, use margin on children
   },
   iconButton: {
-    width: moderateScale(26),
-    height: moderateVerticalScale(26),
+    width: moderateScale(26,0.8),
+    height: moderateVerticalScale(26,0.6),
     borderRadius: moderateScale(20),
     alignItems: 'center',
     justifyContent: 'center',

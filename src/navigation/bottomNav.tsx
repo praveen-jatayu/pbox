@@ -122,17 +122,12 @@ const styles = StyleSheet.create({
         height: verticalScale(60),
     },
     tabBar: {
-    //   position:'absolute',
-    //   bottom:verticalScale(10),
-    //   marginHorizontal:scale(15),
+    
       borderTopLeftRadius:moderateScale(16),
       borderTopRightRadius:moderateScale(16),
     borderRadius:moderateScale(10),
         height: moderateVerticalScale(60),
-        // borderColor:COLORS.primary,
-        // borderWidth:1,
         backgroundColor: COLORS.secondary,
-         // iOS shadow properties
     shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.3,
@@ -143,7 +138,7 @@ const styles = StyleSheet.create({
     },
     btn: {
         width: moderateScale(40),
-        height: moderateVerticalScale(40),
+        height: moderateVerticalScale(40,0.3),
         borderRadius: moderateScale(25),
         backgroundColor: COLORS.secondary,
         justifyContent: 'center',

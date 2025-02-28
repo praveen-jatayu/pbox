@@ -38,12 +38,15 @@ const mainStyles= StyleSheet.create({
       primaryTextColor:{
         color:COLORS.primary
       },
+      secondaryTextColor:{
+        color:COLORS.secondary
+      },
       successTextColor:{
         color:COLORS.success
       },
 
       neutralTextColor:{
-        color:COLORS.neutral
+        color:COLORS.infoColor
       },
       errotTextColor:{
         color:COLORS.errorColor
@@ -61,7 +64,7 @@ const mainStyles= StyleSheet.create({
        borderColor:COLORS.lightBorder
       },
       neutralBorderColor:{
-        borderColor:COLORS.neutral
+        borderColor:COLORS.infoColor
       },
       
       borderWidth1:{
@@ -73,8 +76,11 @@ const mainStyles= StyleSheet.create({
       secondaryBackgroundColor:{
         backgroundColor:COLORS.secondary
       },
-      neutralBackgroundColor:{
-        backgroundColor:COLORS.neutralBackground
+      infoBackgroundColor:{
+        backgroundColor:COLORS.infoColor
+      },
+      secondaryInfoBackgroundColor:{
+        backgroundColor:COLORS.secondaryInfoColor
       },
       disabledBackgroundColor:{
         backgroundColor:COLORS.disabled
