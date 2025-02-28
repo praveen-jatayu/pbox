@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
 import { icons } from '../constants/Icon';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../assets/styles/mainStyles';
 
 const SubHeader = ({ title, onPress, style }) => {
@@ -26,10 +26,11 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: verticalScale(60),
+    height: moderateVerticalScale(60,0.6),
     gap: moderateScale(100),
     paddingHorizontal: scale(13),
-    paddingVertical: verticalScale(18),
+    paddingTop: verticalScale(12),
+
    
   },
   icon: {

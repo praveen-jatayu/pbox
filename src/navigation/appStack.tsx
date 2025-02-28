@@ -5,12 +5,13 @@ import BottomNav from './bottomNav';
 import SelectCity from '../screens/selectCity/selectCity';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
-import CourtDetail from '../screens/courtDetails/boxDetail';
 import ClientReview from '../screens/clientReview/clientReview';
 import EditProfile from '../screens/profile/editProfile';
 import SettingsScreen from '../screens/profile/settings';
 import DeleteAccount from '../screens/profile/deleteAccount';
 import BoxDetail from '../screens/courtDetails/boxDetail';
+import BookingConfirmation from '../screens/bookings/bookingConfirmation';
+import SlotBooking from '../screens/bookings/slotBooking';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +20,7 @@ const AppStack = () => {
 
   return (
   <>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      <StatusBar backgroundColor="#ffffff" barStyle="dark-content"/>
     
       <Stack.Navigator screenOptions={{ headerShown: false ,animation:'fade_from_bottom'}}  >
         <Stack.Screen
@@ -79,12 +80,27 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
+          name="SlotBooking"
+          component={SlotBooking}
+          options={{
+            headerShown: false,
+          }}
+        />
+         <Stack.Screen
+          name="BookingConfirmation"
+          component={BookingConfirmation}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="ClientReview"
           component={ClientReview}
           options={{
             headerShown: false,
           }}
         />
+       
         
         </Stack.Navigator>
        

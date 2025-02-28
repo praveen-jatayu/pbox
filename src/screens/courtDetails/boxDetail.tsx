@@ -88,11 +88,7 @@ const BoxDetail = ({navigation,route}) => {
   });
 
   // Show header when slider disappears
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, sliderHeight - 80],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
+ 
 
   const renderItem = ({item}) => {
     return (
@@ -134,6 +130,12 @@ const BoxDetail = ({navigation,route}) => {
       outputRange: [-150, 0],
       extrapolate: 'clamp',
     });
+
+    const headerOpacity = scrollY.interpolate({
+      inputRange: [0, sliderHeight+30],
+      outputRange: [0.6,1],
+      extrapolate: 'clamp',
+    });
   
     return (
       <Animated.View
@@ -149,6 +151,7 @@ const BoxDetail = ({navigation,route}) => {
           paddingHorizontal: scale(4),
           paddingTop:verticalScale(17),
           transform: [{ translateY: headerTranslateY }],
+         opacity:headerOpacity,
           elevation: 5,
           zIndex: 10,
           gap:scale(7)
@@ -159,7 +162,7 @@ const BoxDetail = ({navigation,route}) => {
         backgroundColor="transparent"
         barStyle="light-content"
         />
-        <EvilIcons name="chevron-left" size={38} color={'white'} />
+        <EvilIcons name="chevron-left" size={38} color={'white'} onPress={()=>navigation.goBack()}/>
         <View>
         <Text style={[mainStyles.fontSize16,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.title}</Text>
         <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.address}</Text>
@@ -364,7 +367,7 @@ const BoxDetail = ({navigation,route}) => {
       </View>
       </View>
     </Animated.ScrollView>
-      <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('Login')} disabled={undefined} style={{position:'absolute',bottom:verticalScale(10),width:'90%'}} />
+      <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('SlotBooking')} disabled={undefined} style={{position:'absolute',bottom:moderateVerticalScale(10),width:'90%'}} />
     </View>
   );
 };

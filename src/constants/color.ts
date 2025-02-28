@@ -1,6 +1,8 @@
 const COLORS = {
-    primary: '#FF4F0A', // Orange
-    secondary: '#FFFFFF', // Red-Orange
+    primary: '#FF4F0A', 
+    secondary: '#FFFFFF', 
+    neutral:'#3986FF',
+    neutralBackground:'#E8EFF9',
     darkText: '#181919',
     lightText: '#919191',
     disabled:"#F1F3F2",
@@ -11,6 +13,8 @@ const COLORS = {
     itemBackground:"#FFE8E3",
     success:"#09A863",
     warning:'#FBBC04',
+
+
    
   };
 

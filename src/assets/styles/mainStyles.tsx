@@ -41,11 +41,18 @@ const mainStyles= StyleSheet.create({
       successTextColor:{
         color:COLORS.success
       },
+
+      neutralTextColor:{
+        color:COLORS.neutral
+      },
       errotTextColor:{
         color:COLORS.errorColor
       },
       warningTextColor:{
         color:COLORS.warning
+      },
+      linkTextColor:{
+        color:COLORS.linkingColor
       },
       primaryBorderColor:{
         borderColor:COLORS.borderColor
@@ -53,11 +60,21 @@ const mainStyles= StyleSheet.create({
       secondaryBorderColor:{
        borderColor:COLORS.lightBorder
       },
+      neutralBorderColor:{
+        borderColor:COLORS.neutral
+      },
+      
+      borderWidth1:{
+        borderWidth:1
+      },
       primaryBackgroundColor:{
         backgroundColor:COLORS.primary
       },
       secondaryBackgroundColor:{
         backgroundColor:COLORS.secondary
+      },
+      neutralBackgroundColor:{
+        backgroundColor:COLORS.neutralBackground
       },
       disabledBackgroundColor:{
         backgroundColor:COLORS.disabled
@@ -68,7 +85,9 @@ const mainStyles= StyleSheet.create({
       iconBackgroundColor:{
         backgroundColor:COLORS.lightBorder
       },
-    
+    itemBackgroundColor:{
+      backgroundColor:COLORS.itemBackground
+    },
       fontNunitoBold:{
         fontFamily:FONTS.nunitoBold
       },

@@ -19,7 +19,7 @@ const CustomCheckBox = ({
 
   return (
     <TouchableOpacity
-      style={[styles.container, style]}
+      style={[styles.container]}
       onPress={handlePress}
       disabled={disabled}
       activeOpacity={0.8}
@@ -29,7 +29,7 @@ const CustomCheckBox = ({
           styles.checkBoxSquare,
           mainStyles.primaryBorderColor,
           value && mainStyles.successBackgroudColor,
-          disabled && styles.disabledBox,
+          style
         ]}
       >
         {value && (
@@ -60,7 +60,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  disabledBox: {
-    opacity: 0.5,
-  },
+  
 });
