@@ -5,7 +5,14 @@ import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../../assets/styles/mainStyles';
 
 const DateSlider = ({ onDateSelected }) => {
-  const [dates, setDates] = useState([]);
+
+  type DateItem = {
+    formattedDate: string;
+    displayDay: string;
+    displayDate: string;
+    displayMonth: string;
+  };
+  const [dates, setDates] = useState<DateItem[]>([]);
   const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
   const listRef = useRef(null);
 
@@ -39,7 +46,7 @@ const DateSlider = ({ onDateSelected }) => {
   }, [selectedDate]);
 
   // Function to generate dates for the current month
-  const generateDates = (monthYear) => {
+  const generateDates = (monthYear: moment.MomentInput) => {
     let startDate = moment(monthYear, 'YYYY-MM').startOf('month');
     let endDate = moment(monthYear, 'YYYY-MM').endOf('month');
     let tempDates = [];
@@ -97,7 +104,7 @@ const styles = StyleSheet.create({
    paddingVertical:verticalScale(7),
    paddingHorizontal:scale(15),
     marginVertical:verticalScale(12),
-    marginHorizontal:scale(7  ),
+    marginHorizontal:scale(7),
     borderRadius: moderateScale(5),
     alignItems: 'center',
     gap:verticalScale(4)

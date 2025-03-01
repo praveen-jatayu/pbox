@@ -21,6 +21,8 @@ import logoutIcon from '../assets/icons/logoutIcon.png'
 import userPrimaryIcon from '../assets/icons/userPrimaryIcon.png'
 import helpIcon from '../assets/icons/helpIcon.png'
 import editIcon from '../assets/icons/editIcon.png'
+import moonIcon from '../assets/icons/moonIcon.png'
+import sunIcon from '../assets/icons/sunIcon.png'
 
 
 
@@ -48,6 +50,8 @@ export const icons={
     privacyPolicyIcon,
     logoutIcon,
     helpIcon,
-    editIcon
+    editIcon,
+    moonIcon,
+    sunIcon
 
 }

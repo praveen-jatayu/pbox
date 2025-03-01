@@ -45,7 +45,7 @@ const mainStyles= StyleSheet.create({
         color:COLORS.success
       },
 
-      neutralTextColor:{
+      infoTextColor:{
         color:COLORS.infoColor
       },
       errotTextColor:{
@@ -63,7 +63,7 @@ const mainStyles= StyleSheet.create({
       secondaryBorderColor:{
        borderColor:COLORS.lightBorder
       },
-      neutralBorderColor:{
+      infoBorderColor:{
         borderColor:COLORS.infoColor
       },
       
