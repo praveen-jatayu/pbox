@@ -9,9 +9,10 @@ import ClientReview from '../screens/clientReview/clientReview';
 import EditProfile from '../screens/profile/editProfile';
 import SettingsScreen from '../screens/profile/settings';
 import DeleteAccount from '../screens/profile/deleteAccount';
-import BoxDetail from '../screens/courtDetails/boxDetail';
+import BoxDetail from '../screens/boxDetail/boxDetail';
 import BookingConfirmation from '../screens/bookings/bookingConfirmation';
 import SlotBooking from '../screens/bookings/slotBooking';
+import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
 
 const Stack = createNativeStackNavigator();
 
@@ -96,6 +97,13 @@ const AppStack = () => {
         <Stack.Screen
           name="ClientReview"
           component={ClientReview}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="AddRatingAndReview"
+          component={AddRatingAndReview}
           options={{
             headerShown: false,
           }}

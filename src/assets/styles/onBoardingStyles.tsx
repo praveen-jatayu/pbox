@@ -31,31 +31,14 @@ const onBoardingStyles = StyleSheet.create({
         marginTop: verticalScale(50),
         alignItems: 'center',
       },
-      title: {
-        fontFamily: FONTS.inriaSansBold,
-        fontSize: scale(24),
-        color: COLORS.darkText,
-        textAlign: 'center',
-      },
-      subtitle: {
-        fontFamily: FONTS.nunitoSemiBold,
-        fontSize: scale(16),
-        color: COLORS.lightText,
-        marginTop: verticalScale(12),
-        textAlign: 'center',
-      },
+   
+     
       bottomSection: {
         position: 'absolute',
         width: '95%',
         bottom: verticalScale(25),
         alignItems: 'center',
         alignSelf:'center'
-      },
-      bottomText: {
-        fontFamily: FONTS.inriaSansRegular,
-        color: COLORS.darkText,
-        fontSize: scale(16),
-        marginBottom: 10,
       },
 })
 export default onBoardingStyles;

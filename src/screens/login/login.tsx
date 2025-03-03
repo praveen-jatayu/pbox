@@ -33,7 +33,7 @@ const Login = ({navigation}) => {
         //   useNativeDriver: true,
         // }),
       ]).start(() => {
-        navigation.navigate('OTP',{mobileNo:mobileNo});
+        navigation.navigate('OTP',{mobileNo:mobileNo,actualOtp:'1111'});
         
       });
     };

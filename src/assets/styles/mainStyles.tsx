@@ -115,6 +115,10 @@ const mainStyles= StyleSheet.create({
       fontInriaSansLight:{
         fontFamily:FONTS.inriaSansLight
       },
+      fontSize24:{
+        fontSize:scale(24)
+      },
+      
       fontSize22:{
         fontSize:scale(22)
       },

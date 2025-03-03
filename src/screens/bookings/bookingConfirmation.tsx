@@ -312,9 +312,9 @@ const BookingConfirmation = ({navigation}) => {
       {/* Button to open payment gateway */}
       <PrimaryButton
         title={'Pay ₹300.00 SECURELY'}
-        onPress={undefined}
+        onPress={()=>navigation.navigate('AddRatingAndReview')}
         style={bookingConfirmationStyles.primaryButton}
-        disabled={undefined}
+        disabled={!isTandCChecked}
       />
     </View>
   );

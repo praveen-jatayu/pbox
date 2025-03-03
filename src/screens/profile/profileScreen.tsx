@@ -1,5 +1,5 @@
-import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
-import React from 'react';
+import { View, Text, Image, Pressable, StyleSheet,BackHandler } from 'react-native';
+import React, { useContext, useEffect } from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
 
@@ -8,6 +8,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/navigationTypes';
 import profileStyles from '../../assets/styles/profileStyles';
+import { AuthContext } from '../../context/authContext';
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ProfileScreen'>;
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ProfileScreen'>;
@@ -18,6 +19,21 @@ type ProfileScreenProps = {
 };
 
 const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
+  
+  const{logout}=useContext(AuthContext)
+
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // Prevent default behavior of going back
+      e.preventDefault();
+
+      // Navigate explicitly to 'My Lorry'
+      navigation.navigate('BottomNav');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   return (
     <View style={[mainStyles.container]}>
       <SubHeader
@@ -110,7 +126,7 @@ const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
           </View>
         </Pressable>
         {/* Logout option */}
-        <Pressable style={profileStyles.menuItem}>
+        <Pressable style={profileStyles.menuItem} onPress={logout}>
           <View style={[profileStyles.menuIconContainer, mainStyles.contentCenter, mainStyles.iconBackgroundColor]}>
             <Image
               source={icons.logoutIcon}

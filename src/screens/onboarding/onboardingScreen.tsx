@@ -5,6 +5,7 @@ import PrimaryButton from '../../components/primaryButton';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import { images } from '../../constants/image';
 import mainStyles from '../../assets/styles/mainStyles';
+import { verticalScale } from 'react-native-size-matters';
 
 
 
@@ -48,14 +49,15 @@ const OnboardingScreen = ({ navigation }) => {
         </View>
 
         <Animated.View style={[onBoardingStyles.middleSection, { transform: [{ translateY: textAnim }] }]}>
-          <Text style={onBoardingStyles.title}>Find Players In</Text>
-          <Text style={onBoardingStyles.title}>Your Neighbourhood</Text>
-          <Text style={onBoardingStyles.subtitle}>Just Like You Did as a Kid!</Text>
+          <Text style={[mainStyles.fontInriaSansBold,mainStyles.darkTextColor,mainStyles.fontSize24]}>Find Players In</Text>
+          <Text style={[mainStyles.fontInriaSansBold,mainStyles.darkTextColor,mainStyles.fontSize24]}>Your Neighbourhood</Text>
+          <Text style={[mainStyles.fontNunitoSemibold,mainStyles.lightTextColor,mainStyles.fontSize16,{ marginTop: verticalScale(12),
+                  textAlign: 'center',}]}>Just Like You Did as a Kid!</Text>
         </Animated.View>
 
         <Animated.View style={[onBoardingStyles.bottomSection, { transform: [{ translateY: buttonAnim }] }]}>
-          <Text style={onBoardingStyles.bottomText}>Let's Get Playing!</Text>
-          <PrimaryButton title={'GO'} onPress={() => navigation.navigate('Login')} disabled={undefined} />
+          <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize16,{marginBottom:verticalScale(10)}]}>Let's Get Playing!</Text>
+          <PrimaryButton title={'GO'} onPress={() => navigation.navigate('Login')} disabled={undefined} style={undefined} />
         </Animated.View>
       </View>
     </>

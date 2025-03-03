@@ -12,7 +12,7 @@ import {
   TextInput,
   Animated,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import loginStyles from '../../assets/styles/loginStyles';
 
@@ -26,10 +26,12 @@ import { icons } from '../../constants/Icon';
 import otpStyles from '../../assets/styles/otpStyles';
 import mainStyles from '../../assets/styles/mainStyles';
 import { verticalScale } from 'react-native-size-matters';
+import { AuthContext } from '../../context/authContext';
 
 const OTP = ({ navigation, route }) => {
   const [resendTimer, setResendTimer] = useState(0);
   const [otp, setOtp] = useState(['', '', '', '']);
+ const {login}=useContext(AuthContext)
   const [errorMessage, setErrorMessage] = useState('');
   const [isVerifiedPressed, setIsVerifiedPressed] = useState(false);
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
@@ -101,13 +103,16 @@ const translateY = useRef(new Animated.Value(80)).current;
 
   };
   const checkOtp = (enteredOtp) => {
-    // const enteredOtp = otp.join('');
-    if (enteredOtp === route.params.actualOtp) {
-      // login(route.params.mobileNo, loginUser, UserVerification);
+    const formattedOtp = enteredOtp.trim();
+    const actualOtp = String(route.params.actualOtp).trim();
+    console.log(formattedOtp)
+    console.log(actualOtp)
+    if (formattedOtp === actualOtp) {
+      login();
     } else {
-      };
       setErrorMessage('OTP does not match. Please try again!');
     }
+  };
  
   const formatResendTimer = () => {
     const minutes = Math.floor(resendTimer / 60);
@@ -117,7 +122,7 @@ const translateY = useRef(new Animated.Value(80)).current;
 
   const handleVerify = () => {
     setIsVerifiedPressed(true);
-    if (otp !== "11111") {
+    if (otp !== "1111") {
       setErrorMessage('* OTP does not match. Please try again!');
     } else {
       setErrorMessage('');

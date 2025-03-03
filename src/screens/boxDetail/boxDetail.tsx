@@ -71,6 +71,7 @@ const BoxDetail = ({navigation,route}) => {
   const boxData = route.params.boxData;
   const [activeSlide, setActiveSlide] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
+  const [showAllReview, setShowAllReviews] = useState(false);
   const carouselRef = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -216,14 +217,14 @@ const BoxDetail = ({navigation,route}) => {
       <View style={styles.rightIconsContainer}>
         <TouchableOpacity
           style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
-          onPress={() => navigation.goBack()}
+          onPress={undefined}
           activeOpacity={0.8}
         >
           <EvilIcons name="heart" size={moderateScale(20)} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
-          onPress={() => navigation.goBack()}
+          onPress={undefined}
           activeOpacity={0.8}
         >
           <MaterialCommunityIcons name="share-outline" size={20} />
@@ -339,7 +340,7 @@ const BoxDetail = ({navigation,route}) => {
        <View style={[mainStyles.flexContainer]}>
          <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize18]}>What Client Says</Text>
          <TouchableOpacity onPress={()=>navigation.navigate('ClientReview',{ reviews: dummyReviews })}>
-         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.primaryTextColor,mainStyles.fontSize16]}>   {showAllAmenities ? 'Show Less' : 'See All'}</Text>
+         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.primaryTextColor,mainStyles.fontSize16]}>   {showAllReview ? 'Show Less' : 'See All'}</Text>
          </TouchableOpacity>
             
          </View>

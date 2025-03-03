@@ -29,6 +29,7 @@ import {
 import TextInputComponent from '../../components/textInputComponent';
 import PrimaryButton from '../../components/primaryButton';
 import BottomModal from '../../components/bottomModal';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 // Define types for navigation
@@ -61,10 +62,14 @@ const schema = Yup.object().shape({
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
   const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState(false);
-
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dobDisplay, setDobDisplay] = useState('');
+  const [dobServer, setDobServer] = useState('');
+ const [keyboardVisible, setKeyboardVisible] = useState(false);
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -98,6 +103,35 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     return unsubscribe;
   }, [navigation]);
 
+  const toggleDatePicker = () => {
+    Keyboard.dismiss()
+    setShowDatePicker(!showDatePicker);
+};
+
+  const formatDate = (rawDate, type) => {
+    let date = new Date(rawDate);
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    if (type === 'display') {
+        return `${day}-${month}-${year}`;
+    } else {
+        return `${year}-${month}-${day}`;
+    }
+};
+
+ useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []); 
 
   return (
     <KeyboardAvoidingView
@@ -111,7 +145,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         style={undefined}
       />
       <ScrollView
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContainer(keyboardVisible)}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -147,6 +181,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             {/* Name Field (Required) */}
             <Controller
               control={control}
+              rules={{
+                required: true,
+              }}
               name="name"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInputComponent
@@ -158,6 +195,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   error={errors.name?.message}
                   required={true}
                 />
+              
               )}
             />
             {/* Phone Field (Optional) */}
@@ -192,22 +230,41 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 />
               )}
             />
-            {/* DOB Field (Optional) */}
-            <Controller
-              control={control}
-              name="dob"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInputComponent
-                  value={value}
-                  label={'Date Of Birth'}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder="Enter your DOB"
-                  error={errors.dob?.message}
-                  required={false}
-                />
-              )}
-            />
+             {/* DOB Field with Date Picker */}
+             <Controller
+  control={control}
+  name="dob"
+  render={({ field: { onChange, value } }) => (
+    <>
+      <Pressable onPress={toggleDatePicker}>
+        <TextInputComponent
+          label={'Date Of Birth'}
+          placeholder="Select your DOB"
+          value={dobDisplay}
+          editable={false} // Prevent keyboard input
+          required={false}
+        />
+      </Pressable>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={value ? new Date(value) : new Date()} // Convert to Date object
+          mode="date"
+          display={'default'}
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+              const formattedDate = formatDate(selectedDate, 'server');
+              setDobDisplay(formatDate(selectedDate, 'display'));
+              setDobServer(formattedDate);
+              onChange(formattedDate); // Update react-hook-form
+            }
+          }}
+        />
+      )}
+    </>
+  )}
+/>
           </View>
         </View>
         {/* Save Button */}
@@ -227,10 +284,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    paddingBottom: verticalScale(160),
-    // paddingHorizontal: scale(5),
-  },
+  scrollContainer: (keyboardVisible: boolean) => ({
+    paddingBottom: keyboardVisible ? verticalScale(180) : verticalScale(50),
+  }),
   saveButton: {
     position: 'relative',
     bottom:verticalScale(10),
@@ -239,3 +295,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 });
+
+
