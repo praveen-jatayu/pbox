@@ -88,6 +88,7 @@ const translateY = useRef(new Animated.Value(80)).current;
     }
   };
   const handleOtpChange = (value, index) => {
+    setErrorMessage('')
     const otpArray = [...otp];
     otpArray[index] = value;
     setOtp(otpArray);
@@ -105,19 +106,17 @@ const translateY = useRef(new Animated.Value(80)).current;
   const checkOtp = (enteredOtp) => {
     const formattedOtp = enteredOtp.trim();
     const actualOtp = String(route.params.actualOtp).trim();
-    console.log(formattedOtp)
-    console.log(actualOtp)
     if (formattedOtp === actualOtp) {
       login();
     } else {
-      setErrorMessage('OTP does not match. Please try again!');
+      setErrorMessage('* OTP does not match. Please try again!');
     }
   };
  
   const formatResendTimer = () => {
-    const minutes = Math.floor(resendTimer / 60);
-    const seconds = resendTimer % 60;
-    return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    const minutes = Math.floor(resendTimer / 60).toString().padStart(2,"0")
+    const seconds = String(resendTimer % 60).padStart(2,"0");
+    return `${minutes}:${seconds}`
   };
 
   const handleVerify = () => {

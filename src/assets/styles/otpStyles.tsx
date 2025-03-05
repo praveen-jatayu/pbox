@@ -52,6 +52,7 @@ const otpStyles = StyleSheet.create({
     marginTop: verticalScale(5),
     textAlign: 'left',
   },
+  
 });
 
 export default otpStyles;
