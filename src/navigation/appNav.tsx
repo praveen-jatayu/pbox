@@ -6,11 +6,12 @@ import AuthStack from './authStack';
 import AppStack from './appStack';
 import SplashScreen from '../screens/splashScreen/splashScreen';
 import { AuthContext } from '../context/authContext';
+import { COLORS } from '../constants/color';
 
 
 function AppNav() {
   const [isSplashVisible, setIsSplashVisible] = useState(true); // Show splash initially
-  const { userToken } = useContext(AuthContext);
+  const { userToken,isLoading } = useContext(AuthContext);
   console.log('userToken',userToken)
 
   useEffect(() => {
@@ -20,6 +21,14 @@ function AppNav() {
 
     return () => clearTimeout(timer); // Cleanup
   }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center' }}>
+        <ActivityIndicator color={COLORS.primary} size={'large'} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaProvider>

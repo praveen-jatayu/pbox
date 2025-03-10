@@ -1,4 +1,4 @@
-import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing } from 'react-native'
+import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import mainStyles from '../../assets/styles/mainStyles'
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters'
@@ -8,6 +8,9 @@ import { images } from '../../constants/image'
 import BoxCard from '../../components/boxCard'
 import ImageSlider from './imageSlider'
 import SearchInput from '../../components/searchInput'
+import { API_ENDPOINTS } from '../../constants/apiEndPoinst'
+import { apiPost } from '../../services/apiService/apiService'
+import NoDataContainer from '../../components/noDataContainer'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); // height of the header
@@ -21,7 +24,8 @@ const sportsData = [
   { id: '6', name: 'Badminton', logo: images.badminton },
 ];
 
-const boxCourtData = [
+
+const boxData = [
   {
     id: '1',
     title: 'Cricket Arena',
@@ -29,7 +33,12 @@ const boxCourtData = [
     address: '123 Cricket Lane, Sportstown',
     startingPrice: '₹500',
     offers: 'Upto 20% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
+    images: [
+      images.scenic,
+      images.scenic,
+      images.scenic,
+      images.scenic,
+    ],
   },
   {
     id: '2',
@@ -38,7 +47,12 @@ const boxCourtData = [
     address: '456 Sporty Ave, Game City',
     startingPrice: '₹450',
     offers: 'Upto 15% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
+    images: [
+      images.scenic,
+      images.scenic,
+      images.scenic,
+      images.scenic,
+    ],
   },
   {
     id: '3',
@@ -47,27 +61,25 @@ const boxCourtData = [
     address: '456 Sporty Ave, Game City',
     startingPrice: '₹450',
     offers: 'Upto 15% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
+    images: [
+      images.scenic,
+      images.scenic,
+      images.scenic,
+      images.scenic,
+    ],
   },
-  {
-    id: '4',
-    title: 'Sports Hub',
-    rating: 4.2,
-    address: '456 Sporty Ave, Game City',
-    startingPrice: '₹450',
-    offers: 'Upto 15% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
-  },
+  // Add more items as needed...
 ];
+
 const Home = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [search, setSearch] = useState('');
   const [showAllSports, setShowAllSports] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-
-
-  const renderBoxCard = ({ item }) => <BoxCard data={item} />;
+// const [boxData,setBoxData]=useState([])
+const [refreshing, setRefreshing] = useState(false);
+  const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={getBoxList}/>;
 
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
@@ -143,6 +155,37 @@ const Home = () => {
     </TouchableOpacity>
   );
 
+  const getBoxList = async (boxId="") => {
+    setRefreshing(true)
+  let formData=new FormData()
+  formData.append('box_id',boxId)
+    try {
+     
+      const response = await apiPost(API_ENDPOINTS.BOX.GET_BOX_DETAILS);
+  
+      if (response.success) {
+        console.log('boxdata',response.data)
+       setBoxData(response.data)
+      } else {
+       console.log('error occured',response.error)
+      }
+  
+     
+    } catch (error) {
+      
+      console.error('Login Error:', error);
+     
+    }
+    finally{
+      setRefreshing(false)
+    }
+   
+   
+  };
+  // useEffect(()=>{
+  //   getBoxList()
+  // },[])
+
   return (
     <View style={mainStyles.container}>
       <Animated.View
@@ -196,7 +239,7 @@ const Home = () => {
       <Animated.View style={[{ transform: [{ translateY: instantTranslateY }] }]}>
         <Animated.FlatList
           ref={flatListRef}
-          data={boxCourtData}
+          data={boxData}
           renderItem={renderBoxCard}
           keyExtractor={item => item.id}
           contentContainerStyle={styles.flatListContainer}
@@ -205,6 +248,17 @@ const Home = () => {
             useNativeDriver: true,
           })}
           scrollEventThrottle={16}
+          ListEmptyComponent={
+            <NoDataContainer style={undefined} />
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={getBoxList}
+              // colors={['grey']}
+              // progressBackgroundColor={'black'}
+            />
+          }
         />
       </Animated.View>
     </View>
@@ -279,8 +333,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: scale(5),
+    marginHorizontal:scale(10),
     zIndex: 12,
   },
+  
 });
 
 export default Home

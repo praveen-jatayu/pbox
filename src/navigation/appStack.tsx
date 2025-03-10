@@ -23,7 +23,8 @@ const AppStack = () => {
   <>
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content"/>
     
-      <Stack.Navigator screenOptions={{ headerShown: false ,animation:'fade_from_bottom'}}  >
+      <Stack.Navigator screenOptions={{ headerShown: false ,animation:'fade_from_bottom'}}>
+        
         <Stack.Screen
           name="BottomNav"
           component={BottomNav}

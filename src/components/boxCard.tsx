@@ -14,10 +14,11 @@ import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import { icons } from '../constants/Icon';
 import boxCardStyles from '../assets/styles/boxCardStyles';
+import BoxDetail from '../screens/boxDetail/boxDetail';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-const BoxCard = ({ data ,isBookmarked='false'}) => {
+const BoxCard = ({ boxData ,isBookmarked='false',onAction}) => {
   const carouselRef = useRef(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [bookmarkToggle, setBookmarkToggle] = useState(isBookmarked);
@@ -65,8 +66,12 @@ const BoxCard = ({ data ,isBookmarked='false'}) => {
     setBookmarkToggle(!bookmarkToggle);
   };
 
+  const handleBoxCardPress=()=>{
+    navigation.navigate('BoxDetail',{boxDetail:boxData})
+    // onAction={boxData?.id}
+  }
   return (
-    <Pressable onPress={()=>navigation.navigate('BoxDetail',{boxData:data})}>
+    <Pressable onPress={handleBoxCardPress}>
     <Animated.View
       style={[
         boxCardStyles.cardContainer,
@@ -80,7 +85,7 @@ const BoxCard = ({ data ,isBookmarked='false'}) => {
       <View style={boxCardStyles.sliderContainer}>
         <Carousel
           ref={carouselRef}
-          data={data.images}
+          data={boxData.images}
           renderItem={renderImageItem}
           sliderWidth={screenWidth - scale(32)}
           itemWidth={screenWidth - scale(40)}
@@ -89,7 +94,7 @@ const BoxCard = ({ data ,isBookmarked='false'}) => {
           inactiveSlideScale={0.95}
         />
         <Pagination
-          dotsLength={data.images.length}
+          dotsLength={boxData.images.length}
           activeDotIndex={activeSlide}
           containerStyle={boxCardStyles.paginationContainer}
           dotStyle={boxCardStyles.paginationDotActive}
@@ -126,21 +131,21 @@ const BoxCard = ({ data ,isBookmarked='false'}) => {
         <View style={boxCardStyles.firstRow}>
           <View style={boxCardStyles.titleContainer}>
             <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
-              {data.title || 'Cricket Arena'}
+              {boxData.title || 'Cricket Arena'}
             </Text>
             <Text style={boxCardStyles.address} numberOfLines={2}>
-              {data.address || '123 Cricket Lane, Sportstown'}
+              {boxData.address || '123 Cricket Lane, Sportstown'}
             </Text>
           </View>
-          <Text style={boxCardStyles.rating}>⭐ {data.rating || '4.5'}</Text>
+          <Text style={boxCardStyles.rating}>⭐ {boxData.rating || '4.5'}</Text>
         </View>
         {/* Second Row: Starting Price and Offers */}
         <View style={boxCardStyles.secondRow}>
           <Animated.View style={[boxCardStyles.offerContainer, { transform: [{ scale: pulseAnim }] }]}>
             <Image source={icons.offerIcon} style={boxCardStyles.offerIcon} />
-            <Text style={boxCardStyles.offers}>{data.offers || 'Upto 30% Off'}</Text>
+            <Text style={boxCardStyles.offers}>{boxData.offers || 'Upto 30% Off'}</Text>
           </Animated.View>
-          <Text style={boxCardStyles.price}>{data.price || 'INR 400 Onwards'}</Text>
+          <Text style={boxCardStyles.price}>{boxData.price || 'INR 400 Onwards'}</Text>
         </View>
       </View>
     </Animated.View>

@@ -68,8 +68,9 @@ const dummyReviews = [
 ];
 
 const BoxDetail = ({navigation,route}) => {
-  const boxData = route.params.boxData;
+  const {boxDetail} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
+  const [amenities,setAmenities]=useState([])
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [showAllReview, setShowAllReviews] = useState(false);
   const carouselRef = useRef(null);
@@ -120,12 +121,12 @@ const BoxDetail = ({navigation,route}) => {
 
 
 
-  const amenitiesToShow = showAllAmenities ? dummyAmenitiesData : dummyAmenitiesData.slice(0, 4);
+  const amenitiesToShow = showAllAmenities ? boxDetail?.get_selected_amenities : dummyAmenitiesData.slice(0, 4);
 
   const reviewsToShow = dummyReviews.slice(0, 2);
 
 
-  const AnimatedHeader = ({ scrollY, boxData }) => {
+  const AnimatedHeader = ({ scrollY, boxDetail }) => {
     const headerTranslateY = scrollY.interpolate({
       inputRange: [0, sliderHeight],
       outputRange: [-150, 0],
@@ -165,12 +166,14 @@ const BoxDetail = ({navigation,route}) => {
         />
         <EvilIcons name="chevron-left" size={38} color={'white'} onPress={()=>navigation.goBack()}/>
         <View>
-        <Text style={[mainStyles.fontSize16,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.title}</Text>
-        <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.address}</Text>
+        <Text style={[mainStyles.fontSize16,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxDetail?.title}</Text>
+        <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxDetail?.address}</Text>
         </View>
       </Animated.View>
     );
   };
+
+
   return (
     <View style={mainStyles.container}>
       {/* Make StatusBar transparent */}
@@ -179,7 +182,7 @@ const BoxDetail = ({navigation,route}) => {
         backgroundColor="transparent"
         barStyle="light-content"
         />
-          <AnimatedHeader scrollY={scrollY} boxData={boxData} />
+          <AnimatedHeader scrollY={scrollY} boxData={boxDetail} />
           <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}} showsVerticalScrollIndicator={false}
        onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: false})}
        scrollEventThrottle={16}>
@@ -188,7 +191,7 @@ const BoxDetail = ({navigation,route}) => {
       <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity, transform: [{scale: sliderScale}]}]}>
         <Carousel
           ref={carouselRef}
-          data={boxData.images}
+          data={boxDetail.images}
           renderItem={renderItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}
@@ -197,7 +200,7 @@ const BoxDetail = ({navigation,route}) => {
           inactiveSlideOpacity={1}
         />
         <Pagination
-          dotsLength={boxData.images.length}
+          dotsLength={boxDetail.images.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.paginationContainer}
           dotStyle={[styles.paginationDot,mainStyles.primaryBackgroundColor]}
@@ -238,14 +241,14 @@ const BoxDetail = ({navigation,route}) => {
         <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
           <View style={boxCardStyles.titleContainer}>
             <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
-              {boxData.title || 'Cricket Arena'}
+              {boxDetail.title || 'Cricket Arena'}
             </Text>
             <Text style={boxCardStyles.address} numberOfLines={2}>
-              {boxData.address || '123 Cricket Lane, Sportstown'}
+              {boxDetail.address || '123 Cricket Lane, Sportstown'}
             </Text>
           </View>
           <Text style={boxCardStyles.rating}>
-            ⭐ {boxData.rating || '4.5'}
+            ⭐ {boxDetail.rating || '4.5'}
           </Text>
         </View>
 
@@ -302,7 +305,7 @@ const BoxDetail = ({navigation,route}) => {
             Available Sports
           </Text>
           <View style={styles.sportsContainer}>
-            {availableSportsData.map(item => renderSportCategory(item))}
+            {(boxDetail?.get_selected_available_sport).map(item => renderSportCategory(item))}
           </View>
          
         </View>
@@ -321,6 +324,8 @@ const BoxDetail = ({navigation,route}) => {
                        dummyAmenitiesData.length > amenitiesToShow.length &&
                        dummyAmenitiesData.slice(amenitiesToShow.length).map(item => renderAmenitiesList(item))}
                    </View>
+
+
                 
        </View>
 {/* Cancelation Policy Container */}
