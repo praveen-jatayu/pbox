@@ -67,6 +67,29 @@ const dummyReviews = [
   // ... add more reviews as needed
 ];
 
+
+const image = [
+  {
+    title: 'Beautiful Landscape',
+    illustration: images.scenic,
+  },
+  {
+    title: 'City at Night',
+    illustration: images.scenic,
+  },
+  {
+    title: 'Mountain Adventure',
+    illustration: images.scenic,
+  },
+  {
+    title: 'Mountain Adventure',
+    illustration: images.scenic,
+  },
+  {
+    title: 'Mountain Adventure',
+    illustration: images.scenic,
+  },
+];
 const BoxDetail = ({navigation,route}) => {
   const {boxDetail} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
@@ -83,11 +106,11 @@ const BoxDetail = ({navigation,route}) => {
     extrapolate: 'clamp',
   });
 
-  const sliderScale = scrollY.interpolate({
-    inputRange: [0, sliderHeight],
-    outputRange: [1, 0.5],
-    extrapolate: 'clamp',
-  });
+  // const sliderScale = scrollY.interpolate({
+  //   inputRange: [0, sliderHeight],
+  //   outputRange: [1, 0.5],
+  //   extrapolate: 'clamp',
+  // });
 
   // Show header when slider disappears
  
@@ -95,13 +118,13 @@ const BoxDetail = ({navigation,route}) => {
   const renderItem = ({item}) => {
     return (
       <View>
-        <Image source={item} style={styles.image} />
+        <Image source={item.illustration} style={styles.image} />
       </View>
     );
   };
 
   const renderSportCategory = item => (
-    <View key={item.id} style={[styles.sportItem,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect]}>
+    <View key={item.id} style={[styles.sportItem,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:5}]}>
       
         <Image source={item.logo} style={styles.sportLogo} />
   
@@ -109,19 +132,26 @@ const BoxDetail = ({navigation,route}) => {
     </View>
   );
 
-  const renderAmenitiesList=(item)=>{
-    return (
-      <View key={item.id} style={styles.amenitiesItem}>
-        <Ionicons name='car-outline' size={18} color={mainStyles.darkTextColor}/>
-        <Text style={[mainStyles.fontNunitoRegular,mainStyles.fontSize14,mainStyles.darkTextColor]}>{item.name}</Text>
-      </View>
-    );
-  }
+ 
+  const amenitiesData = boxDetail?.get_selected_amenities?.map(item => ({
+    id: item?.id,
+    name: item.get_single_amenities?.name,
+    icon: item.get_single_amenities?.icon
+})) || [];
 
+// Show limited amenities initially
+const amenitiesToShow = showAllAmenities 
+    ? amenitiesData 
+    : amenitiesData.slice(0, 3); // Change 3 to however many you want to show initially
 
-
-
-  const amenitiesToShow = showAllAmenities ? boxDetail?.get_selected_amenities : dummyAmenitiesData.slice(0, 4);
+const renderAmenitiesList = (item) => (
+    <View key={item.id} style={[styles.amenityItem]}>
+        <Image source={{ uri: item.icon }} style={styles.amenityIcon} />
+        <Text style={[mainStyles.fontNunitoRegular, mainStyles.fontSize14, mainStyles.darkTextColor]}>
+            {item.name}
+        </Text>
+    </View>
+);
 
   const reviewsToShow = dummyReviews.slice(0, 2);
 
@@ -182,16 +212,16 @@ const BoxDetail = ({navigation,route}) => {
         backgroundColor="transparent"
         barStyle="light-content"
         />
-          <AnimatedHeader scrollY={scrollY} boxData={boxDetail} />
+          <AnimatedHeader scrollY={scrollY} boxDetail={boxDetail} />
           <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}} showsVerticalScrollIndicator={false}
        onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: false})}
        scrollEventThrottle={16}>
         
       {/* Top slider  */}
-      <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity, transform: [{scale: sliderScale}]}]}>
+      <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity}]}>
         <Carousel
           ref={carouselRef}
-          data={boxDetail.images}
+          data={image}
           renderItem={renderItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}
@@ -200,7 +230,7 @@ const BoxDetail = ({navigation,route}) => {
           inactiveSlideOpacity={1}
         />
         <Pagination
-          dotsLength={boxDetail.images.length}
+          dotsLength={image.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.paginationContainer}
           dotStyle={[styles.paginationDot,mainStyles.primaryBackgroundColor]}
@@ -241,14 +271,14 @@ const BoxDetail = ({navigation,route}) => {
         <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
           <View style={boxCardStyles.titleContainer}>
             <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
-              {boxDetail.title || 'Cricket Arena'}
+              {boxDetail?.title || '---'}
             </Text>
             <Text style={boxCardStyles.address} numberOfLines={2}>
-              {boxDetail.address || '123 Cricket Lane, Sportstown'}
+              {boxDetail?.address || '----'}
             </Text>
           </View>
           <Text style={boxCardStyles.rating}>
-            ⭐ {boxDetail.rating || '4.5'}
+            ⭐ {boxDetail?.rating || '4.5'}
           </Text>
         </View>
 
@@ -305,40 +335,70 @@ const BoxDetail = ({navigation,route}) => {
             Available Sports
           </Text>
           <View style={styles.sportsContainer}>
-            {(boxDetail?.get_selected_available_sport).map(item => renderSportCategory(item))}
+          {(boxDetail?.get_selected_available_sport || []).map(item =>
+        renderSportCategory({
+            id: item.get_single_sports.id,
+            name: item.get_single_sports.name,
+            logo: { uri: item.get_single_sports.icon }  // Ensure correct image format
+        })
+    )}
           </View>
          
         </View>
         {/* Amenities Container */}
-       <View style={[mainStyles.marginTop10]}>
-       <View style={[mainStyles.flexContainer]}>
-         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize18]}>Amenities</Text>
-         <TouchableOpacity onPress={()=>setShowAllAmenities(!showAllAmenities)}>
-         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.primaryTextColor,mainStyles.fontSize16]}>   {showAllAmenities ? 'Show Less' : 'See All'}</Text>
-         </TouchableOpacity>
-            
-         </View>
-         <View style={styles.sportsContainer}>
-                     {amenitiesToShow.map(item => renderAmenitiesList(item))}
-                     {showAllAmenities &&
-                       dummyAmenitiesData.length > amenitiesToShow.length &&
-                       dummyAmenitiesData.slice(amenitiesToShow.length).map(item => renderAmenitiesList(item))}
-                   </View>
+        <View style={[mainStyles.marginTop10]}>
+            <View style={[mainStyles.flexContainer]}>
+                <Text style={[
+                    mainStyles.fontInriaSansRegular,
+                    mainStyles.darkTextColor,
+                    mainStyles.fontSize18
+                ]}>
+                    Amenities
+                </Text>
 
+                <TouchableOpacity onPress={() => setShowAllAmenities(!showAllAmenities)}>
+                    <Text style={[
+                        mainStyles.fontInriaSansRegular,
+                        mainStyles.primaryTextColor,
+                        mainStyles.fontSize16
+                    ]}>
+                        {showAllAmenities ? 'Show Less' : 'See All'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
 
-                
-       </View>
-{/* Cancelation Policy Container */}
-       <View >
-        <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize18]}>Cancellation Policy</Text>
-        <View style={[mainStyles.marginTop10,{marginLeft:scale(10)}]}>
-      
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(9)}}>{'\u2B24'}</Text>{' '} Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(9)}}>{'\u2B24'}</Text>{' '} Lorem ipsum, dolorsit amet,cons</Text>
-          
-         
+            <View style={styles.sportsContainer}>
+                {amenitiesToShow.map(item => renderAmenitiesList(item))}
+            </View>
         </View>
-       </View>
+{/* Cancelation Policy Container */}
+<View>
+    <Text
+        style={[
+            mainStyles.darkTextColor,
+            mainStyles.fontInriaSansRegular,
+            mainStyles.fontSize18
+        ]}
+    >
+        Cancellation Policy
+    </Text>
+
+    <View style={[mainStyles.marginTop10, { marginLeft: scale(10) }]}>
+        {(boxDetail?.get_box_cancellation_policy || []).map(item => (
+            <Text
+                key={item.id}
+                style={[
+                    mainStyles.lightTextColor,
+                    mainStyles.fontNunitoSemibold,
+                    mainStyles.fontSize14
+                ]}
+            >
+                <Text style={{ fontSize: scale(9) }}>{'\u2B24'}</Text>{' '}
+                {item.text}
+            </Text>
+        ))}
+    </View>
+</View>
        
       {/* Client review and comments container */}
       <View style={[mainStyles.marginTop20]}>
@@ -443,7 +503,7 @@ const styles = StyleSheet.create({
   sportsContainer: {
     marginTop: verticalScale(10),
     flexDirection: 'row',
-    justifyContent:'space-between',
+    justifyContent:'space-evenly',
     flexWrap: 'wrap',
   },
   sportLogo:{
@@ -451,14 +511,20 @@ const styles = StyleSheet.create({
     height:verticalScale(22),
     marginBottom:verticalScale(5)
   },
-  amenitiesItem:{
+  amenityItem:{
     alignItems: 'center',
     flexDirection:'row',
-    justifyContent:'center',
+    flexWrap:'wrap',
+    justifyContent:'space-evenly',
     marginRight: scale(20),
     gap:scale(10),
     marginBottom: verticalScale(10),
   },
+  amenityIcon: {
+    width: moderateScale(24),
+    height: moderateVerticalScale(24),
+    resizeMode: 'contain'
+},
   reviewContainer:{
     paddingTop:verticalScale(5),
     paddingBottom:verticalScale(10),

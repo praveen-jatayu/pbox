@@ -14,7 +14,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { apiPost } from '../../services/apiService/apiService';
 import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 import Toast from 'react-native-toast-message';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const Login = ({navigation}) => {
   const [isTandCChecked, setIsTandCChecked] = useState(false);
@@ -28,7 +27,7 @@ const Login = ({navigation}) => {
       setLoading(true)
       Animated.parallel([
         Animated.timing(translateY, {
-          toValue: 50, // Move button down
+          toValue: 30, // Move button down
           duration: 500,
           useNativeDriver: true,
         }),
@@ -58,7 +57,7 @@ const Login = ({navigation}) => {
           Toast.show({
             type: 'error',
             text1: 'Login Failed',
-            text2: 'Something went wrong!',
+            text2: error||'Something went wrong!',
           });
         }
         finally{

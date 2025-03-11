@@ -15,7 +15,6 @@ export const AuthProvider = ({children}) => {
   
 
   const login = async (mobileNo,registerNewUser) => {
-  
     try {
       // let fcmToken = await AsyncStorage.getItem('fcmToken');
 

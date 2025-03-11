@@ -1,64 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, FlatList, Animated, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import CustomTopHeader from '../../components/mainHeader';
+import { View, FlatList, Animated, StyleSheet, TouchableOpacity, Text, RefreshControl } from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
 import SearchInput from '../../components/searchInput';
 import BoxCard from '../../components/boxCard';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { images } from '../../constants/image';
 import MainHeader from '../../components/mainHeader';
+import { getBoxDetail } from '../../services/boxService';
+import BoxCardSkeleton from '../../components/boxCardSkeleton';
+import NoDataContainer from '../../components/noDataContainer';
 
-const bookmarkedBoxData = [
-  {
-    id: '1',
-    title: 'Cricket Arena',
-    rating: 4.5,
-    address: '123 Cricket Lane, Sportstown',
-    startingPrice: '₹500',
-    offers: 'Upto 20% Off',
-    images: [
-      images.scenic,
-      images.scenic,
-      images.scenic,
-      images.scenic,
-    ],
-  },
-  {
-    id: '2',
-    title: 'Sports Hub',
-    rating: 4.2,
-    address: '456 Sporty Ave, Game City',
-    startingPrice: '₹450',
-    offers: 'Upto 15% Off',
-    images: [
-      images.scenic,
-      images.scenic,
-      images.scenic,
-      images.scenic,
-    ],
-  },
-  {
-    id: '3',
-    title: 'Sports Hub',
-    rating: 4.2,
-    address: '456 Sporty Ave, Game City',
-    startingPrice: '₹450',
-    offers: 'Upto 15% Off',
-    images: [
-      images.scenic,
-      images.scenic,
-      images.scenic,
-      images.scenic,
-    ],
-  },
-  // Add more items as needed...
-];
+
 const HEADER_HEIGHT = verticalScale(80); // height of the header
 const SEARCH_HEIGHT = verticalScale(50);  
 const SCROLL_THRESHOLD = verticalScale(150);
 const Bookmarks = () => {
   const [search, setSearch] = useState('');
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [bookmarkedBoxData, setBookmarkedBoxData] = useState([]);
+   const [refreshing, setRefreshing] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
    // Header moves up from 0 to -HEADER_HEIGHT
@@ -68,17 +28,16 @@ const Bookmarks = () => {
     extrapolate: 'clamp',
   });
 
-  // Search bar moves up further so that it sticks to top.
-  // When scrollY reaches HEADER_HEIGHT, we want the search to be at y = 0.
-  // Initially, search is below header (i.e. at HEADER_HEIGHT)
+
   const searchTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
     outputRange: [0, -HEADER_HEIGHT],
     extrapolate: 'clamp',
   });
-  const renderBoxCard = ({ item }) => (
-    <BoxCard data={item} isBookmarked="true" />
-  );
+
+
+
+  const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={getBookMarkedBoxList} isBookmarked={true}/>;
 
    // Listen to scrollY changes and update "showScrollToTop"
    useEffect(() => {
@@ -97,6 +56,39 @@ const Bookmarks = () => {
     flatListRef.current && flatListRef.current.scrollToOffset({ offset: 0, animated: true });
   };
 
+
+   const getBookMarkedBoxList = async (boxData = null) => {
+      setRefreshing(true);
+      setIsLoading(true)
+      if(boxData!==null){
+      const formData = new FormData();
+  
+      // Conditionally add 'box_id' only when it's provided
+      if (boxData?.id) {
+          formData.append('box_id', boxData.id);
+      }
+      }
+      try {
+          const response = await getBoxDetail(boxData!==null?formData:{});
+          if (response) {
+              
+              setBookmarkedBoxData(response);
+              // setFilteredBoxData(response)
+          } else {
+              console.error('Error occurred:', response.error);
+          }
+      } catch (error) {
+          console.error('Failed to fetch box data:', error);
+      } finally {
+          setRefreshing(false);
+          setIsLoading(false)
+      }
+  };
+
+
+  useEffect(()=>{
+getBookMarkedBoxList()
+  },[])
   return (
     <View style={mainStyles.container}>
       {/* Animated Header */}
@@ -123,6 +115,21 @@ const Bookmarks = () => {
         />
       </Animated.View>
 
+
+      {isLoading ? (
+        <Animated.FlatList
+          data={[1, 1,1,1]}
+          ref={flatListRef}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[styles.listContainer,{paddingHorizontal:scale(0 )}]}
+          renderItem={() => <BoxCardSkeleton />}
+          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+            useNativeDriver: true,
+          })}
+          scrollEventThrottle={16}
+        
+        />
+      ):(
       <Animated.FlatList
        ref={flatListRef}
         data={bookmarkedBoxData}
@@ -135,8 +142,20 @@ const Bookmarks = () => {
           { useNativeDriver: true }
         )}
         scrollEventThrottle={16}
+        ListEmptyComponent={
+          <NoDataContainer style={undefined} />
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              getBookMarkedBoxList();
     
+            }}
+          />
+        }
       />
+      )}
        {/* Move to Top Button */}
        {showScrollToTop && (
         <TouchableOpacity

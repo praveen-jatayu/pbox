@@ -5,7 +5,7 @@ import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 
 
 
-const PUBLIC_API_ROUTES = [API_ENDPOINTS.AUTH.LOGIN,API_ENDPOINTS.AUTH.OTP,API_ENDPOINTS.USER.UPDATE_PROFILE];
+const PUBLIC_API_ROUTES = [API_ENDPOINTS.AUTH.LOGIN,API_ENDPOINTS.AUTH.OTP,API_ENDPOINTS.USER.UPDATE_USERNAME];
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -35,6 +35,7 @@ apiClient.interceptors.request.use(
     }
 
   }
+  console.log(config)
 
     return config;
   },
@@ -119,7 +120,7 @@ export const apiPost = async (url:string, data = {}) => {
     console.log(`POST Request to: ${apiClient.defaults.baseURL}${url}`);
     console.log('Request Data:', data);
     const response = await apiClient.post(url, data);
-
+    console.log('eeeeee',response)
     return response.data;
   } catch (error) {
     throw error;

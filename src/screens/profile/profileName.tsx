@@ -9,6 +9,7 @@ import SubHeader from '../../components/subHeader';
 import { apiPost, saveAuthToken } from '../../services/apiService/apiService';
 import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 import { AuthContext } from '../../context/authContext';
+import Toast from 'react-native-toast-message';
 
 
 const ProfileName = ({ navigation ,route}) => {
@@ -36,23 +37,26 @@ const ProfileName = ({ navigation ,route}) => {
   const handleNext=async()=>{
    
        let formData = new FormData();
+       formData.append('user_id',userDetail.id)
        formData.append('first_name', firstName);
-       formData.append('last_name', lastName);
-       formData.append('mobile_no', userDetail.mobile_no);
-      
+       formData.append('last_name', lastName);    
    
        try {
-         const response = await apiPost(API_ENDPOINTS.USER.UPDATE_PROFILE, formData);
-         console.log('gog',response)
-         return false;
+         const response = await apiPost(API_ENDPOINTS.USER.UPDATE_USERNAME, formData);
+        //  console.log('gog',response)
+        //  return false;
          if (response.success) {
-         await setUserInfo(userDetail)
-         await setUserToken(userDetail.api_token)
-         await saveAuthToken(userDetail.api_token)
+         await setUserInfo(response.data)
+         await setUserToken(response.data.api_token)
+         await saveAuthToken(response.data.api_token)
          
            
          } else {
-          console.log('error')
+          Toast.show({
+                          type: 'error',
+                          text1: 'Login Failed',
+                          text2: response.message || 'Something went wrong!',
+                        });
          }
        } catch (error) {
          console.error('Failed to Register user:', error);
@@ -89,10 +93,9 @@ const ProfileName = ({ navigation ,route}) => {
         {/* NEXT Button */}
         <View style={[onBoardingStyles.bottomSection]}>
           <PrimaryButton 
-            title={'NEXT'} 
-            onPress={handleNext} 
-            disabled={!validateForm()} 
-
+            title={'NEXT'}
+            onPress={handleNext}
+            disabled={!validateForm()} style={undefined}
           />
         </View>
       </View>

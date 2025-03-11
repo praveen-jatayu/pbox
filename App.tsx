@@ -20,8 +20,12 @@ const App = () => {
         style={{ borderLeftColor: 'green' }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
-          fontSize: 15,
-          fontWeight: '400'
+          fontSize: moderateScale(15),
+          fontFamily:FONTS.nunitoMedium
+        }}
+        text2Style={{
+          fontFamily:FONTS.nunitoMedium,
+          fontSize: moderateScale(14)
         }}
       />
     ),

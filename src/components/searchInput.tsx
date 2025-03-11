@@ -5,7 +5,7 @@ import { COLORS } from '../constants/color';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { FONTS } from '../constants/font';
 
-const SearchInput = ({ value, onChangeText, onSearchPress }) => {
+const SearchInput = ({ value, onChangeText, onSearchPress}) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
 
