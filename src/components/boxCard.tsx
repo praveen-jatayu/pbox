@@ -15,38 +15,22 @@ import { useNavigation } from '@react-navigation/native';
 import { icons } from '../constants/Icon';
 import boxCardStyles from '../assets/styles/boxCardStyles';
 import { updateBookmark } from '../services/apiService/bookmarkService';
-import { images } from '../constants/image';
+
 import Toast from 'react-native-toast-message';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-const image = [
-  {
-    title: 'Beautiful Landscape',
-    illustration: images.scenic,
-  },
-  {
-    title: 'City at Night',
-    illustration: images.scenic,
-  },
-  {
-    title: 'Mountain Adventure',
-    illustration: images.scenic,
-  },
-  {
-    title: 'Mountain Adventure',
-    illustration: images.scenic,
-  },
-  {
-    title: 'Mountain Adventure',
-    illustration: images.scenic,
-  },
-];
 
-const BoxCard = ({ boxData ,isBookmarked=false,onAction}) => {
+
+const BoxCard = ({ boxData,onAction}) => {
   const carouselRef = useRef(null);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [bookmarkToggle, setBookmarkToggle] = useState(isBookmarked);
+  const [isBookmarked, setIsBookmarked] = useState(
+    boxData?.get_selected_user_book_mark?.length > 0 && 
+    boxData?.get_selected_user_book_mark[0]?.is_bookmark === 1
+      ? 1 
+      : 0
+  );
   const navigation = useNavigation();
 
   // Entrance Animation (fade in & slide up)
@@ -84,17 +68,15 @@ const BoxCard = ({ boxData ,isBookmarked=false,onAction}) => {
   }, [pulseAnim]);
 
   const renderImageItem = ({ item }) => (
-    <Image source={item.illustration} style={boxCardStyles.sliderImage} />
+    <Image source={{uri:item?.image}} style={boxCardStyles.sliderImage} />
   );
 // handle bookmark press
 
 
   const handleBookmarkPress = async() => {
-    setBookmarkToggle(!bookmarkToggle);
-
     let formData=new FormData()
     formData.append('box_id',boxData.id)
-    formData.append('is_bookmark',bookmarkToggle?1:0)
+    formData.append('is_bookmark', isBookmarked?0:1)
 
     try{
     const {success,message}=await updateBookmark(formData)
@@ -104,6 +86,8 @@ const BoxCard = ({ boxData ,isBookmarked=false,onAction}) => {
                      text1: 'Success!!!',
                      text2: message || 'Something went wrong!',
                    });
+                   setIsBookmarked(isBookmarked ? 0 : 1)
+                 await  onAction && onAction()
     }
     else{
       Toast.show({
@@ -115,13 +99,20 @@ const BoxCard = ({ boxData ,isBookmarked=false,onAction}) => {
   }
   catch(error) {
     console.log(error.message);
+    Toast.show({
+      type: 'error',
+      text1: 'Failed!!!',
+      text2: error.message || 'Something went wrong!',
+    });
   }
 }
 
   const handleBoxCardPress=()=>{
-    navigation.navigate('BoxDetail',{boxDetail:boxData})
+    navigation.navigate('BoxDetail',{boxDetail:boxData,isBookmarked:isBookmarked})
     onAction={boxData}
   }
+
+  
   return (
     <Pressable onPress={handleBoxCardPress}>
     <Animated.View
@@ -137,16 +128,18 @@ const BoxCard = ({ boxData ,isBookmarked=false,onAction}) => {
       <View style={boxCardStyles.sliderContainer}>
         <Carousel
           ref={carouselRef}
-          data={image}
+          data={boxData?.get_selected_box_images}
           renderItem={renderImageItem}
           sliderWidth={screenWidth - scale(32)}
           itemWidth={screenWidth - scale(40)}
           onSnapToItem={(index) => setActiveSlide(index)}
+          autoplay
+          loop
           inactiveSlideOpacity={0.8}
           inactiveSlideScale={0.95}
         />
         <Pagination
-          dotsLength={image.length}
+          dotsLength={boxData?.get_selected_box_images?.length}
           activeDotIndex={activeSlide}
           containerStyle={boxCardStyles.paginationContainer}
           dotStyle={boxCardStyles.paginationDotActive}
@@ -160,18 +153,34 @@ const BoxCard = ({ boxData ,isBookmarked=false,onAction}) => {
         </View>
         {/* Sports category label */}
         <View style={boxCardStyles.sportsCategoryLabel}>
-          <Image source={icons.badmintonOutline} style={boxCardStyles.categoryIcon} />
-          <Text style={boxCardStyles.categorySeparator}>|</Text>
-          <Image source={icons.baseballOutline} style={boxCardStyles.categoryIcon} />
-        </View>
+  {boxData?.get_selected_available_sport?.slice(0, 2).map((sport, index) => (
+    <React.Fragment key={sport.id}>
+      <Image
+        source={{ uri: sport.get_single_sports?.icon }}
+        style={boxCardStyles.categoryIcon}
+      />
+      {index === 0 && (
+        <Text style={boxCardStyles.categorySeparator}>|</Text>
+      )}
+    </React.Fragment>
+  ))} 
+
+
+
+  {boxData?.get_selected_available_sport?.length > 2 && (
+    <Text style={boxCardStyles.categorySeparator}>
+      + {boxData.get_selected_available_sport?.length - 2} more
+    </Text>
+  )}
+</View>
         {/* Bookmark icon */}
         <View style={boxCardStyles.bookMarkContainer}>
           <TouchableOpacity activeOpacity={0.8} onPress={handleBookmarkPress}>
             <Image
-              source={bookmarkToggle ? icons.heartIconFilled : icons.heartIconActive}
+              source={isBookmarked ? icons.heartIconFilled : icons.heartIconActive}
               style={[
                 boxCardStyles.bookmarkIcon,
-                bookmarkToggle && boxCardStyles.bookmarkIconToggled,
+                isBookmarked  && boxCardStyles.bookmarkIconToggled,
               ]}
             />
           </TouchableOpacity>
@@ -197,7 +206,7 @@ const BoxCard = ({ boxData ,isBookmarked=false,onAction}) => {
             <Image source={icons.offerIcon} style={boxCardStyles.offerIcon} />
             <Text style={boxCardStyles.offers}>{boxData.offers || 'Upto 30% Off'}</Text>
           </Animated.View>
-          <Text style={boxCardStyles.price}>{boxData.price || 'INR 400 Onwards'}</Text>
+          <Text style={boxCardStyles.price}> INR {boxData?.price_start_from || ' 00 '} Onwards</Text>
         </View>
       </View>
     </Animated.View>

@@ -16,61 +16,6 @@ import SportsCategorySkeleton from './sportsCategorySkeleton'
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
 
-// const sportsData = [
-//   { id: '1', name: 'Cricket', logo: images.football },
-//   { id: '2', name: 'Football', logo: images.football },
-//   { id: '3', name: 'Basketball', logo: images.baseball },
-//   { id: '4', name: 'Tennis', logo: images.tennis },
-//   { id: '5', name: 'Baseball', logo: images.baseball },
-//   { id: '6', name: 'Badminton', logo: images.badminton },
-// ];
-
-
-// const boxData = [
-//   {
-//     id: '1',
-//     title: 'Cricket Arena',
-//     rating: 4.5,
-//     address: '123 Cricket Lane, Sportstown',
-//     startingPrice: '₹500',
-//     offers: 'Upto 20% Off',
-//     images: [
-//       images.scenic,
-//       images.scenic,
-//       images.scenic,
-//       images.scenic,
-//     ],
-//   },
-//   {
-//     id: '2',
-//     title: 'Sports Hub',
-//     rating: 4.2,
-//     address: '456 Sporty Ave, Game City',
-//     startingPrice: '₹450',
-//     offers: 'Upto 15% Off',
-//     images: [
-//       images.scenic,
-//       images.scenic,
-//       images.scenic,
-//       images.scenic,
-//     ],
-//   },
-//   {
-//     id: '3',
-//     title: 'Sports Hub',
-//     rating: 4.2,
-//     address: '456 Sporty Ave, Game City',
-//     startingPrice: '₹450',
-//     offers: 'Upto 15% Off',
-//     images: [
-//       images.scenic,
-//       images.scenic,
-//       images.scenic,
-//       images.scenic,
-//     ],
-//   },
-//   // Add more items as needed...
-// ];
 
 const Home = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -81,27 +26,44 @@ const Home = () => {
   const [boxData,setBoxData]=useState([])
   const [sportData,setSportData]=useState([])
   const [filteredBoxData,setFilteredBoxData]=useState([])
-  const [refreshing, setRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={getBoxList}/>;
+  const [refreshing, setRefreshing] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={fetchBoxList}/>;
 
-  const headerTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
-    extrapolate: 'clamp',
-  });
+  const headerTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.2
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
+      extrapolate: 'clamp',
+    });
 
-  const filterTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
-    extrapolate: 'clamp',
-  });
+const sliderTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
+      extrapolate: 'clamp',
+    });
 
-  const sliderTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
-    extrapolate: 'clamp',
-  });
+const sliderOpacity = isSearchFocused ? 0 : scrollY.interpolate({
+  inputRange: [0, HEADER_HEIGHT * 2.2],
+  outputRange: [1, 0],
+  extrapolate: 'clamp',
+});
+
+  // const filterTranslateY = scrollY.interpolate({
+  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+  //   extrapolate: 'clamp',
+  // });
+
+  // const sliderTranslateY = scrollY.interpolate({
+  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
+  //   extrapolate: 'clamp',
+  // });
 
   // Interpolating scrollY to control the slider's scale and opacity
   const sliderScale = scrollY.interpolate({
@@ -110,55 +72,70 @@ const Home = () => {
     extrapolate: 'clamp',
   });
 
-  const sliderOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_HEIGHT * 2.2],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
+  // const sliderOpacity = scrollY.interpolate({
+  //   inputRange: [0, HEADER_HEIGHT * 2.2],
+  //   outputRange: [1, 0],
+  //   extrapolate: 'clamp',
+  // });
 
-  const instantTranslateY = scrollY.interpolate({
+  const instantTranslateY =  isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  :scrollY.interpolate({
     inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
     outputRange: [0, -MIN_HEADER_HEIGHT * 1.4],
     extrapolate: 'clamp',
   });
 
-  const searchTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
-    extrapolate: 'clamp',
-  });
+  const filterTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+      extrapolate: 'clamp',
+    });
+
+const searchTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+      extrapolate: 'clamp',
+    });
 
   const sportsToShow = showAllSports ? sportData: sportData.slice(0,4);
 
   const handleCategoryPress = item => {
+    console.log('selected sport ',item)
     setSelectedCategory(item.id === selectedCategory ? null : item.id);
-   const filteredData = filteredBoxData.filter(box =>
-      box.get_selected_available_sport.some(sport =>
-          sport.get_single_sports.id === selectedCategory
-      )
-  );
-  setFilteredBoxData(filteredData)
+    fetchBoxList(item.id)
+  
   };
 
   const handleSearchChange = text => {
     setSearch(text);
+    if (text.trim() === '') {
+      setFilteredBoxData(boxData); // Show all data if search input is empty
+    } else {
+      const filteredData = boxData.filter(box =>
+        box.title.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredBoxData(filteredData);
+    }
+  
   };
 
-  const handleSearchPress = () => {
-    console.log('Search query submitted: ', search);
-  };
 
   const renderSportCategory = item => (
     <TouchableOpacity
       key={item.id.toString()} // Ensure unique keys
       style={[
         homeStyles.sportItem,
-        selectedCategory === item.id && [homeStyles.sportItemSelected],
+        selectedCategory !== null && selectedCategory === item.id && homeStyles.sportItemSelected,
       ]}
       onPress={() => handleCategoryPress(item)}
     >
       <View style={homeStyles.sportLogoBackground}>
-        <Image source={{ uri: item.icon }} style={homeStyles.sportLogo} />
+        <Image source={{ uri: item.image }} style={homeStyles.sportLogo} />
       </View>
       <Text 
         style={[
@@ -173,19 +150,24 @@ const Home = () => {
     </TouchableOpacity>
 );
 
-  const getBoxList = async (boxData = null) => {
-    setRefreshing(true);
-    setIsLoading(true)
-    if(boxData!==null){
+  const fetchBoxList = async (boxData = null,sportId=null) => {
+    console.log('sportId',sportId)
+  
     const formData = new FormData();
-
+    if(boxData!==null || sportId!==null){
+    
     // Conditionally add 'box_id' only when it's provided
     if (boxData?.id) {
         formData.append('box_id', boxData.id);
     }
+    if(sportId){
+    formData.append('sport_id',sportId)
     }
+  }
+  
+
     try {
-        const response = await getBoxDetail(boxData!==null?formData:{});
+        const response = await getBoxDetail(boxData!==null||sportId!==null?formData:{});
         if (response) {
             
             setBoxData(response);
@@ -228,7 +210,8 @@ const Home = () => {
 
 
   useEffect(()=>{
-    getBoxList()
+    setSelectedCategory(null)
+    fetchBoxList()
     getSportList()
   },[])
 
@@ -287,11 +270,12 @@ const Home = () => {
         homeStyles.animatedSearch,
         { transform: [{ translateY: searchTranslateY }] },
       ]}>
-        <SearchInput value={search} onChangeText={handleSearchChange} onSearchPress={handleSearchPress} />
+        <SearchInput value={search} onChangeText={handleSearchChange}  onFocus={() => setIsSearchFocused(true)}
+    onBlur={() => setIsSearchFocused(false)} />
       </Animated.View>
 
       <Animated.View style={[{ transform: [{ translateY: instantTranslateY }] }]}>
-      {isLoading ? (
+      {(isLoading || boxData.length===0) ? (
         <Animated.FlatList
           data={[1, 1,1,1]}
           ref={flatListRef}
@@ -305,7 +289,7 @@ const Home = () => {
         
         />
       ):(
-        <Animated.FlatList
+        <Animated.FlatList  
           ref={flatListRef}
           data={filteredBoxData}
           renderItem={renderBoxCard}
@@ -317,13 +301,13 @@ const Home = () => {
           })}
           scrollEventThrottle={16}
           ListEmptyComponent={
-            <NoDataContainer style={undefined} />
+            <NoDataContainer style={undefined} noDataText='No box  available!!' />
           }
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => {
-                getBoxList();
+                fetchBoxList();
                 getSportList();
               }}
             />

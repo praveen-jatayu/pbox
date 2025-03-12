@@ -4,7 +4,7 @@ import mainStyles from '../assets/styles/mainStyles';
 import {images} from '../constants/image';
 import {moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
 
-const NoDataContainer = ({style}) => {
+const NoDataContainer = ({style,noDataText}) => {
   const randomImage = useMemo(() => {
     const noDataImages = [images.noData1, images.noData2, images.noData3];
     return noDataImages[Math.floor(Math.random() * noDataImages.length)];
@@ -42,7 +42,7 @@ const NoDataContainer = ({style}) => {
           mainStyles.lightTextColor,
           {textAlign: 'center'},
         ]}>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa
+       {noDataText}
         
       </Text>
     </View>

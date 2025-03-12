@@ -18,6 +18,11 @@ export const API_ENDPOINTS = {
   BOOKMARK:{
     UPDATE_BOOKMARK:'update-bookmark'
   },
+  BOOKING:{
+  GET_BOX_BY_COURT:'get-box-by-court',
+  GET_BOX_COURT_DATE_BY_SLOT:'get-box-court-date-by-slot'
+
+  },
   NOTIFICATION: {
     GET_NOTIFICATION_LIST: 'get-notification-list',
   },

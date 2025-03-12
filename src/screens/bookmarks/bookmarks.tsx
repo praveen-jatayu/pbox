@@ -8,19 +8,21 @@ import MainHeader from '../../components/mainHeader';
 import { getBoxDetail } from '../../services/boxService';
 import BoxCardSkeleton from '../../components/boxCardSkeleton';
 import NoDataContainer from '../../components/noDataContainer';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const HEADER_HEIGHT = verticalScale(80); // height of the header
-const SEARCH_HEIGHT = verticalScale(50);  
 const SCROLL_THRESHOLD = verticalScale(150);
 const Bookmarks = () => {
   const [search, setSearch] = useState('');
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [bookmarkedBoxData, setBookmarkedBoxData] = useState([]);
-   const [refreshing, setRefreshing] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+  const [filteredBookmarkedData, setFilteredBookmarkedData] = useState([]);
+   const [refreshing, setRefreshing] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
+  const isFocused=useIsFocused()
    // Header moves up from 0 to -HEADER_HEIGHT
    const headerTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
@@ -35,9 +37,22 @@ const Bookmarks = () => {
     extrapolate: 'clamp',
   });
 
+  const handleSearchChange = text => {
+    setSearch(text);
+    if (text.trim() === '') {
+      setFilteredBookmarkedData(bookmarkedBoxData); // Show all data if search input is empty
+    } else {
+      const filteredData = bookmarkedBoxData.filter(box =>
+        box.title.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredBookmarkedData(filteredData);
+    }
+  
+  };
 
 
-  const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={getBookMarkedBoxList} isBookmarked={true}/>;
+
+  const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={fetchBookMarkedBoxList}/>;
 
    // Listen to scrollY changes and update "showScrollToTop"
    useEffect(() => {
@@ -57,9 +72,8 @@ const Bookmarks = () => {
   };
 
 
-   const getBookMarkedBoxList = async (boxData = null) => {
-      setRefreshing(true);
-      setIsLoading(true)
+   const fetchBookMarkedBoxList = async (boxData = null) => {
+     
       if(boxData!==null){
       const formData = new FormData();
   
@@ -72,8 +86,9 @@ const Bookmarks = () => {
           const response = await getBoxDetail(boxData!==null?formData:{});
           if (response) {
               
-              setBookmarkedBoxData(response);
-              // setFilteredBoxData(response)
+            const bookmarketBoxes=response.filter(box=>box?.get_selected_user_book_mark?.length>0 && box.get_selected_user_book_mark[0]?.is_bookmark===1)
+              setBookmarkedBoxData(bookmarketBoxes);
+              setFilteredBookmarkedData(bookmarketBoxes)
           } else {
               console.error('Error occurred:', response.error);
           }
@@ -87,8 +102,9 @@ const Bookmarks = () => {
 
 
   useEffect(()=>{
-getBookMarkedBoxList()
-  },[])
+  fetchBookMarkedBoxList()
+  setSearch('')
+  },[isFocused])
   return (
     <View style={mainStyles.container}>
       {/* Animated Header */}
@@ -110,9 +126,7 @@ getBookMarkedBoxList()
       >
         <SearchInput
           value={search}
-          onChangeText={setSearch}
-          onSearchPress={undefined}
-        />
+          onChangeText={handleSearchChange} onFocus={undefined} onBlur={undefined}        />
       </Animated.View>
 
 
@@ -132,10 +146,10 @@ getBookMarkedBoxList()
       ):(
       <Animated.FlatList
        ref={flatListRef}
-        data={bookmarkedBoxData}
+        data={filteredBookmarkedData}
         renderItem={renderBoxCard}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[styles.listContainer,{flexGrow:1}]}
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -143,13 +157,13 @@ getBookMarkedBoxList()
         )}
         scrollEventThrottle={16}
         ListEmptyComponent={
-          <NoDataContainer style={undefined} />
+          <NoDataContainer style={undefined} noDataText='No bookmarks available!!' />
         }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => {
-              getBookMarkedBoxList();
+              fetchBookMarkedBoxList();
     
             }}
           />

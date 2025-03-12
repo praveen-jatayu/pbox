@@ -17,29 +17,14 @@ import boxCardStyles from '../../assets/styles/boxCardStyles';
 import {icons} from '../../constants/Icon';
 import {images} from '../../constants/image';
 import PrimaryButton from '../../components/primaryButton';
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../navigation/navigationTypes';
+import { RouteProp } from '@react-navigation/native';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
-
-const availableSportsData = [
-  {id: '1', name: 'Cricket', logo: images.football},
-  {id: '2', name: 'Football', logo: images.football},
-  {id: '3', name: 'Basketball', logo: images.baseball},
-  // { id: '4', name: 'Tennis', logo: images.tennis },
-  // { id: '5', name: 'Baseball', logo: images.baseball },
-  // { id: '6', name: 'Badminton', logo: images.badminton },
-];
-
-const dummyAmenitiesData=[
-  {id: '1', name: 'Drinking Water' },
-  {id: '2', name: 'Flood Lights' },
-  {id: '3', name: 'Parking' },
-  {id: '4', name: 'Drinking Water' },
-  {id: '5', name: 'Flood Lights' },
-  {id: '6', name: 'Parking' },
-]
 
 
 const dummyReviews = [
@@ -67,33 +52,21 @@ const dummyReviews = [
   // ... add more reviews as needed
 ];
 
+type BoxDetailNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'BoxDetail'
+>;
+type BoxDetailRouteProps = RouteProp<RootStackParamList, 'BoxDetail'>;
 
-const image = [
-  {
-    title: 'Beautiful Landscape',
-    illustration: images.scenic,
-  },
-  {
-    title: 'City at Night',
-    illustration: images.scenic,
-  },
-  {
-    title: 'Mountain Adventure',
-    illustration: images.scenic,
-  },
-  {
-    title: 'Mountain Adventure',
-    illustration: images.scenic,
-  },
-  {
-    title: 'Mountain Adventure',
-    illustration: images.scenic,
-  },
-];
-const BoxDetail = ({navigation,route}) => {
-  const {boxDetail} = route.params;
+type BoxDetailProps = {
+  navigation: BoxDetailNavigationProp;
+  route: BoxDetailRouteProps;
+};
+
+
+const BoxDetail = ({navigation,route}:BoxDetailProps) => {
+  const {boxDetail,isBookmarked} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
-  const [amenities,setAmenities]=useState([])
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [showAllReview, setShowAllReviews] = useState(false);
   const carouselRef = useRef(null);
@@ -118,7 +91,7 @@ const BoxDetail = ({navigation,route}) => {
   const renderItem = ({item}) => {
     return (
       <View>
-        <Image source={item.illustration} style={styles.image} />
+        <Image source={{uri:item.image}} style={styles.image} />
       </View>
     );
   };
@@ -127,7 +100,7 @@ const BoxDetail = ({navigation,route}) => {
     <View key={item.id} style={[styles.sportItem,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:5}]}>
       
         <Image source={item.logo} style={styles.sportLogo} />
-  
+
       <Text style={[mainStyles.fontNunitoRegular,mainStyles.fontSize14,mainStyles.darkTextColor]}>{item.name}</Text>
     </View>
   );
@@ -221,7 +194,7 @@ const renderAmenitiesList = (item) => (
       <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity}]}>
         <Carousel
           ref={carouselRef}
-          data={image}
+          data={boxDetail.get_selected_box_images}
           renderItem={renderItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}
@@ -230,7 +203,7 @@ const renderAmenitiesList = (item) => (
           inactiveSlideOpacity={1}
         />
         <Pagination
-          dotsLength={image.length}
+          dotsLength={boxDetail?.get_selected_box_images?.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.paginationContainer}
           dotStyle={[styles.paginationDot,mainStyles.primaryBackgroundColor]}
@@ -253,7 +226,13 @@ const renderAmenitiesList = (item) => (
           onPress={undefined}
           activeOpacity={0.8}
         >
-          <EvilIcons name="heart" size={moderateScale(20)} />
+          {isBookmarked ? (
+            <Ionicons name="heart" size={moderateScale(18)} color={'red'}/>
+          ):(
+            <EvilIcons name="heart" size={moderateScale(20)} />
+          )}
+       
+          
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
@@ -339,7 +318,7 @@ const renderAmenitiesList = (item) => (
         renderSportCategory({
             id: item.get_single_sports.id,
             name: item.get_single_sports.name,
-            logo: { uri: item.get_single_sports.icon }  // Ensure correct image format
+            logo: { uri: item.get_single_sports.image }  // Ensure correct image format
         })
     )}
           </View>
@@ -433,7 +412,7 @@ const renderAmenitiesList = (item) => (
       </View>
       </View>
     </Animated.ScrollView>
-      <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('SlotBooking')} disabled={undefined} style={{position:'absolute',bottom:moderateVerticalScale(10),width:'90%'}} />
+      <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('SlotBooking',{boxInfo:boxDetail})} disabled={undefined} style={{position:'absolute',bottom:moderateVerticalScale(10),width:'90%'}} />
     </View>
   );
 };
@@ -514,16 +493,15 @@ const styles = StyleSheet.create({
   amenityItem:{
     alignItems: 'center',
     flexDirection:'row',
-    flexWrap:'wrap',
-    justifyContent:'space-evenly',
     marginRight: scale(20),
     gap:scale(10),
     marginBottom: verticalScale(10),
   },
   amenityIcon: {
-    width: moderateScale(24),
-    height: moderateVerticalScale(24),
-    resizeMode: 'contain'
+    width: moderateScale(22),
+    height: moderateVerticalScale(22),
+    resizeMode: 'cover'
+    
 },
   reviewContainer:{
     paddingTop:verticalScale(5),

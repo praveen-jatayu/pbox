@@ -43,11 +43,9 @@ const ProfileName = ({ navigation ,route}) => {
    
        try {
          const response = await apiPost(API_ENDPOINTS.USER.UPDATE_USERNAME, formData);
-        //  console.log('gog',response)
-        //  return false;
          if (response.success) {
-         await setUserInfo(response.data)
-         await setUserToken(response.data.api_token)
+         setUserInfo(response.data)
+         setUserToken(response.data.api_token)
          await saveAuthToken(response.data.api_token)
          
            

@@ -25,7 +25,7 @@ export const AuthProvider = ({children}) => {
 
       if (response.success) {
         const userInfo = response.data;
-        console.log(userInfo)
+        console.log('sser444',userInfo)
        
 
         if (userInfo.user === 'New') {

@@ -5,7 +5,7 @@ import { COLORS } from '../constants/color';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { FONTS } from '../constants/font';
 
-const SearchInput = ({ value, onChangeText, onSearchPress}) => {
+const SearchInput = ({ value, onChangeText,onFocus,onBlur}) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
 
@@ -29,9 +29,7 @@ const SearchInput = ({ value, onChangeText, onSearchPress}) => {
   const handleIconPress = () => {
     if (showClearIcon) {
       handleClear();
-    } else if (onSearchPress) {
-      onSearchPress();
-    }
+    } 
   };
 
   return (
@@ -42,8 +40,14 @@ const SearchInput = ({ value, onChangeText, onSearchPress}) => {
         placeholder="Search"
         value={value}
         onChangeText={onChangeText}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={() => {
+          setIsFocused(true);
+          if (onFocus) onFocus(); // Trigger the onFocus prop
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+          if (onBlur) onBlur(); // Trigger the onBlur prop
+        }}
         placeholderTextColor={COLORS.lightText}
       />
       <TouchableOpacity style={styles.iconContainer} onPress={handleIconPress}>

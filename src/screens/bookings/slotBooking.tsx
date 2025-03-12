@@ -18,38 +18,40 @@ import {RootStackParamList} from '../../navigation/navigationTypes';
 import {RouteProp} from '@react-navigation/native';
 
 import { icons } from '../../constants/Icon';
+import { getCourtByBoxId } from '../../services/bookingService';
 type SlotBookingNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'Settings'
+  'SlotBooking'
 >;
-type SlotBookingRouteProp = RouteProp<RootStackParamList, 'Settings'>;
+type SlotBookingRouteProp = RouteProp<RootStackParamList, 'SlotBooking'>;
 
 type SlotBookingProps = {
   navigation: SlotBookingNavigationProp;
   route: SlotBookingRouteProp;
 };
 
-const SlotBooking = ({navigation}: SlotBookingProps) => {
+const SlotBooking = ({navigation,route}: SlotBookingProps) => {
+  const{boxInfo}=route?.params
   const [selectedDate, setSelectedDate] = useState<String>('');
   const [selectedCourt, setSelectedCourt] = useState<string | null>(null);
-  const [availableCourts, setAvailableCourts] = useState<string[]>([]);
+  const [availableCourts, setAvailableCourts] = useState([]);
   const [availableSlots, setAvailableSlots] = useState<{ time: string; price: number; discount: number; available: boolean }[]>([]);
   
-  const handleDateSelection = (date: string) => {
-    setSelectedDate(date);
-    console.log('Selected Date:', date);
+  // const handleDateSelection = (date: string) => {
+  //   setSelectedDate(date);
+  //   console.log('Selected Date:', date);
     
-    // Fetch available courts for selected date
-    fetchAvailableCourts(date);
-  };
+  //   // Fetch available courts for selected date
+  //   fetchAvailableCourts(date);
+  // };
   
   const handleCourtSelection = (court: string) => {
     setSelectedCourt(court);
     console.log('Selected Court:', court);
   
-    if (selectedDate) {
-      fetchAvailableSlots(selectedDate, court);
-    }
+    // if (selectedDate) {
+    //   fetchAvailableSlots(selectedDate, court);
+    // }
   };
 
   const fetchAvailableSlots = (date: string, court: string | null) => {
@@ -64,15 +66,41 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
     
     setAvailableSlots(slots);
   };
-  const fetchAvailableCourts = (date: string) => {
-    // Simulating API call to get available courts for the selected date
-    const courts = ['C1', 'C2', 'C3', 'C4'];
-    setAvailableCourts(courts);
+  // const fetchAvailableCourts = (date: string) => {
+  //   // Simulating API call to get available courts for the selected date
+  //   // const courts = ['C1', 'C2', 'C3', 'C4'];
+
+  //   setAvailableCourts(courts);
   
-    // Reset court selection when date changes
-    setSelectedCourt(null);
-    setAvailableSlots([]);
-  };
+  //   // Reset court selection when date changes
+  //   setSelectedCourt(null);
+  //   setAvailableSlots([]);
+  // };
+  
+  const fetchCourtByBoxId = async (boxData) => {
+    
+     const formData = new FormData();
+     formData.append('box_id',boxData.id)
+   
+ 
+     try {
+         const response = await getCourtByBoxId(formData);
+         if (response) {
+             
+             setAvailableCourts(response);
+         } else {
+             console.error('Error occurred:', response.error);
+         }
+     } catch (error) {
+         console.error('Failed to fetch box data:', error);
+     } finally {
+         
+     }
+ };
+ useEffect(()=>{
+fetchCourtByBoxId(boxInfo)
+ },[])
+ 
   return (
     <View style={[mainStyles.container]}>
       <SubHeader
@@ -97,7 +125,7 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
             ]}>
             Date
           </Text>
-          <DateSlider onDateSelected={handleDateSelection} />
+          <DateSlider onDateSelected={undefined} />
         </View>
         {/* Court slection container */}
 
@@ -109,7 +137,7 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
     {availableCourts.length > 0 ? (
       availableCourts.map((court) => (
         <TouchableOpacity
-          key={court}
+          key={court.id}
           onPress={() => handleCourtSelection(court)}
           style={[
             mainStyles.secondaryBorderColor,
@@ -124,7 +152,7 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
           ]}
         >
           <Text style={[mainStyles.primaryTextColor, mainStyles.fontSize14, mainStyles.fontNunitoMedium,selectedCourt === court && {color:'#FFFFFF'}]}>
-            {court}
+            {court?.name}
           </Text>
         </TouchableOpacity>
       ))

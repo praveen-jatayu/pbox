@@ -20,7 +20,7 @@ type ProfileScreenProps = {
 
 const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
   
-  const{logout}=useContext(AuthContext)
+  const{logout,userInfo}=useContext(AuthContext)
 
 
   useEffect(() => {
@@ -52,10 +52,10 @@ const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
           {/* Name & phone container */}
           <View>
             <Text style={[ mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize20]}>
-              John Doe
+             {userInfo.name}
             </Text>
             <Text style={[profileStyles.profilePhone, mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize14]}>
-              +91 9374609900
+              +91 {userInfo.mobile_no}
             </Text>
           </View>
         </View>
