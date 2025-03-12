@@ -18,7 +18,7 @@ import {RootStackParamList} from '../../navigation/navigationTypes';
 import {RouteProp} from '@react-navigation/native';
 
 import { icons } from '../../constants/Icon';
-import { getCourtByBoxId } from '../../services/bookingService';
+import { getCourtByBoxId, getSlotDetailByDate } from '../../services/bookingService';
 type SlotBookingNavigationProp = StackNavigationProp<
   RootStackParamList,
   'SlotBooking'
@@ -35,48 +35,36 @@ const SlotBooking = ({navigation,route}: SlotBookingProps) => {
   const [selectedDate, setSelectedDate] = useState<String>('');
   const [selectedCourt, setSelectedCourt] = useState<string | null>(null);
   const [availableCourts, setAvailableCourts] = useState([]);
-  const [availableSlots, setAvailableSlots] = useState<{ time: string; price: number; discount: number; available: boolean }[]>([]);
+  const [slotDetail, setSlotDetail] = useState<{ time: string; price: number; discount: number; available: boolean }[]>([]);
   
-  // const handleDateSelection = (date: string) => {
-  //   setSelectedDate(date);
-  //   console.log('Selected Date:', date);
-    
-  //   // Fetch available courts for selected date
-  //   fetchAvailableCourts(date);
-  // };
-  
+  const handleDateSelection = (date: string) => {
+    setSelectedDate(date);
+    if (selectedCourt) {
+      fetchAvailableSlots(date, selectedCourt);
+    }
+  };
+
   const handleCourtSelection = (court: string) => {
-    setSelectedCourt(court);
-    console.log('Selected Court:', court);
-  
-    // if (selectedDate) {
-    //   fetchAvailableSlots(selectedDate, court);
-    // }
+    setSelectedCourt(court.id);
+    if (selectedDate) {
+      fetchAvailableSlots(selectedDate, court.id);
+    }
   };
 
-  const fetchAvailableSlots = (date: string, court: string | null) => {
-    if (!court) return; // Don't fetch if court is not selected
-  
-    // Simulate fetching data from an API
-    const slots = [
-      { time: '6:00 PM', price: 300, discount: 50, available: true },
-      { time: '7:00 PM', price: 350, discount: 30, available: false },
-      { time: '8:00 PM', price: 400, discount: 20, available: true },
-    ];
-    
-    setAvailableSlots(slots);
+  const fetchAvailableSlots = async (date: string, court: string | null) => {
+    if (!court) return; 
+    const formData=new FormData()
+    formData.append('booking_date',date)
+    formData.append('box_court_id',court)
+    try {
+      const response = await getSlotDetailByDate(formData);
+      console.log('efefeefe',response)
+      setSlotDetail(response);
+    } catch (error) {
+      console.error('Failed to fetch available slots:', error);
+    }
   };
-  // const fetchAvailableCourts = (date: string) => {
-  //   // Simulating API call to get available courts for the selected date
-  //   // const courts = ['C1', 'C2', 'C3', 'C4'];
 
-  //   setAvailableCourts(courts);
-  
-  //   // Reset court selection when date changes
-  //   setSelectedCourt(null);
-  //   setAvailableSlots([]);
-  // };
-  
   const fetchCourtByBoxId = async (boxData) => {
     
      const formData = new FormData();
@@ -97,9 +85,16 @@ const SlotBooking = ({navigation,route}: SlotBookingProps) => {
          
      }
  };
- useEffect(()=>{
-fetchCourtByBoxId(boxInfo)
- },[])
+ useEffect(() => {
+  fetchCourtByBoxId(boxInfo);
+}, []);
+
+useEffect(() => {
+  if (selectedDate && availableCourts.length > 0) {
+    fetchAvailableSlots(selectedDate, availableCourts[0]?.id);
+    setSelectedCourt(availableCourts[0]?.id);
+  }
+}, [selectedDate, availableCourts]);
  
   return (
     <View style={[mainStyles.container]}>
@@ -125,7 +120,7 @@ fetchCourtByBoxId(boxInfo)
             ]}>
             Date
           </Text>
-          <DateSlider onDateSelected={undefined} />
+          <DateSlider onDateSelected={handleDateSelection} />
         </View>
         {/* Court slection container */}
 
@@ -142,7 +137,7 @@ fetchCourtByBoxId(boxInfo)
           style={[
             mainStyles.secondaryBorderColor,
             mainStyles.borderWidth1,
-            selectedCourt === court && mainStyles.primaryBackgroundColor,
+            selectedCourt === court.id && mainStyles.primaryBackgroundColor,
             {
               paddingVertical: verticalScale(7),
               paddingHorizontal: scale(8),
@@ -151,7 +146,7 @@ fetchCourtByBoxId(boxInfo)
             },
           ]}
         >
-          <Text style={[mainStyles.primaryTextColor, mainStyles.fontSize14, mainStyles.fontNunitoMedium,selectedCourt === court && {color:'#FFFFFF'}]}>
+          <Text style={[mainStyles.primaryTextColor, mainStyles.fontSize14, mainStyles.fontNunitoMedium,selectedCourt === court.id && {color:'#FFFFFF'}]}>
             {court?.name}
           </Text>
         </TouchableOpacity>
@@ -178,8 +173,8 @@ fetchCourtByBoxId(boxInfo)
           </Text>
         </View>
             {/* booking container */}
-            {selectedDate && selectedCourt && availableSlots.length > 0 ? (
-  availableSlots.map((slot, index) => (
+            {selectedDate && selectedCourt && slotDetail.length > 0 ? (
+  slotDetail.map((slot, index) => (
     <View key={index} style={{ marginTop: verticalScale(10), paddingHorizontal: scale(16) }}>
       <View style={[mainStyles.flexContainer]}>
         <View>

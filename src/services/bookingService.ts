@@ -17,3 +17,19 @@ export const getCourtByBoxId = async (data) => {
     throw error; // Propagate the error if needed
   }
 };
+export const getSlotDetailByDate = async (data) => {
+  
+  try {
+    const response = await apiPost(API_ENDPOINTS.BOOKING.GET_BOX_COURT_DATE_BY_SLOT, data);
+
+
+    if (response?.success) {
+      return response.data; // Return data if successful
+    } else {
+      return []; // Return an empty array if no data
+    }
+  } catch (error) {
+    console.error('Error fetching box data:', error.message);
+    throw error; // Propagate the error if needed
+  }
+};

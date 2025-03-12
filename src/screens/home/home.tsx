@@ -106,8 +106,8 @@ const searchTranslateY = isSearchFocused
 
   const handleCategoryPress = item => {
     console.log('selected sport ',item)
-    setSelectedCategory(item.id === selectedCategory ? null : item.id);
-    fetchBoxList(item.id)
+    setSelectedCategory(item.id===selectedCategory?null:item.id);
+    fetchBoxList(null,item.id===selectedCategory?null:item.id)
   
   };
 
@@ -150,37 +150,33 @@ const searchTranslateY = isSearchFocused
     </TouchableOpacity>
 );
 
-  const fetchBoxList = async (boxData = null,sportId=null) => {
-    console.log('sportId',sportId)
-  
-    const formData = new FormData();
-    if(boxData!==null || sportId!==null){
-    
-    // Conditionally add 'box_id' only when it's provided
+const fetchBoxList = async (boxData = null, sportId = null) => {
+  console.log('sportId', sportId);
+
+  const formData = new FormData();
+  if (boxData !== null || sportId !== null) {
     if (boxData?.id) {
-        formData.append('box_id', boxData.id);
+      formData.append('box_id', boxData.id);
     }
-    if(sportId){
-    formData.append('sport_id',sportId)
+    if (sportId) {
+      formData.append('sport_id', sportId);  // Correctly appending sport_id
     }
   }
-  
 
-    try {
-        const response = await getBoxDetail(boxData!==null||sportId!==null?formData:{});
-        if (response) {
-            
-            setBoxData(response);
-            setFilteredBoxData(response)
-        } else {
-            console.error('Error occurred:', response.error);
-        }
-    } catch (error) {
-        console.error('Failed to fetch box data:', error);
-    } finally {
-        setRefreshing(false);
-        setIsLoading(false)
+  try {
+    const response = await getBoxDetail(boxData !== null || sportId !== null?formData:null);  // Pass the correct `formData`
+    if (response) {
+      setBoxData(response);
+      setFilteredBoxData(response);
+    } else {
+      console.error('Error occurred:', response.error);
     }
+  } catch (error) {
+    console.error('Failed to fetch box data:', error);
+  } finally {
+    setRefreshing(false);
+    setIsLoading(false);
+  }
 };
   const getSportList = async () => {
    setIsLoading(true)
@@ -211,7 +207,7 @@ const searchTranslateY = isSearchFocused
 
   useEffect(()=>{
     setSelectedCategory(null)
-    fetchBoxList()
+    fetchBoxList(null,selectedCategory)
     getSportList()
   },[])
 
@@ -294,7 +290,7 @@ const searchTranslateY = isSearchFocused
           data={filteredBoxData}
           renderItem={renderBoxCard}
           keyExtractor={item => item.id}
-          contentContainerStyle={homeStyles.flatListContainer}
+          contentContainerStyle={[homeStyles.flatListContainer,filteredBoxData.length<=2 && {paddingBottom:verticalScale(500)}]}
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
             useNativeDriver: true,

@@ -120,7 +120,6 @@ export const apiPost = async (url:string, data = {}) => {
     console.log(`POST Request to: ${apiClient.defaults.baseURL}${url}`);
     console.log('Request Data:', data);
     const response = await apiClient.post(url, data);
-    console.log('eeeeee',response)
     return response.data;
   } catch (error) {
     throw error;
