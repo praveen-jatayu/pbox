@@ -7,6 +7,8 @@ export type RootStackParamList = {
     EditProfile: undefined;
     Settings: undefined;
     NotificationScreen: undefined;
+    BoxDetail:undefined;
+    SlotBooking:undefined;
     CourtDetail: { 
       // Example: if you expect a court object parameter. Otherwise use undefined.
       courtData: any;

@@ -11,14 +11,12 @@ import {
   Linking,
   TextInput,
   Animated,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import loginStyles from '../../assets/styles/loginStyles';
-
 import { images } from '../../constants/image';
-import { COLORS } from '../../constants/color';
-import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Label from '../../components/label';
 import PrimaryButton from '../../components/primaryButton';
 import SecondaryButton from '../../components/secondaryButton';
@@ -27,8 +25,13 @@ import otpStyles from '../../assets/styles/otpStyles';
 import mainStyles from '../../assets/styles/mainStyles';
 import { verticalScale } from 'react-native-size-matters';
 import { AuthContext } from '../../context/authContext';
+import { useNavigation } from '@react-navigation/native';
+import { COLORS } from '../../constants/color';
 
-const OTP = ({ navigation, route }) => {
+const OTP = ({ route }) => {
+  const {mobileNo,actualOtp}=route.params
+  // console.log('check',mobileNo,actualOtp)
+  const navigation = useNavigation();
   const [resendTimer, setResendTimer] = useState(0);
   const [otp, setOtp] = useState(['', '', '', '']);
  const {login}=useContext(AuthContext)
@@ -36,6 +39,7 @@ const OTP = ({ navigation, route }) => {
   const [isVerifiedPressed, setIsVerifiedPressed] = useState(false);
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [loading,setLoading]=useState(false)
 const translateY = useRef(new Animated.Value(80)).current;
     const opacity = useRef(new Animated.Value(0.7)).current;
 
@@ -98,19 +102,22 @@ const translateY = useRef(new Animated.Value(80)).current;
     } else if (!value && index > 0) {
       inputRefs[index - 1].current.focus();
     }
-    if (otpArray.every(digit => digit !== '')) {
-      checkOtp(otpArray.join(''));
-    }
 
   };
-  const checkOtp = (enteredOtp) => {
-    const formattedOtp = enteredOtp.trim();
-    const actualOtp = String(route.params.actualOtp).trim();
-    if (formattedOtp === actualOtp) {
-      login();
+  const handleVerify = () => {
+    setIsVerifiedPressed(true);
+    const enteredOtp = otp.join('');
+    checkOtp(enteredOtp); // Now login will only be called when VERIFY button is pressed
+  };
+  const checkOtp = async(enteredOtp:string) => { 
+    setLoading(true)
+    if (enteredOtp === actualOtp) {
+     await login(mobileNo, registerNewUser);
+     
     } else {
       setErrorMessage('* OTP does not match. Please try again!');
     }
+    setLoading(false)
   };
  
   const formatResendTimer = () => {
@@ -119,16 +126,13 @@ const translateY = useRef(new Animated.Value(80)).current;
     return `${minutes}:${seconds}`
   };
 
-  const handleVerify = () => {
-    setIsVerifiedPressed(true);
-    if (otp !== "1111") {
-      setErrorMessage('* OTP does not match. Please try again!');
-    } else {
-      setErrorMessage('');
-      console.log('OTP Verified Successfully'); // Replace with actual login function
-    }
-  };
-
+ 
+// navigate to register profile name screen when the new user login for the first time
+  const registerNewUser=async(userInfo)=>{
+    console.log('check',navigation)
+      navigation.navigate('ProfileName',{userDetail:userInfo});
+    
+  }
   const renderOtpInputs = () => {
     return otp.map((digit, index) => (
       <TextInput
@@ -187,6 +191,7 @@ const translateY = useRef(new Animated.Value(80)).current;
             {isVerifiedPressed && errorMessage ? <Text style={otpStyles.errorText}>{errorMessage}</Text> : null}
 
             {/* Buttons */}
+            {loading && <ActivityIndicator color={COLORS.primary} size={'large'} style={{marginTop:verticalScale(12)}}/>}
         <Animated.View style={{ transform: [{ translateY }], opacity }}>
               <PrimaryButton title={'VERIFY'} onPress={handleVerify} disabled={otp.length !== 4} style={{marginTop:verticalScale(12)}} />
               </Animated.View>

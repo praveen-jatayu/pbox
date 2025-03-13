@@ -1,91 +1,69 @@
-import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing } from 'react-native'
+import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import mainStyles from '../../assets/styles/mainStyles'
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters'
-import { COLORS } from '../../constants/color'
 import MainHeader from '../../components/mainHeader'
-import { images } from '../../constants/image'
 import BoxCard from '../../components/boxCard'
 import ImageSlider from './imageSlider'
 import SearchInput from '../../components/searchInput'
+import NoDataContainer from '../../components/noDataContainer'
+import { getBoxDetail } from '../../services/boxService'
+import { getSportDetail } from '../../services/sportService'
+import homeStyles from '../../assets/styles/homeStyles'
+import BoxCardSkeleton from '../../components/boxCardSkeleton'
+import SportsCategorySkeleton from './sportsCategorySkeleton'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
-const MIN_HEADER_HEIGHT = moderateVerticalScale(150); // height of the header
+const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
 
-const sportsData = [
-  { id: '1', name: 'Cricket', logo: images.football },
-  { id: '2', name: 'Football', logo: images.football },
-  { id: '3', name: 'Basketball', logo: images.baseball },
-  { id: '4', name: 'Tennis', logo: images.tennis },
-  { id: '5', name: 'Baseball', logo: images.baseball },
-  { id: '6', name: 'Badminton', logo: images.badminton },
-];
 
-const boxCourtData = [
-  {
-    id: '1',
-    title: 'Cricket Arena',
-    rating: 4.5,
-    address: '123 Cricket Lane, Sportstown',
-    startingPrice: '₹500',
-    offers: 'Upto 20% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
-  },
-  {
-    id: '2',
-    title: 'Sports Hub',
-    rating: 4.2,
-    address: '456 Sporty Ave, Game City',
-    startingPrice: '₹450',
-    offers: 'Upto 15% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
-  },
-  {
-    id: '3',
-    title: 'Sports Hub',
-    rating: 4.2,
-    address: '456 Sporty Ave, Game City',
-    startingPrice: '₹450',
-    offers: 'Upto 15% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
-  },
-  {
-    id: '4',
-    title: 'Sports Hub',
-    rating: 4.2,
-    address: '456 Sporty Ave, Game City',
-    startingPrice: '₹450',
-    offers: 'Upto 15% Off',
-    images: [images.scenic, images.scenic, images.scenic, images.scenic],
-  },
-];
 const Home = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [search, setSearch] = useState('');
   const [showAllSports, setShowAllSports] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [boxData,setBoxData]=useState([])
+  const [sportData,setSportData]=useState([])
+  const [filteredBoxData,setFilteredBoxData]=useState([])
+  const [refreshing, setRefreshing] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={fetchBoxList}/>;
 
+  const headerTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.2
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
+      extrapolate: 'clamp',
+    });
 
-  const renderBoxCard = ({ item }) => <BoxCard data={item} />;
+const sliderTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
+      extrapolate: 'clamp',
+    });
 
-  const headerTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
-    extrapolate: 'clamp',
-  });
+const sliderOpacity = isSearchFocused ? 0 : scrollY.interpolate({
+  inputRange: [0, HEADER_HEIGHT * 2.2],
+  outputRange: [1, 0],
+  extrapolate: 'clamp',
+});
 
-  const filterTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
-    extrapolate: 'clamp',
-  });
+  // const filterTranslateY = scrollY.interpolate({
+  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+  //   extrapolate: 'clamp',
+  // });
 
-  const sliderTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
-    extrapolate: 'clamp',
-  });
+  // const sliderTranslateY = scrollY.interpolate({
+  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
+  //   extrapolate: 'clamp',
+  // });
 
   // Interpolating scrollY to control the slider's scale and opacity
   const sliderScale = scrollY.interpolate({
@@ -94,60 +72,150 @@ const Home = () => {
     extrapolate: 'clamp',
   });
 
-  const sliderOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_HEIGHT * 2.2],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
+  // const sliderOpacity = scrollY.interpolate({
+  //   inputRange: [0, HEADER_HEIGHT * 2.2],
+  //   outputRange: [1, 0],
+  //   extrapolate: 'clamp',
+  // });
 
-  const instantTranslateY = scrollY.interpolate({
+  const instantTranslateY =  isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  :scrollY.interpolate({
     inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
     outputRange: [0, -MIN_HEADER_HEIGHT * 1.4],
     extrapolate: 'clamp',
   });
 
-  const searchTranslateY = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-    outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
-    extrapolate: 'clamp',
-  });
+  const filterTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+      extrapolate: 'clamp',
+    });
 
-  const sportsToShow = showAllSports ? sportsData : sportsData.slice(0, 4);
+const searchTranslateY = isSearchFocused
+  ? -MIN_HEADER_HEIGHT * 1.5
+  : scrollY.interpolate({
+      inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
+      outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+      extrapolate: 'clamp',
+    });
+
+  const sportsToShow = showAllSports ? sportData: sportData.slice(0,4);
 
   const handleCategoryPress = item => {
-    setSelectedCategory(item.id === selectedCategory ? null : item.id);
+    console.log('selected sport ',item)
+    setSelectedCategory(item.id===selectedCategory?null:item.id);
+    fetchBoxList(null,item.id===selectedCategory?null:item.id)
+  
   };
 
   const handleSearchChange = text => {
     setSearch(text);
+    if (text.trim() === '') {
+      setFilteredBoxData(boxData); // Show all data if search input is empty
+    } else {
+      const filteredData = boxData.filter(box =>
+        box.title.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredBoxData(filteredData);
+    }
+  
   };
 
-  const handleSearchPress = () => {
-    console.log('Search query submitted: ', search);
-  };
 
   const renderSportCategory = item => (
     <TouchableOpacity
-      key={item.id}
+      key={item.id.toString()} // Ensure unique keys
       style={[
-        styles.sportItem,
-        selectedCategory === item.id && [styles.sportItemSelected, mainStyles.primaryBorderColor],
+        homeStyles.sportItem,
+        selectedCategory !== null && selectedCategory === item.id && homeStyles.sportItemSelected,
       ]}
-      onPress={() => handleCategoryPress(item)}>
-      <View style={styles.sportLogoBackground}>
-        <Image source={item.logo} style={styles.sportLogo} />
+      onPress={() => handleCategoryPress(item)}
+    >
+      <View style={homeStyles.sportLogoBackground}>
+        <Image source={{ uri: item.image }} style={homeStyles.sportLogo} />
       </View>
-      <Text style={[mainStyles.darkTextColor, mainStyles.fontInriaSansRegular, mainStyles.fontSize14, { textAlign: 'center' }]}>
+      <Text 
+        style={[
+          mainStyles.darkTextColor,
+          mainStyles.fontInriaSansRegular,
+          mainStyles.fontSize14,
+          { textAlign: 'center' }
+        ]}
+      >
         {item.name}
       </Text>
     </TouchableOpacity>
-  );
+);
+
+const fetchBoxList = async (boxData = null, sportId = null) => {
+  console.log('sportId', sportId);
+
+  const formData = new FormData();
+  if (boxData !== null || sportId !== null) {
+    if (boxData?.id) {
+      formData.append('box_id', boxData.id);
+    }
+    if (sportId) {
+      formData.append('sport_id', sportId);  // Correctly appending sport_id
+    }
+  }
+
+  try {
+    const response = await getBoxDetail(boxData !== null || sportId !== null?formData:null);  // Pass the correct `formData`
+    if (response) {
+      setBoxData(response);
+      setFilteredBoxData(response);
+    } else {
+      console.error('Error occurred:', response.error);
+    }
+  } catch (error) {
+    console.error('Failed to fetch box data:', error);
+  } finally {
+    setRefreshing(false);
+    setIsLoading(false);
+  }
+};
+  const getSportList = async () => {
+   setIsLoading(true)
+    try {
+     
+      const response = await  getSportDetail()
+      console.log('sports',response)
+  
+      if (response) {
+        console.log('sportData',response)
+       setSportData(response)
+      } else {
+       console.log('error occured',response.error)
+      }
+  
+     
+    } catch (error) {
+      
+      console.error('Login Error:', error);
+     
+    }
+    finally{
+      setRefreshing(false)
+      setIsLoading(false)
+    }
+  };
+
+
+  useEffect(()=>{
+    setSelectedCategory(null)
+    fetchBoxList(null,selectedCategory)
+    getSportList()
+  },[])
 
   return (
     <View style={mainStyles.container}>
       <Animated.View
         style={[
-          styles.animatedHeader,
+          homeStyles.animatedHeader,
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
@@ -156,7 +224,7 @@ const Home = () => {
 
       <Animated.View
         style={[
-          styles.animatedSlider,
+          homeStyles.animatedSlider,
           { transform: [{ scale: sliderScale }, { translateY: sliderTranslateY }] },
           { opacity: sliderOpacity, }
         ]}>
@@ -165,7 +233,7 @@ const Home = () => {
 
       <View style={{ paddingHorizontal: scale(14), marginTop: verticalScale(4) }}>
         <Animated.View style={[
-          styles.animatedFilter,
+          homeStyles.animatedFilter,
           { transform: [{ translateY: filterTranslateY }] },
         ]}>
           <View style={[mainStyles.flexContainer]}>
@@ -176,111 +244,77 @@ const Home = () => {
               </Text>
             </TouchableOpacity>
           </View>
+          {isLoading ? (
+  <View style={{ flexDirection: 'row', width:'90%' }}> 
+    {[1, 2, 3, 4].map((_, index) => (
+      <SportsCategorySkeleton key={index} />
+    ))}
+  </View>
+) : (
 
-          <View style={styles.sportsContainer}>
+          <View style={homeStyles.sportsContainer}>
             {sportsToShow.map(item => renderSportCategory(item))}
             {showAllSports &&
-              sportsData.length > sportsToShow.length &&
-              sportsData.slice(sportsToShow.length).map(item => renderSportCategory(item))}
+              sportData.length > sportsToShow.length &&
+              sportData.slice(sportsToShow.length).map(item => renderSportCategory(item))}
           </View>
+  )}
         </Animated.View>
       </View>
 
       <Animated.View style={[
-        styles.animatedSearch,
+        homeStyles.animatedSearch,
         { transform: [{ translateY: searchTranslateY }] },
       ]}>
-        <SearchInput value={search} onChangeText={handleSearchChange} onSearchPress={handleSearchPress} />
+        <SearchInput value={search} onChangeText={handleSearchChange}  onFocus={() => setIsSearchFocused(true)}
+    onBlur={() => setIsSearchFocused(false)} />
       </Animated.View>
 
       <Animated.View style={[{ transform: [{ translateY: instantTranslateY }] }]}>
+      {(isLoading || boxData.length===0) ? (
         <Animated.FlatList
+          data={[1, 1,1,1]}
           ref={flatListRef}
-          data={boxCourtData}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingBottom:verticalScale(200)}}
+          renderItem={() => <BoxCardSkeleton />}
+          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+            useNativeDriver: true,
+          })}
+          scrollEventThrottle={16}
+        
+        />
+      ):(
+        <Animated.FlatList  
+          ref={flatListRef}
+          data={filteredBoxData}
           renderItem={renderBoxCard}
           keyExtractor={item => item.id}
-          contentContainerStyle={styles.flatListContainer}
+          contentContainerStyle={[homeStyles.flatListContainer,filteredBoxData.length<=2 && {paddingBottom:verticalScale(500)}]}
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
             useNativeDriver: true,
           })}
           scrollEventThrottle={16}
+          ListEmptyComponent={
+            <NoDataContainer style={undefined} noDataText='No box  available!!' />
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                fetchBoxList();
+                getSportList();
+              }}
+            />
+          }
         />
+      )}
       </Animated.View>
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  sportsContainer: {
-    marginTop: verticalScale(10),
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  sportItem: {
-    alignItems: 'center',
-    marginRight: scale(17),
-    marginLeft: scale(10),
-    marginBottom: verticalScale(10),
-  },
-  sportItemSelected: {
-    borderWidth: 1,
-    borderRadius: moderateScale(8),
-    padding: scale(4),
-  },
-  sportLogoBackground: {
-    width: moderateScale(40),
-    height: moderateVerticalScale(40),
-    borderRadius: moderateScale(30),
-    backgroundColor: COLORS.itemBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: verticalScale(4),
-  },
-  sportLogo: {
-    width: scale(24),
-    height: scale(24),
-    resizeMode: 'contain',
-  },
-  searchAndListContainer: {
-    marginTop: verticalScale(5),
-    paddingHorizontal: scale(10),
-  },
-  flatListContainer: {
-    paddingHorizontal: scale(16),
-    paddingBottom: verticalScale(200),
-  },
 
-  animatedHeader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: HEADER_HEIGHT,
-    zIndex: 10,
-  },
-  animatedFilter: {
-    top: HEADER_HEIGHT - moderateVerticalScale(90),
-    left: 0,
-    right: 0,
-    paddingHorizontal: scale(5),
-    zIndex: 12,
-  },
-  animatedSlider: {
-    top: HEADER_HEIGHT - moderateVerticalScale(90),
-    left: 0,
-    right: 0,
-    paddingHorizontal: scale(5),
-    marginTop: verticalScale(70),
-    zIndex: 12,
-  },
-  animatedSearch: {
-    top: HEADER_HEIGHT - moderateVerticalScale(80),
-    left: 0,
-    right: 0,
-    paddingHorizontal: scale(5),
-    zIndex: 12,
-  },
-});
 
-export default Home
+export default Home;

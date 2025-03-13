@@ -17,29 +17,14 @@ import boxCardStyles from '../../assets/styles/boxCardStyles';
 import {icons} from '../../constants/Icon';
 import {images} from '../../constants/image';
 import PrimaryButton from '../../components/primaryButton';
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../navigation/navigationTypes';
+import { RouteProp } from '@react-navigation/native';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
-
-const availableSportsData = [
-  {id: '1', name: 'Cricket', logo: images.football},
-  {id: '2', name: 'Football', logo: images.football},
-  {id: '3', name: 'Basketball', logo: images.baseball},
-  // { id: '4', name: 'Tennis', logo: images.tennis },
-  // { id: '5', name: 'Baseball', logo: images.baseball },
-  // { id: '6', name: 'Badminton', logo: images.badminton },
-];
-
-const dummyAmenitiesData=[
-  {id: '1', name: 'Drinking Water' },
-  {id: '2', name: 'Flood Lights' },
-  {id: '3', name: 'Parking' },
-  {id: '4', name: 'Drinking Water' },
-  {id: '5', name: 'Flood Lights' },
-  {id: '6', name: 'Parking' },
-]
 
 
 const dummyReviews = [
@@ -67,8 +52,20 @@ const dummyReviews = [
   // ... add more reviews as needed
 ];
 
-const BoxDetail = ({navigation,route}) => {
-  const boxData = route.params.boxData;
+type BoxDetailNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'BoxDetail'
+>;
+type BoxDetailRouteProps = RouteProp<RootStackParamList, 'BoxDetail'>;
+
+type BoxDetailProps = {
+  navigation: BoxDetailNavigationProp;
+  route: BoxDetailRouteProps;
+};
+
+
+const BoxDetail = ({navigation,route}:BoxDetailProps) => {
+  const {boxDetail,isBookmarked} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [showAllReview, setShowAllReviews] = useState(false);
@@ -82,11 +79,11 @@ const BoxDetail = ({navigation,route}) => {
     extrapolate: 'clamp',
   });
 
-  const sliderScale = scrollY.interpolate({
-    inputRange: [0, sliderHeight],
-    outputRange: [1, 0.5],
-    extrapolate: 'clamp',
-  });
+  // const sliderScale = scrollY.interpolate({
+  //   inputRange: [0, sliderHeight],
+  //   outputRange: [1, 0.5],
+  //   extrapolate: 'clamp',
+  // });
 
   // Show header when slider disappears
  
@@ -94,38 +91,45 @@ const BoxDetail = ({navigation,route}) => {
   const renderItem = ({item}) => {
     return (
       <View>
-        <Image source={item} style={styles.image} />
+        <Image source={{uri:item.image}} style={styles.image} />
       </View>
     );
   };
 
   const renderSportCategory = item => (
-    <View key={item.id} style={[styles.sportItem,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect]}>
+    <View key={item.id} style={[styles.sportItem,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:5}]}>
       
         <Image source={item.logo} style={styles.sportLogo} />
-  
+
       <Text style={[mainStyles.fontNunitoRegular,mainStyles.fontSize14,mainStyles.darkTextColor]}>{item.name}</Text>
     </View>
   );
 
-  const renderAmenitiesList=(item)=>{
-    return (
-      <View key={item.id} style={styles.amenitiesItem}>
-        <Ionicons name='car-outline' size={18} color={mainStyles.darkTextColor}/>
-        <Text style={[mainStyles.fontNunitoRegular,mainStyles.fontSize14,mainStyles.darkTextColor]}>{item.name}</Text>
-      </View>
-    );
-  }
+ 
+  const amenitiesData = boxDetail?.get_selected_amenities?.map(item => ({
+    id: item?.id,
+    name: item.get_single_amenities?.name,
+    icon: item.get_single_amenities?.icon
+})) || [];
 
+// Show limited amenities initially
+const amenitiesToShow = showAllAmenities 
+    ? amenitiesData 
+    : amenitiesData.slice(0, 3); // Change 3 to however many you want to show initially
 
-
-
-  const amenitiesToShow = showAllAmenities ? dummyAmenitiesData : dummyAmenitiesData.slice(0, 4);
+const renderAmenitiesList = (item) => (
+    <View key={item.id} style={[styles.amenityItem]}>
+        <Image source={{ uri: item.icon }} style={styles.amenityIcon} />
+        <Text style={[mainStyles.fontNunitoRegular, mainStyles.fontSize14, mainStyles.darkTextColor]}>
+            {item.name}
+        </Text>
+    </View>
+);
 
   const reviewsToShow = dummyReviews.slice(0, 2);
 
 
-  const AnimatedHeader = ({ scrollY, boxData }) => {
+  const AnimatedHeader = ({ scrollY, boxDetail }) => {
     const headerTranslateY = scrollY.interpolate({
       inputRange: [0, sliderHeight],
       outputRange: [-150, 0],
@@ -165,12 +169,14 @@ const BoxDetail = ({navigation,route}) => {
         />
         <EvilIcons name="chevron-left" size={38} color={'white'} onPress={()=>navigation.goBack()}/>
         <View>
-        <Text style={[mainStyles.fontSize16,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.title}</Text>
-        <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxData.address}</Text>
+        <Text style={[mainStyles.fontSize16,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxDetail?.title}</Text>
+        <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxDetail?.address}</Text>
         </View>
       </Animated.View>
     );
   };
+
+
   return (
     <View style={mainStyles.container}>
       {/* Make StatusBar transparent */}
@@ -179,16 +185,16 @@ const BoxDetail = ({navigation,route}) => {
         backgroundColor="transparent"
         barStyle="light-content"
         />
-          <AnimatedHeader scrollY={scrollY} boxData={boxData} />
+          <AnimatedHeader scrollY={scrollY} boxDetail={boxDetail} />
           <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}} showsVerticalScrollIndicator={false}
        onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: false})}
        scrollEventThrottle={16}>
         
       {/* Top slider  */}
-      <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity, transform: [{scale: sliderScale}]}]}>
+      <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity}]}>
         <Carousel
           ref={carouselRef}
-          data={boxData.images}
+          data={boxDetail?.get_selected_box_images}
           renderItem={renderItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}
@@ -197,7 +203,7 @@ const BoxDetail = ({navigation,route}) => {
           inactiveSlideOpacity={1}
         />
         <Pagination
-          dotsLength={boxData.images.length}
+          dotsLength={boxDetail?.get_selected_box_images?.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.paginationContainer}
           dotStyle={[styles.paginationDot,mainStyles.primaryBackgroundColor]}
@@ -220,7 +226,13 @@ const BoxDetail = ({navigation,route}) => {
           onPress={undefined}
           activeOpacity={0.8}
         >
-          <EvilIcons name="heart" size={moderateScale(20)} />
+          {isBookmarked ? (
+            <Ionicons name="heart" size={moderateScale(18)} color={'red'}/>
+          ):(
+            <EvilIcons name="heart" size={moderateScale(20)} />
+          )}
+       
+          
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
@@ -238,14 +250,14 @@ const BoxDetail = ({navigation,route}) => {
         <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
           <View style={boxCardStyles.titleContainer}>
             <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
-              {boxData.title || 'Cricket Arena'}
+              {boxDetail?.title || '---'}
             </Text>
             <Text style={boxCardStyles.address} numberOfLines={2}>
-              {boxData.address || '123 Cricket Lane, Sportstown'}
+              {boxDetail?.address || '----'}
             </Text>
           </View>
           <Text style={boxCardStyles.rating}>
-            ⭐ {boxData.rating || '4.5'}
+            ⭐ {boxDetail?.rating || '4.5'}
           </Text>
         </View>
 
@@ -302,38 +314,70 @@ const BoxDetail = ({navigation,route}) => {
             Available Sports
           </Text>
           <View style={styles.sportsContainer}>
-            {availableSportsData.map(item => renderSportCategory(item))}
+          {(boxDetail?.get_selected_available_sport || []).map(item =>
+        renderSportCategory({
+            id: item.get_single_sports.id,
+            name: item.get_single_sports.name,
+            logo: { uri: item.get_single_sports.image }  // Ensure correct image format
+        })
+    )}
           </View>
          
         </View>
         {/* Amenities Container */}
-       <View style={[mainStyles.marginTop10]}>
-       <View style={[mainStyles.flexContainer]}>
-         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize18]}>Amenities</Text>
-         <TouchableOpacity onPress={()=>setShowAllAmenities(!showAllAmenities)}>
-         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.primaryTextColor,mainStyles.fontSize16]}>   {showAllAmenities ? 'Show Less' : 'See All'}</Text>
-         </TouchableOpacity>
-            
-         </View>
-         <View style={styles.sportsContainer}>
-                     {amenitiesToShow.map(item => renderAmenitiesList(item))}
-                     {showAllAmenities &&
-                       dummyAmenitiesData.length > amenitiesToShow.length &&
-                       dummyAmenitiesData.slice(amenitiesToShow.length).map(item => renderAmenitiesList(item))}
-                   </View>
-                
-       </View>
-{/* Cancelation Policy Container */}
-       <View >
-        <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize18]}>Cancellation Policy</Text>
-        <View style={[mainStyles.marginTop10,{marginLeft:scale(10)}]}>
-      
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(9)}}>{'\u2B24'}</Text>{' '} Lorem ipsum, dolorsit amet,cons</Text>
-          <Text style={[mainStyles.lightTextColor,mainStyles.fontNunitoSemibold,mainStyles.fontSize14]}><Text style={{fontSize:scale(9)}}>{'\u2B24'}</Text>{' '} Lorem ipsum, dolorsit amet,cons</Text>
-          
-         
+        <View style={[mainStyles.marginTop10]}>
+            <View style={[mainStyles.flexContainer]}>
+                <Text style={[
+                    mainStyles.fontInriaSansRegular,
+                    mainStyles.darkTextColor,
+                    mainStyles.fontSize18
+                ]}>
+                    Amenities
+                </Text>
+
+                <TouchableOpacity onPress={() => setShowAllAmenities(!showAllAmenities)}>
+                    <Text style={[
+                        mainStyles.fontInriaSansRegular,
+                        mainStyles.primaryTextColor,
+                        mainStyles.fontSize16
+                    ]}>
+                        {showAllAmenities ? 'Show Less' : 'See All'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.sportsContainer}>
+                {amenitiesToShow.map(item => renderAmenitiesList(item))}
+            </View>
         </View>
-       </View>
+{/* Cancelation Policy Container */}
+<View>
+    <Text
+        style={[
+            mainStyles.darkTextColor,
+            mainStyles.fontInriaSansRegular,
+            mainStyles.fontSize18
+        ]}
+    >
+        Cancellation Policy
+    </Text>
+
+    <View style={[mainStyles.marginTop10, { marginLeft: scale(10) }]}>
+        {(boxDetail?.get_box_cancellation_policy || []).map(item => (
+            <Text
+                key={item.id}
+                style={[
+                    mainStyles.lightTextColor,
+                    mainStyles.fontNunitoSemibold,
+                    mainStyles.fontSize14
+                ]}
+            >
+                <Text style={{ fontSize: scale(9) }}>{'\u2B24'}</Text>{' '}
+                {item.text}
+            </Text>
+        ))}
+    </View>
+</View>
        
       {/* Client review and comments container */}
       <View style={[mainStyles.marginTop20]}>
@@ -368,7 +412,7 @@ const BoxDetail = ({navigation,route}) => {
       </View>
       </View>
     </Animated.ScrollView>
-      <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('SlotBooking')} disabled={undefined} style={{position:'absolute',bottom:moderateVerticalScale(10),width:'90%'}} />
+      <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('SlotBooking',{boxInfo:boxDetail})} disabled={undefined} style={{position:'absolute',bottom:moderateVerticalScale(10),width:'90%'}} />
     </View>
   );
 };
@@ -438,7 +482,7 @@ const styles = StyleSheet.create({
   sportsContainer: {
     marginTop: verticalScale(10),
     flexDirection: 'row',
-    justifyContent:'space-between',
+    justifyContent:'space-evenly',
     flexWrap: 'wrap',
   },
   sportLogo:{
@@ -446,14 +490,19 @@ const styles = StyleSheet.create({
     height:verticalScale(22),
     marginBottom:verticalScale(5)
   },
-  amenitiesItem:{
+  amenityItem:{
     alignItems: 'center',
     flexDirection:'row',
-    justifyContent:'center',
     marginRight: scale(20),
     gap:scale(10),
     marginBottom: verticalScale(10),
   },
+  amenityIcon: {
+    width: moderateScale(22),
+    height: moderateVerticalScale(22),
+    resizeMode: 'cover'
+    
+},
   reviewContainer:{
     paddingTop:verticalScale(5),
     paddingBottom:verticalScale(10),

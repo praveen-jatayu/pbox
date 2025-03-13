@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -30,6 +30,7 @@ import TextInputComponent from '../../components/textInputComponent';
 import PrimaryButton from '../../components/primaryButton';
 import BottomModal from '../../components/bottomModal';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { AuthContext } from '../../context/authContext';
 
 
 // Define types for navigation
@@ -61,6 +62,8 @@ const schema = Yup.object().shape({
 });
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
+  const {userInfo}=useContext(AuthContext)
+  console.log('user',userInfo)
   const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dobDisplay, setDobDisplay] = useState('');
@@ -74,8 +77,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: '',
-      mobileNo: '',
+      name: userInfo.name,
+      mobileNo:'+91 ' + userInfo.mobile_no,
       email: '',
       dob: '',
     },
@@ -211,6 +214,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   placeholder="Enter your phone"
                   error={errors.mobileNo?.message}
                   required={false}
+                  style={mainStyles.iconBackgroundColor}
                 />
               )}
             />

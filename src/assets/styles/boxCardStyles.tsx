@@ -82,6 +82,7 @@ export default boxCardStyles=StyleSheet.create({
       },
       categorySeparator: {
         color: COLORS.secondary,
+        fontSize:moderateScale(12)
       },
       bookMarkContainer: {
         position: 'absolute',

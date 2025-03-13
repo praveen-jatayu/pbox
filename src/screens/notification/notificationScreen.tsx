@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-import { moderateScale, moderateVerticalScale, scale } from 'react-native-size-matters';
+import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import NoDataContainer from '../../components/noDataContainer';
 
 // Dummy data for notifications
-const notifications = [
+const notifications: string | ArrayLike<any> | null | undefined = [
   // {
   //   id: '1',
   //   profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',

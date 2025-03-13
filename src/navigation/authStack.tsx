@@ -59,7 +59,6 @@ const AuthStack = () => {
         <Stack.Screen
           name="ProfileName"
           component={ProfileName}
-         
           options={{
             headerShown:false,
            

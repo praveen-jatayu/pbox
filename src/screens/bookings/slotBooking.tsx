@@ -4,12 +4,13 @@ import {
   StatusBar,
   StyleSheet,
   TouchableOpacity,
-  Image
+  Image,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
 import CustomCheckBox from '../../components/checkbox';
 import PrimaryButton from '../../components/primaryButton';
 import DateSlider from './dateSelector';
@@ -17,68 +18,158 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigation/navigationTypes';
 import {RouteProp} from '@react-navigation/native';
 
-import { icons } from '../../constants/Icon';
+import {icons} from '../../constants/Icon';
+import {
+  getCourtByBoxId,
+  getSlotDetailByDate,
+} from '../../services/bookingService';
+import Toast from 'react-native-toast-message';
+import {formatTimeTo12Hour} from '../../utils/timeCoverterUtils';
+import NoDataContainer from '../../components/noDataContainer';
 type SlotBookingNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'Settings'
+  'SlotBooking'
 >;
-type SlotBookingRouteProp = RouteProp<RootStackParamList, 'Settings'>;
+type SlotBookingRouteProp = RouteProp<RootStackParamList, 'SlotBooking'>;
 
 type SlotBookingProps = {
   navigation: SlotBookingNavigationProp;
   route: SlotBookingRouteProp;
 };
 
-const SlotBooking = ({navigation}: SlotBookingProps) => {
-  const [selectedDate, setSelectedDate] = useState<String>('');
-  const [selectedCourt, setSelectedCourt] = useState<string | null>(null);
-  const [availableCourts, setAvailableCourts] = useState<string[]>([]);
-  const [availableSlots, setAvailableSlots] = useState<{ time: string; price: number; discount: number; available: boolean }[]>([]);
-  
+const SlotBooking = ({navigation, route}: SlotBookingProps) => {
+  const {boxInfo} = route?.params;
+
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split('T')[0], // Format as 'YYYY-MM-DD'
+  );
+  const [selectedCourt, setSelectedCourt] = useState(null);
+  const [availableCourts, setAvailableCourts] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState({});
+  const [slotDetail, setSlotDetail] = useState([]);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [loading, setLoading] = useState(true);
   const handleDateSelection = (date: string) => {
-    setSelectedDate(date);
-    console.log('Selected Date:', date);
     
-    // Fetch available courts for selected date
-    fetchAvailableCourts(date);
-  };
-  
-  const handleCourtSelection = (court: string) => {
-    setSelectedCourt(court);
-    console.log('Selected Court:', court);
-  
-    if (selectedDate) {
-      fetchAvailableSlots(selectedDate, court);
+    setSelectedDate(date);
+    if (selectedCourt) {
+      fetchAvailableAndBookedSlots(date, selectedCourt);
     }
   };
 
-  const fetchAvailableSlots = (date: string, court: string | null) => {
-    if (!court) return; // Don't fetch if court is not selected
+  const handleCourtSelection = (court: string) => {
+    setSelectedCourt(court.id);
+    if (selectedDate) {
+      fetchAvailableAndBookedSlots(selectedDate, court.id);
+    }
+  };
+
+  const fetchAvailableAndBookedSlots = async (date: string,courtId: string | null, ) => {
+    console.log('ttt');
+    if (!courtId) return;
+    console.log('ttt2');
+    const formData = new FormData();
+    formData.append('booking_date', date);
+    formData.append('box_court_id', courtId);
+    try {
+      const response = await getSlotDetailByDate(formData);
+      
+      setSlotDetail(response.all_slots);
+      setBookedSlots(response.booked_slot)
+    } catch (error) {
+      console.error('Failed to fetch available slots:', error);
+    }
+    // finally{
+    //   setLoading(false)
+    // }
+  };
+
+  const fetchCourtByBoxId = async boxData => {
+    console.log('insidecourt')
+    const formData = new FormData();
+    formData.append('box_id', boxData.id);
+
+    try {
+      const response = await getCourtByBoxId(formData);
+      if (response) {
+        setAvailableCourts(response);
+        setSelectedCourt(response[0].id);
+        await fetchAvailableAndBookedSlots(selectedDate, response[0].id);
+      } else {
+        console.error('Error occurred:', response.error);
+      }
+    } catch (error) {
+      console.error('Failed to fetch box data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchCourtByBoxId(boxInfo);
+  }, []);
+
+
+  const handleSlotSelection = (slotId) => {
+    setSelectedSlot(prevState => {
+      const updatedSlots = {...prevState};
   
-    // Simulate fetching data from an API
-    const slots = [
-      { time: '6:00 PM', price: 300, discount: 50, available: true },
-      { time: '7:00 PM', price: 350, discount: 30, available: false },
-      { time: '8:00 PM', price: 400, discount: 20, available: true },
-    ];
+      // Check if the selected date already exists
+      if (!updatedSlots[selectedDate]) {
+        updatedSlots[selectedDate] = [{ [selectedCourt]: [slotId] }];
+      } else {
+        const courtIndex = updatedSlots[selectedDate].findIndex(
+          (court) => court[selectedCourt]
+        );
+  
+        if (courtIndex !== -1) {
+          const courtSlots = updatedSlots[selectedDate][courtIndex][selectedCourt];
+          
+          // Add or remove the slot ID
+          if (courtSlots.includes(slotId)) {
+            updatedSlots[selectedDate][courtIndex][selectedCourt] = courtSlots.filter(
+              (id) => id !== slotId
+            );
+          } else {
+            updatedSlots[selectedDate][courtIndex][selectedCourt].push(slotId);
+          }
+  
+          // Remove the court entry if no slots remain
+          if (updatedSlots[selectedDate][courtIndex][selectedCourt].length === 0) {
+            updatedSlots[selectedDate].splice(courtIndex, 1);
+          }
+        } else {
+          // If the court doesn't exist, add it
+          updatedSlots[selectedDate].push({ [selectedCourt]: [slotId] });
+        }
+      }
+  
+      // Clean up empty date entries
+      if (updatedSlots[selectedDate].length === 0) {
+        delete updatedSlots[selectedDate];
+      }
+  
+      return updatedSlots;
+    });
     
-    setAvailableSlots(slots);
   };
-  const fetchAvailableCourts = (date: string) => {
-    // Simulating API call to get available courts for the selected date
-    const courts = ['C1', 'C2', 'C3', 'C4'];
-    setAvailableCourts(courts);
+
+  const isSlotSelected = (slotId) => {
+    console.log('ech',selectedSlot)
+    const dateEntry = selectedSlot[selectedDate];
   
-    // Reset court selection when date changes
-    setSelectedCourt(null);
-    setAvailableSlots([]);
+    if (!dateEntry) return false; // No slots for the selected date
+  
+    return dateEntry.some((court) =>
+      court[selectedCourt]?.includes(slotId)
+    );
   };
+
   return (
     <View style={[mainStyles.container]}>
       <SubHeader
-        title={'Box Name'}
+        title={boxInfo.title}
         onPress={() => navigation.goBack()}
-        style={{height: verticalScale(80), paddingTop: verticalScale(20)}}
+        style={[{height: verticalScale(80), paddingTop: verticalScale(20),gap:scale(110)},boxInfo.title.length>10 &&{ gap:scale(70)}]}
       />
       <StatusBar
         // translucent
@@ -87,8 +178,7 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
       />
       <View>
         {/* Date picker  */}
-        <View
-          style={slotBookingStyles.datePickerContainer}>
+        <View style={slotBookingStyles.datePickerContainer}>
           <Text
             style={[
               mainStyles.fontInriaSansRegular,
@@ -102,43 +192,73 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
         {/* Court slection container */}
 
         <View style={slotBookingStyles.courtSelectionContainer}>
-  <Text style={[mainStyles.darkTextColor, mainStyles.fontInriaSansRegular, mainStyles.fontSize20]}>
-    Court
-  </Text>
-  <View style={{ flexDirection: 'row', alignItems: 'center', gap: moderateScale(12) }}>
-    {availableCourts.length > 0 ? (
-      availableCourts.map((court) => (
-        <TouchableOpacity
-          key={court}
-          onPress={() => handleCourtSelection(court)}
-          style={[
-            mainStyles.secondaryBorderColor,
-            mainStyles.borderWidth1,
-            selectedCourt === court && mainStyles.primaryBackgroundColor,
-            {
-              paddingVertical: verticalScale(7),
-              paddingHorizontal: scale(8),
-              borderRadius: moderateScale(5),
-             
-            },
-          ]}
-        >
-          <Text style={[mainStyles.primaryTextColor, mainStyles.fontSize14, mainStyles.fontNunitoMedium,selectedCourt === court && {color:'#FFFFFF'}]}>
-            {court}
+          <Text
+            style={[
+              mainStyles.darkTextColor,
+              mainStyles.fontInriaSansRegular,
+              mainStyles.fontSize20,
+            ]}>
+            Court
           </Text>
-        </TouchableOpacity>
-      ))
-    ) : (
-      <Text>No courts available</Text>
-    )}
-  </View>
-</View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: moderateScale(12),
+            }}>
+            {loading ? (
+              // Skeleton Loader for Court Selection
+              Array.from({length: 4}).map((_, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: moderateScale(35),
+                    height: moderateVerticalScale(35),
+                    backgroundColor: '#E0E0E0', // Skeleton background
+                    borderRadius: moderateScale(5),
+                    opacity: 0.6,
+                  }}
+                />
+              ))
+            ) : availableCourts.length > 0 ? (
+              availableCourts.map(court => (
+                <TouchableOpacity
+                  key={court.id}
+                  onPress={() => handleCourtSelection(court)}
+                  style={[
+                    mainStyles.secondaryBorderColor,
+                    mainStyles.borderWidth1,
+                    selectedCourt === court.id &&
+                      mainStyles.primaryBackgroundColor,
+                    {
+                      paddingVertical: verticalScale(7),
+                      paddingHorizontal: scale(8),
+                      borderRadius: moderateScale(5),
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      mainStyles.primaryTextColor,
+                      mainStyles.fontSize14,
+                      mainStyles.fontNunitoMedium,
+                      selectedCourt === court.id && {color: '#FFFFFF'},
+                    ]}>
+                    {court?.name}
+                  </Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text>No courts available</Text>
+            )}
+          </View>
+        </View>
         {/* banner container */}
         <View
           style={[
             mainStyles.infoBackgroundColor,
             mainStyles.widthFull,
-            slotBookingStyles.bannerContainer
+            slotBookingStyles.bannerContainer,
           ]}>
           <Text
             style={[
@@ -149,38 +269,101 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
             Be The First! Reserve This Court Before Anyone
           </Text>
         </View>
-            {/* booking container */}
-            {selectedDate && selectedCourt && availableSlots.length > 0 ? (
-  availableSlots.map((slot, index) => (
-    <View key={index} style={{ marginTop: verticalScale(10), paddingHorizontal: scale(16) }}>
-      <View style={[mainStyles.flexContainer]}>
-        <View>
-          <Text style={[mainStyles.fontInriaSansRegular, mainStyles.fontSize16, mainStyles.darkTextColor]}>
-            {slot.time}
-          </Text>
-          <Image source={icons.sunIcon} style={{ width: scale(24), height: verticalScale(24), marginTop: verticalScale(5) }} />
-        </View>
-        <TouchableOpacity 
-          style={[
-            slot.available ? mainStyles.secondaryBorderColor : { backgroundColor: '#FDEBE9', borderColor: '#FF4F0A' },
-            mainStyles.borderWidth1,
-            { alignItems: 'center', justifyContent: 'center', paddingVertical: verticalScale(7), paddingHorizontal: scale(60), borderRadius: moderateScale(5) },
-          ]}
-        >
-          <Text style={[mainStyles.infoTextColor, mainStyles.fontInriaSansBold, mainStyles.fontSize16]}>
-            {slot.discount}% Discount
-          </Text>
-          <Text style={[mainStyles.lightTextColor, mainStyles.fontNunitoRegular, mainStyles.fontSize14]}>
-            {slot.available ? `Available ₹ ${slot.price}` : 'Booked'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  ))
-) : (
-  <Text style={{ textAlign: 'center', marginTop: 20 }}>Select a date and court to view available slots</Text>
-)}
-    
+        {/* booking container */}
+        <ScrollView
+          style={{maxHeight: verticalScale(300)}}
+          contentContainerStyle={{paddingBottom: verticalScale(100)}}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          {selectedDate && selectedCourt && slotDetail.length > 0 ? (
+            slotDetail.map((slot, index) => (
+              <View
+                key={index}
+                style={{
+                  marginTop: verticalScale(10),
+                  paddingHorizontal: scale(16),
+                  paddingBottom: verticalScale(12),
+                }}>
+                <View style={[mainStyles.flexContainer]}>
+                  <View>
+                    <Text
+                      style={[
+                        mainStyles.fontInriaSansRegular,
+                        mainStyles.fontSize16,
+                        mainStyles.darkTextColor,
+                      ]}>
+                      {formatTimeTo12Hour(slot?.get_single_slot?.start_time)} -{' '}
+                      {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
+                    </Text>
+                    <Image
+                      source={
+                        slot?.get_single_slot?.start_time >= '19:00:00'
+                          ? icons.moonIcon
+                          : icons.sunIcon
+                      }
+                      style={{
+                        width: scale(24),
+                        height: verticalScale(24),
+                        marginTop: verticalScale(5),
+                      }}
+                    />
+                  </View>
+                  
+                  <TouchableOpacity
+                  onPress={() => handleSlotSelection(slot.id)}
+                    disabled={bookedSlots.includes(slot?.id)}
+                    style={[
+                      mainStyles.borderWidth1,
+                      {
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingVertical: verticalScale(25),
+                        paddingHorizontal: scale(20),
+                        borderRadius: moderateScale(5),
+                        width: '55%',
+                      },
+                      !bookedSlots.includes(slot.id)
+                      ? isSlotSelected(slot.id) 
+                          ? {backgroundColor: '#FDEBE9', borderColor: '#FF4F0A'} // Selected slot
+                          : [
+                              mainStyles.secondaryInfoBackgroundColor,
+                              mainStyles.infoBorderColor,
+                            ] // Available slot
+                        : [
+                           {backgroundColor:'#D3D3D3'},
+                            mainStyles.primaryBorderColor,
+                          ], // Booked slot
+                    ]}>
+                    <Text
+                      style={[
+                        mainStyles.infoTextColor,
+                        mainStyles.fontInriaSansBold,
+                        mainStyles.fontSize16,
+                        bookedSlots.includes(slot.id) && mainStyles.lightTextColor,
+                      ]}>
+                      {slot.discount || '50'}% Discount
+                    </Text>
+                    <Text
+                      style={[
+                        mainStyles.lightTextColor,
+                        mainStyles.fontNunitoRegular,
+                        mainStyles.fontSize14,
+                      ]}>
+                      {!bookedSlots.includes(slot.id)
+                        ? `Available ₹ ${slot.price || 300}`
+                        : 'Booked'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          ) : (
+            <NoDataContainer
+              style={{marginTop: verticalScale(50)}}
+              noDataText={'No slots available'}
+            />
+          )}
+        </ScrollView>
       </View>
       {/* Bottom info container */}
       <View
@@ -201,7 +384,7 @@ const SlotBooking = ({navigation}: SlotBookingProps) => {
               alignItems: 'center',
               gap: scale(10),
             }}>
-            <CustomCheckBox style={undefined} disabled={true} />
+            <CustomCheckBox style={{backgroundColor:'#D3D3D3'}} disabled={true} />
             <Text
               style={[
                 mainStyles.fontNunitoSemibold,
@@ -308,20 +491,20 @@ const slotBookingStyles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
-  courtSelectionContainer:{
+  courtSelectionContainer: {
     paddingHorizontal: moderateScale(12),
-            paddingVertical: verticalScale(6),
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scale(20),
+    paddingVertical: verticalScale(6),
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scale(20),
   },
-  datePickerContainer:{
-    paddingHorizontal: scale(12), 
-    paddingTop: verticalScale(18)
+  datePickerContainer: {
+    paddingHorizontal: scale(12),
+    paddingTop: verticalScale(18),
   },
-  bannerContainer:{
+  bannerContainer: {
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(10),
     marginVertical: verticalScale(12),
-  }
+  },
 });

@@ -1,4 +1,4 @@
-import {View, Text, ImageBackground, StatusBar, Image, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Animated, Easing} from 'react-native';
+import {View, Text, ImageBackground, StatusBar, Image, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Animated, Easing, ActivityIndicator} from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import {images} from '../../constants/image';
@@ -11,29 +11,60 @@ import { icons } from '../../constants/Icon';
 import loginStyles from '../../assets/styles/loginStyles';
 import mainStyles from '../../assets/styles/mainStyles';
 import { useFocusEffect } from '@react-navigation/native';
+import { apiPost } from '../../services/apiService/apiService';
+import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
+import Toast from 'react-native-toast-message';
 
 const Login = ({navigation}) => {
   const [isTandCChecked, setIsTandCChecked] = useState(false);
+  const [loading,setLoading]=useState(false)
   const [mobileNo, setMobileNo] = useState('');
-  const [isMobileValid, setIsMobileValid] = useState(false);
     // Animated values for opacity & translateY
     const translateY = useRef(new Animated.Value(0)).current;
     // const opacity = useRef(new Animated.Value(1)).current;
   
     const handleSendOtp = () => {
+      setLoading(true)
       Animated.parallel([
         Animated.timing(translateY, {
-          toValue: 50, // Move button down
+          toValue: 30, // Move button down
           duration: 500,
           useNativeDriver: true,
         }),
-        // Animated.timing(opacity, {
-        //   toValue: 0.1, // Fade out
-        //   duration: 500,
-        //   useNativeDriver: true,
-        // }),
-      ]).start(() => {
-        navigation.navigate('OTP',{mobileNo:mobileNo,actualOtp:'1111'});
+       
+      ]).start(async () => {
+        let formData = new FormData();
+
+        formData.append('mobile_no', mobileNo);
+        try{
+            const response=await apiPost(API_ENDPOINTS.AUTH.OTP,formData) 
+            console.log(response)
+            if(response.success){
+             
+              navigation.navigate('OTP',{ mobileNo: mobileNo,
+                actualOtp: response.data.verify_otp.toString()})
+                console.log('nav',navigation)
+            }
+            else{
+              Toast.show({
+                type: 'error',
+                text1: 'Login Failed',
+                text2: response.message || 'Something went wrong!',
+              });
+            }
+        }
+        catch(error){
+          Toast.show({
+            type: 'error',
+            text1: 'Login Failed',
+            text2: error||'Something went wrong!',
+          });
+        }
+        finally{
+          setLoading(false)
+        }
+       
+       
         
       });
     };
@@ -149,8 +180,9 @@ const Login = ({navigation}) => {
               </View>
 
               {/* Send OTP Button */}
+              {loading && <ActivityIndicator color={COLORS.primary} size={'large'} style={{marginTop:verticalScale(12)}}/>}
               <Animated.View style={[loginStyles.buttonContainer, { transform: [{ translateY }] }]}>
-                <PrimaryButton title={'SEND OTP'} onPress={handleSendOtp} disabled={!isMobileValid && !isTandCChecked} style={undefined} />
+                <PrimaryButton title={'SEND OTP'} onPress={handleSendOtp} disabled={!(mobileNo.length === 12 && isTandCChecked)}  style={undefined} />
               </Animated.View>
             </View>
         </ImageBackground>
