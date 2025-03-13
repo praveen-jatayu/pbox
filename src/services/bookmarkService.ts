@@ -1,12 +1,13 @@
-import { API_ENDPOINTS } from "../../constants/apiEndPoinst";
-import { apiPost } from "./apiService";
+import { API_ENDPOINTS } from "../constants/apiEndPoinst"
+import { apiPost } from "./apiService/apiService"
+
 
 export  const updateBookmark=async(formData)=>{
     console.log('book',formData)
     try{
      
     const response=await apiPost(API_ENDPOINTS.BOOKMARK.UPDATE_BOOKMARK,formData)
-       
+       console.log('eeee',response)
            if (response.success) {
                return {success:true,message:response.message} // Return the vehicle data
            } else {

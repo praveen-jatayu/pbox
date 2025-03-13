@@ -86,7 +86,7 @@ const Bookmarks = () => {
           const response = await getBoxDetail(boxData!==null?formData:{});
           if (response) {
               
-            const bookmarketBoxes=response.filter(box=>box?.get_selected_user_book_mark?.length>0 && box.get_selected_user_book_mark[0]?.is_bookmark===1)
+            const bookmarketBoxes=response.filter(box=>box?.get_selected_user_book_mark?.length>0)
               setBookmarkedBoxData(bookmarketBoxes);
               setFilteredBookmarkedData(bookmarketBoxes)
           } else {

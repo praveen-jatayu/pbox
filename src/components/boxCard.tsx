@@ -14,9 +14,10 @@ import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import { icons } from '../constants/Icon';
 import boxCardStyles from '../assets/styles/boxCardStyles';
-import { updateBookmark } from '../services/apiService/bookmarkService';
+
 
 import Toast from 'react-native-toast-message';
+import { updateBookmark } from '../services/bookmarkService';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -26,10 +27,7 @@ const BoxCard = ({ boxData,onAction}) => {
   const carouselRef = useRef(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(
-    boxData?.get_selected_user_book_mark?.length > 0 && 
-    boxData?.get_selected_user_book_mark[0]?.is_bookmark === 1
-      ? 1 
-      : 0
+    boxData?.get_selected_user_book_mark?.length > 0 ? 1 : 0
   );
   const navigation = useNavigation();
 
@@ -76,16 +74,11 @@ const BoxCard = ({ boxData,onAction}) => {
   const handleBookmarkPress = async() => {
     let formData=new FormData()
     formData.append('box_id',boxData.id)
-    formData.append('is_bookmark', isBookmarked?0:1)
 
     try{
     const {success,message}=await updateBookmark(formData)
     if(success){
-     Toast.show({
-                     type: 'success',
-                     text1: 'Success!!!',
-                     text2: message || 'Something went wrong!',
-                   });
+    
                    setIsBookmarked(isBookmarked ? 0 : 1)
                  await  onAction && onAction()
     }
@@ -95,6 +88,7 @@ const BoxCard = ({ boxData,onAction}) => {
         text1: 'Failed!!!',
         text2: message || 'Something went wrong!',
       });
+     console.log(message)
     }
   }
   catch(error) {

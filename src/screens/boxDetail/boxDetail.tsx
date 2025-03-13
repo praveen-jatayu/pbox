@@ -194,7 +194,7 @@ const renderAmenitiesList = (item) => (
       <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity}]}>
         <Carousel
           ref={carouselRef}
-          data={boxDetail.get_selected_box_images}
+          data={boxDetail?.get_selected_box_images}
           renderItem={renderItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}

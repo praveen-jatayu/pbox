@@ -37,8 +37,8 @@ const DateSlider = ({ onDateSelected }) => {
   // Generate weekly dates based on the selected date
   const generateWeeklyDates = (startDate) => {
     let tempDates = [];
-    let currentDate = moment(startDate).startOf('week'); // Start from the week's first day
-
+    let currentDate = moment(startDate); // Start from today's date
+  
     for (let i = 0; i < 7; i++) {
       tempDates.push({
         formattedDate: currentDate.format('YYYY-MM-DD'),
@@ -48,7 +48,7 @@ const DateSlider = ({ onDateSelected }) => {
       });
       currentDate = currentDate.add(1, 'day');
     }
-
+  
     setDates(tempDates);
   };
 

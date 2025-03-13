@@ -22,7 +22,7 @@ export const getSlotDetailByDate = async (data) => {
   try {
     const response = await apiPost(API_ENDPOINTS.BOOKING.GET_BOX_COURT_DATE_BY_SLOT, data);
 
-
+console.log('eeeee',response)
     if (response?.success) {
       return response.data; // Return data if successful
     } else {
