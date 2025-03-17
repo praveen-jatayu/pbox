@@ -31,6 +31,10 @@ import PrimaryButton from '../../components/primaryButton';
 import BottomModal from '../../components/bottomModal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { AuthContext } from '../../context/authContext';
+import { updateProfile } from '../../services/apiService/profileService';
+import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 // Define types for navigation
@@ -62,12 +66,15 @@ const schema = Yup.object().shape({
 });
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
-  const {userInfo}=useContext(AuthContext)
+  const {userInfo,setUserInfo}=useContext(AuthContext)
   console.log('user',userInfo)
   const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dobDisplay, setDobDisplay] = useState('');
   const [dobServer, setDobServer] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+  const [serverProfileImage, setServerProfileImage] = useState('');
+  const [displayProfileImage, setDisplayProfileImage] = useState('');
  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const {
     control,
@@ -85,10 +92,50 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   });
 
   // Handler for form submission
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async(data: FormValues) => {     
     console.log('Form Data:', data);
-    // Make your API call here, e.g., apiPost('/profile/update', data)
+   const formData=new FormData();
+   formData.append('name',data.name)      
+   formData.append('email',data.email)
+   formData.append('dob',data.dob)
+   formData.append('mobile_no',data.mobileNo)
+   if (profileImage !== '') {
+   let document_file = {
+      uri: profileImage,
+      type: 'image/jpeg',
+      name: 'document.jpg',
+    };
+    formData.append('profile_pic', document_file);
+  }
+try{
+   const {success,message,updatedData}=await updateProfile(formData)
+   if(success){
+    await AsyncStorage.setItem('userInfo', JSON.stringify(updatedData));
+    setUserInfo(updatedData)
+     Toast.show({
+            type: 'success',
+            text1: 'Success!!!',
+            text2: message || 'Profile Updated!',
+          });
+   }
+   else{
+    Toast.show({
+      type: 'error',
+      text1: 'Failed!!!',
+      text2: message || 'Failed to update Profile!',
+    });
+   }
+  }
+  catch(error){
+    Toast.show({
+      type: 'error',
+      text1: 'Failed!!!',
+      text2: error.message || 'Something went wrong!!',
+    });
+  }
+
   };
+  
 
   const toggleImagePickerModalVisible=()=>{
     setIsImagePickerModalVisible(!isImagePickerModalVisible)
@@ -280,7 +327,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           disabled={false}
           style={styles.saveButton}
         />
-         <BottomModal isModalVisible={isImagePickerModalVisible} toggleModal={toggleImagePickerModalVisible} type={'imageUpload'} />
+        {/* image picker modal  */}
+         <BottomModal isModalVisible={isImagePickerModalVisible} toggleModal={toggleImagePickerModalVisible} type={'imageUpload'} 
+          profileImage={profileImage}
+          setProfileImage={setProfileImage}
+          serverProfileImage={serverProfileImage}
+          setDisplayProfileImage={setDisplayProfileImage}/>
     </KeyboardAvoidingView>
   );
 };

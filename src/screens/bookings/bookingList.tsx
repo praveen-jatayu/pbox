@@ -15,6 +15,7 @@ import NoDataContainer from '../../components/noDataContainer';
 import bookingListStyles from '../../assets/styles/bookingListStyles';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import MainHeader from '../../components/mainHeader';
+import { getBookingList } from '../../services/bookingService';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
 
@@ -96,6 +97,7 @@ const HEADER_HEIGHT = verticalScale(80); // height of the header
 const SCROLL_THRESHOLD = verticalScale(60);
 
 const BookingCard = ({ item }) => {
+  
   return (
     <View
       style={[
@@ -107,7 +109,7 @@ const BookingCard = ({ item }) => {
         mainStyles.flexContainer,
       ]}
     >
-      <Image source={item.courtImage} style={bookingListStyles.courtImage} />
+      <Image source={item?.get_selected_box_images?.image} style={bookingListStyles.courtImage} />
       <View style={bookingListStyles.bookingCardContent}>
         {/* Booking card category header */}
         <View
@@ -143,7 +145,7 @@ const BookingCard = ({ item }) => {
               ]}
               numberOfLines={1}
             >
-              {item.title}
+              {item?.get_selected_box?.title}
             </Text>
             <View
               style={[
@@ -160,7 +162,7 @@ const BookingCard = ({ item }) => {
                 ]}
                 numberOfLines={2}
               >
-                {item.address}
+                {item?.get_selected_box?.address}
               </Text>
               <View
                 style={[
@@ -210,7 +212,9 @@ const Bookings = () => {
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
-
+  const[bookingData,setBookingData]=useState([])
+  const [isLoading,setIsLoading]=useState(true)
+  const [refreshing,setRefreshing]=useState(true)
   // Filter bookings based on selected category
   const filteredBookings = dummyBookings.filter(
     (booking) => booking.category === selectedCategory
@@ -256,6 +260,32 @@ const Bookings = () => {
   }, [scrollY, showScrollToTop]);
 
   const renderBoxCard = ({ item }) => <BookingCard item={item} />;
+
+  const fetchBookingList = async () => {
+     
+     
+      try {
+          const response = await getBookingList();
+          if (response) {
+              console.log('booking',response)
+            
+              setBookingData(response);
+              // setFilteredBookmarkedData(bookmarketBoxes)
+          } else {
+              console.error('Error occurred:', response.error);
+          }
+      } catch (error) {
+          console.error('Failed to fetch box data:', error);
+      } finally {
+          setRefreshing(false);
+          setIsLoading(false)
+      }
+  };
+
+  useEffect(()=>{
+    fetchBookingList()
+  },[])
+  
 
   return (
     <View style={mainStyles.container}>
@@ -316,7 +346,7 @@ const Bookings = () => {
         </Animated.View>
         <Animated.FlatList
           ref={flatListRef}
-          data={filteredBookings}
+          data={dummyBookings}
           keyExtractor={(item) => item.id}
           renderItem={renderBoxCard}
           contentContainerStyle={{paddingTop:verticalScale(50),paddingHorizontal:verticalScale(5),paddingBottom:verticalScale(100)}}

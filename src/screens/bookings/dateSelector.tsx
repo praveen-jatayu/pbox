@@ -1,12 +1,26 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, AppState } from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  AppState,
+} from 'react-native';
 import moment from 'moment';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import {
+  moderateScale,
+  moderateVerticalScale,
+  scale,
+  verticalScale,
+} from 'react-native-size-matters';
 import mainStyles from '../../assets/styles/mainStyles';
 
-const DateSlider = ({ onDateSelected }) => {
+const DateSlider = ({onDateSelected,countLabel}) => {
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
+  const [selectedDate, setSelectedDate] = useState(
+    moment().format('YYYY-MM-DD'),
+  );
   const listRef = useRef(null);
 
   useEffect(() => {
@@ -15,7 +29,7 @@ const DateSlider = ({ onDateSelected }) => {
   }, []);
 
   useEffect(() => {
-    const handleAppStateChange = (nextAppState) => {
+    const handleAppStateChange = nextAppState => {
       if (nextAppState === 'active') {
         const currentDate = moment().format('YYYY-MM-DD');
 
@@ -27,7 +41,10 @@ const DateSlider = ({ onDateSelected }) => {
       }
     };
 
-    const appStateListener = AppState.addEventListener('change', handleAppStateChange);
+    const appStateListener = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
 
     return () => {
       appStateListener.remove();
@@ -35,10 +52,10 @@ const DateSlider = ({ onDateSelected }) => {
   }, [selectedDate]);
 
   // Generate weekly dates based on the selected date
-  const generateWeeklyDates = (startDate) => {
+  const generateWeeklyDates = startDate => {
     let tempDates = [];
     let currentDate = moment(startDate); // Start from today's date
-  
+
     for (let i = 0; i < 7; i++) {
       tempDates.push({
         formattedDate: currentDate.format('YYYY-MM-DD'),
@@ -48,17 +65,17 @@ const DateSlider = ({ onDateSelected }) => {
       });
       currentDate = currentDate.add(1, 'day');
     }
-  
+
     setDates(tempDates);
   };
 
   // Handle date selection
-  const handleDateSelection = (date) => {
+  const handleDateSelection = date => {
     setSelectedDate(date);
     onDateSelected(date);
 
     // Check if selected date is outside the current range
-    const isOutsideCurrentWeek = !dates.some((d) => d.formattedDate === date);
+    const isOutsideCurrentWeek = !dates.some(d => d.formattedDate === date);
     if (isOutsideCurrentWeek) {
       generateWeeklyDates(date);
     }
@@ -69,33 +86,61 @@ const DateSlider = ({ onDateSelected }) => {
       ref={listRef}
       data={dates}
       horizontal
-      keyExtractor={(item) => item.formattedDate}
+      keyExtractor={item => item.formattedDate}
       showsHorizontalScrollIndicator={false}
-      initialScrollIndex={dates.findIndex((d) => d.formattedDate === selectedDate)}
+      initialScrollIndex={dates.findIndex(
+        d => d.formattedDate === selectedDate,
+      )}
       getItemLayout={(data, index) => ({
         length: scale(70),
         offset: scale(70) * index,
         index,
       })}
-      renderItem={({ item }) => (
+      renderItem={({item}) => (
         <TouchableOpacity
           style={[
             styles.dateCard,
-            selectedDate === item.formattedDate && mainStyles.primaryBackgroundColor,
+            selectedDate === item.formattedDate &&
+              mainStyles.primaryBackgroundColor,
             mainStyles.borderWidth1,
             mainStyles.secondaryBorderColor,
           ]}
           onPress={() => handleDateSelection(item.formattedDate)}
-          activeOpacity={0.8}
-        >
+          activeOpacity={0.8}>
+            {/* count label */}
+            {countLabel[item.formattedDate] > 0 && (
+            <View
+              style={{
+                width: moderateVerticalScale(17),
+                height: moderateVerticalScale(17),
+                position: 'absolute',
+                borderRadius: moderateScale(10),
+                backgroundColor: 'red',
+                alignItems: 'center',
+                justifyContent: 'center',
+                top: verticalScale(-8),
+                right: moderateScale(-2),
+              }}
+            >
+              <Text
+                style={[
+                  mainStyles.secondaryTextColor,
+                  mainStyles.fontSize12,
+                  mainStyles.fontInriaSansRegular,
+                ]}
+              >
+                {countLabel[item.formattedDate]}
+              </Text>
+            </View>
+          )}
           <Text
             style={[
               mainStyles.primaryTextColor,
               mainStyles.fontNunitoMedium,
               mainStyles.fontSize14,
-              selectedDate === item.formattedDate && mainStyles.secondaryTextColor,
-            ]}
-          >
+              selectedDate === item.formattedDate &&
+                mainStyles.secondaryTextColor,
+            ]}>
             {item.displayDay}
           </Text>
           <Text
@@ -103,9 +148,9 @@ const DateSlider = ({ onDateSelected }) => {
               mainStyles.darkTextColor,
               mainStyles.fontNunitoBold,
               mainStyles.fontSize14,
-              selectedDate === item.formattedDate && mainStyles.secondaryTextColor,
-            ]}
-          >
+              selectedDate === item.formattedDate &&
+                mainStyles.secondaryTextColor,
+            ]}>
             {item.displayDate}
           </Text>
           <Text
@@ -113,9 +158,9 @@ const DateSlider = ({ onDateSelected }) => {
               mainStyles.darkTextColor,
               mainStyles.fontNunitoMedium,
               mainStyles.fontSize14,
-              selectedDate === item.formattedDate && mainStyles.secondaryTextColor,
-            ]}
-          >
+              selectedDate === item.formattedDate &&
+                mainStyles.secondaryTextColor,
+            ]}>
             {item.displayMonth}
           </Text>
         </TouchableOpacity>

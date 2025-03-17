@@ -25,8 +25,7 @@ export const AuthProvider = ({children}) => {
 
       if (response.success) {
         const userInfo = response.data;
-        console.log('sser444',userInfo)
-       
+        await AsyncStorage.setItem('profileImage', userInfo.profile_pic);
 
         if (userInfo.user === 'New') {
         

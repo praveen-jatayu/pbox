@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: moderateVerticalScale(60,0.6),
     gap: moderateScale(100),
-    paddingHorizontal: scale(13),
+    paddingHorizontal: scale(7),
     paddingTop: verticalScale(12),
 
    

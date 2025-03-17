@@ -20,7 +20,9 @@ export const API_ENDPOINTS = {
   },
   BOOKING:{
   GET_BOX_BY_COURT:'get-box-by-court',
-  GET_BOX_COURT_DATE_BY_SLOT:'get-box-court-date-by-slot'
+  GET_BOX_COURT_DATE_BY_SLOT:'get-box-court-date-by-slot',
+  ADD_BOOKING:'add-booking',
+  GET_BOOKING_LIST:'get-booking-list'
 
   },
   NOTIFICATION: {
