@@ -13,6 +13,7 @@ import BoxDetail from '../screens/boxDetail/boxDetail';
 import BookingConfirmation from '../screens/bookings/bookingConfirmation';
 import SlotBooking from '../screens/bookings/slotBooking';
 import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
+import BookingDetail from '../screens/bookings/bookingDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -77,6 +78,13 @@ const AppStack = () => {
         <Stack.Screen
           name="BoxDetail"
           component={BoxDetail}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="BookingDetail"
+          component={BookingDetail}
           options={{
             headerShown: false,
           }}

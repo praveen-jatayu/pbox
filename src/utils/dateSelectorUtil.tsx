@@ -14,7 +14,7 @@ import {
   scale,
   verticalScale,
 } from 'react-native-size-matters';
-import mainStyles from '../../assets/styles/mainStyles';
+import mainStyles from '../assets/styles/mainStyles';
 
 const DateSlider = ({onDateSelected,countLabel}) => {
   const [dates, setDates] = useState([]);

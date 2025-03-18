@@ -10,11 +10,11 @@ import { apiPost, saveAuthToken } from '../../services/apiService/apiService';
 import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 import { AuthContext } from '../../context/authContext';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const ProfileName = ({ navigation ,route}) => {
  const {userDetail}=route.params
- console.log(userDetail)
  const {setUserInfo,setUserToken}=useContext(AuthContext)
  
   const [firstName, setFirstName] = useState('');
@@ -46,6 +46,7 @@ const ProfileName = ({ navigation ,route}) => {
          if (response.success) {
          setUserInfo(response.data)
          setUserToken(response.data.api_token)
+         await AsyncStorage.setItem('userInfo', JSON.stringify(response.data));
          await saveAuthToken(response.data.api_token)
          
            

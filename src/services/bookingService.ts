@@ -50,9 +50,9 @@ export  const addBooking=async(formData)=>{
          throw error; // Optional: Propagate the error if needed
        }
 }
-export const getBookingList=async()=>{
+export const getBookingList=async(data)=>{
   try {
-    const response = await apiPost(API_ENDPOINTS.BOOKING.GET_BOOKING_LIST);
+    const response = await apiPost(API_ENDPOINTS.BOOKING.GET_BOOKING_LIST,data);
 
 
     if (response?.success) {

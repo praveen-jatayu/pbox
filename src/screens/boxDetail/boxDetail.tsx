@@ -8,7 +8,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Animated
+  Animated,
+  Linking,
+  Alert
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -23,6 +25,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes';
 import { RouteProp } from '@react-navigation/native';
+import { handleShowLocation } from '../../utils/showLocationUtil';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
@@ -79,14 +82,6 @@ const BoxDetail = ({navigation,route}:BoxDetailProps) => {
     extrapolate: 'clamp',
   });
 
-  // const sliderScale = scrollY.interpolate({
-  //   inputRange: [0, sliderHeight],
-  //   outputRange: [1, 0.5],
-  //   extrapolate: 'clamp',
-  // });
-
-  // Show header when slider disappears
- 
 
   const renderItem = ({item}) => {
     return (
@@ -177,6 +172,8 @@ const renderAmenitiesList = (item) => (
   };
 
 
+  
+
   return (
     <View style={mainStyles.container}>
       {/* Make StatusBar transparent */}
@@ -261,7 +258,8 @@ const renderAmenitiesList = (item) => (
           </Text>
         </View>
 
-        <TouchableOpacity style={[styles.locationButton,mainStyles.primaryBorderColor]}>
+        <TouchableOpacity style={[styles.locationButton,mainStyles.primaryBorderColor]} 
+        onPress={() => handleShowLocation(boxDetail?.get_selected_box?.latitude, boxDetail?.get_selected_box?.longitude)}>
           <Image
             source={images.googleMapsPin}
             style={{width: moderateScale(15,0.8), height: moderateVerticalScale(20)}}
@@ -536,26 +534,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  header: {
-    position: 'absolute',
-    top: 40,
-    left: 0,
-    right: 0,
-    height: 50,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 10,
-    elevation: 5,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 10,
-  },
+  
+ 
+  
 
 });

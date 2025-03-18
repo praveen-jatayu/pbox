@@ -13,7 +13,6 @@ import SubHeader from '../../components/subHeader';
 import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
 import CustomCheckBox from '../../components/checkbox';
 import PrimaryButton from '../../components/primaryButton';
-import DateSlider from './dateSelector';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigation/navigationTypes';
 import {RouteProp} from '@react-navigation/native';
@@ -24,10 +23,10 @@ import {
   getCourtByBoxId,
   getSlotDetailByDate,
 } from '../../services/bookingService';
-import {formatTimeTo12Hour} from '../../utils/timeCoverterUtils';
+import {formatTimeTo12Hour} from '../../utils/timeCoverterUtil';
 import NoDataContainer from '../../components/noDataContainer';
 import SlotContainerSkeleton from './slotContainerSkeleton';
-import { removeLeadingZeros } from '../../utils/formatDigit';
+import DateSlider from '../../utils/dateSelectorUtil';
 type SlotBookingNavigationProp = StackNavigationProp<
   RootStackParamList,
   'SlotBooking'
@@ -191,20 +190,7 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
     return slotCountMap;
   }, [selectedSlot]);
 
-  // const handleContinue=async()=>{
-  //   const requestData={
-  //     box_id:boxInfo.id,
-  //     selectedSlots:selectedSlot
-  //   }
-  //   const {success,message}=await addBooking(requestData)
-  //   if(success){
-  //     console.log('booking added successfully')
-
-  //   }
-  //   else{
-  //     console.log(message)
-  //   }
-  // }
+  
 
   return (
     <View style={[mainStyles.container]}>
@@ -513,21 +499,13 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
               TOTAL : ₹ {totalBookingAmount}
             </Text>
             )}
-            {/* <Text
-              style={[
-                mainStyles.fontNunitoMedium,
-                mainStyles.primaryTextColor,
-                mainStyles.fontSize14,
-              ]}>
-              6:00 PM to 7:30 PM +
-            </Text> */}
           
           <PrimaryButton
             title={'CONTINUE'}
             style={{width: '50%'}}
-            disabled={undefined}
-            onPress={() => navigation.navigate('BookingConfirmation')}
-            // onPress={handleContinue}
+            disabled={Object.keys(selectedSlot).length === 0 }
+            onPress={() => navigation.navigate('BookingConfirmation',{slotBookingData:selectedSlot,boxData:boxInfo,totalAmountToBePaid:totalBookingAmount})}
+            
           />
         </View>
       </View>

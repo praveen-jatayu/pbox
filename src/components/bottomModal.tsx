@@ -8,7 +8,7 @@ import {images} from '../constants/image';
 import {COLORS} from '../constants/color';
 import {FONTS} from '../constants/font';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { requestCameraPermission } from '../utils/permissionUtils';
+import { requestCameraPermission } from '../utils/permissionUtil';
 
 
 

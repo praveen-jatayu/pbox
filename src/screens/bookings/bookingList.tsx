@@ -6,100 +6,33 @@ import {
   StyleSheet,
   FlatList,
   Animated,
+  RefreshControl,
 } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
 import SearchInput from '../../components/searchInput';
-import { images } from '../../constants/image';
 import NoDataContainer from '../../components/noDataContainer';
 import bookingListStyles from '../../assets/styles/bookingListStyles';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import MainHeader from '../../components/mainHeader';
 import { getBookingList } from '../../services/bookingService';
+import BookingCardSkeleton from './bookingCardSkeleton';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
 
-const dummyBookings = [
-  {
-    id: '1',
-    courtImage: images.scenic,
-    availableSports: ['Football', 'Basketball'],
-    date: '14/jan/2025',
-    title: 'Sports Hub',
-    address: '456 Sporty Ave, Game City',
-    category: 'Upcoming',
-    slotTiming: '10:00 AM - 11:30 AM',
-  },
-  {
-    id: '2',
-    courtImage: images.scenic,
-    availableSports: ['Cricket'],
-    date: '14/jan/2025',
-    title: 'Cricket Arena',
-    address: '123 Cricket Lane, Sportstown',
-    category: 'Completed',
-    slotTiming: '2:00 PM - 3:00 PM',
-  },
-  {
-    id: '3',
-    courtImage: images.scenic,
-    availableSports: ['Baseball'],
-    date: '14/jan/2025',
-    title: 'Cricket Arena',
-    address: '123 Cricket Lane, Sportstown',
-    category: 'Upcoming',
-    slotTiming: '4:00 PM - 5:00 PM',
-  },
-  {
-    id: '4',
-    courtImage: images.scenic,
-    availableSports: ['Baseball'],
-    date: '14/jan/2025',
-    title: 'Cricket Arena',
-    address: '123 Cricket Lane, Sportstown',
-    category: 'Upcoming',
-    slotTiming: '4:00 PM - 5:00 PM',
-  },
-  {
-    id: '5',
-    courtImage: images.scenic,
-    availableSports: ['Baseball'],
-    date: '14/jan/2025',
-    title: 'Cricket Arena',
-    address: '123 Cricket Lane, Sportstown',
-    category: 'Upcoming',
-    slotTiming: '4:00 PM - 5:00 PM',
-  },
-  {
-    id: '6',
-    courtImage: images.scenic,
-    availableSports: ['Baseball'],
-    date: '14/jan/2025',
-    title: 'Cricket Arena',
-    address: '123 Cricket Lane, Sportstown',
-    category: 'Upcoming',
-    slotTiming: '4:00 PM - 5:00 PM',
-  },
-  {
-    id: '7',
-    courtImage: images.scenic,
-    availableSports: ['Baseball'],
-    date: '14/jan/2025',
-    title: 'Cricket Arena',
-    address: '123 Cricket Lane, Sportstown',
-    category: 'Upcoming',
-    slotTiming: '4:00 PM - 5:00 PM',
-  },
-  // Add more dummy bookings if needed
-];
+
 
 const HEADER_HEIGHT = verticalScale(80); // height of the header   
 const SCROLL_THRESHOLD = verticalScale(60);
 
-const BookingCard = ({ item }) => {
+const BookingCard = ({ item ,navigation}) => {
   
+  console.log(
+    'boxddddddata',item.get_selected_box.get_selected_available_sport.get_single_sports
+  )
   return (
-    <View
+    <TouchableOpacity
       style={[
         bookingListStyles.bookingCardContainer,
         mainStyles.secondaryBackgroundColor,
@@ -108,21 +41,34 @@ const BookingCard = ({ item }) => {
         mainStyles.widthFull,
         mainStyles.flexContainer,
       ]}
-    >
-      <Image source={item?.get_selected_box_images?.image} style={bookingListStyles.courtImage} />
+  onPress={()=>navigation.navigate('BookingDetail',{bookingDetail:item})} activeOpacity={0.8} >
+     {item?.get_selected_box?.get_selected_box_images?.length > 0 && (
+  <Image 
+    source={{ uri: item.get_selected_box.get_selected_box_images[0].image }} 
+    style={bookingListStyles.courtImage} 
+  />
+)}
       <View style={bookingListStyles.bookingCardContent}>
         {/* Booking card category header */}
         <View
           style={[
             mainStyles.flexContainer,
+          {justifyContent:'flex-start',gap:scale(10)},
             bookingListStyles.categoryHeaderContainer,
           ]}
         >
-          <Image
-            source={images.badminton}
-            style={bookingListStyles.sportsCategoryImage}
-          />
-          <Text
+{/* available sports */}
+         
+            {item?.get_selected_box?.get_selected_available_sport?.map((sport,index)=>(
+              
+              <Image
+              key={sport?.id}
+              source={{ uri: sport?.get_single_sports?.image }}
+              style={bookingListStyles.sportsCategoryImage}
+            />
+            ))}
+  
+          {/* <Text
             style={[
               mainStyles.successTextColor,
               mainStyles.fontNunitoSemibold,
@@ -131,8 +77,8 @@ const BookingCard = ({ item }) => {
               item.category === 'Cancelled' && mainStyles.errotTextColor,
             ]}
           >
-            {item.category === 'Upcoming' ? 'Confirmed' : item.category}
-          </Text>
+            {item.category === 'Upcoming' ? 'Confirmed' : item.category || 'N/A'}
+          </Text> */}
         </View>
         {/* Box title, address and slot count */}
         <View style={bookingListStyles.titleAddressContainer}>
@@ -170,55 +116,29 @@ const BookingCard = ({ item }) => {
                   mainStyles.successBackgroudColor,
                 ]}
               >
-                <Text style={bookingListStyles.slotCountText}>+2</Text>
+                <Text style={bookingListStyles.slotCountText}>+{item?.slot_count||'N/A'}</Text>
               </View>
             </View>
           </View>
         </View>
-        {/* Date and slot time container */}
-        <View
-          style={[
-            mainStyles.flexContainer,
-            bookingListStyles.dateSlotContainer,
-          ]}
-        >
-          <Text
-            style={[
-              mainStyles.lightTextColor,
-              mainStyles.fontSize11,
-              mainStyles.fontNunitoSemibold,
-            ]}
-          >
-            {item.date}
-          </Text>
-          <Text
-            style={[
-              mainStyles.lightTextColor,
-              mainStyles.fontSize11,
-              mainStyles.fontNunitoSemibold,
-            ]}
-          >
-            {item.slotTiming}
-          </Text>
-        </View>
+       
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
-const Bookings = () => {
+const Bookings = ({navigation}) => {
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Upcoming');
+  const isFocused=useIsFocused()
+  const [selecedBookingCategory, setSelectedBookingCategory] = useState('Upcoming');
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const[bookingData,setBookingData]=useState([])
+  const[filteredBookingData,setFilteredBookingData]=useState([])
   const [isLoading,setIsLoading]=useState(true)
   const [refreshing,setRefreshing]=useState(true)
-  // Filter bookings based on selected category
-  const filteredBookings = dummyBookings.filter(
-    (booking) => booking.category === selectedCategory
-  );
+  
 
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
@@ -259,23 +179,24 @@ const Bookings = () => {
     };
   }, [scrollY, showScrollToTop]);
 
-  const renderBoxCard = ({ item }) => <BookingCard item={item} />;
+  const renderBookingCard = ({ item }) => <BookingCard item={item} navigation={navigation}/>;
 
   const fetchBookingList = async () => {
-     
-     
+
+    let formData=new FormData()
+    formData.append('booking_status',selecedBookingCategory)
       try {
-          const response = await getBookingList();
+          const response = await getBookingList(formData);
           if (response) {
-              console.log('booking',response)
+              console.log('booking4444',response)
             
               setBookingData(response);
-              // setFilteredBookmarkedData(bookmarketBoxes)
+             setFilteredBookingData(response)
           } else {
               console.error('Error occurred:', response.error);
           }
       } catch (error) {
-          console.error('Failed to fetch box data:', error);
+          console.error('Failed to fetch booking list :', error);
       } finally {
           setRefreshing(false);
           setIsLoading(false)
@@ -284,8 +205,23 @@ const Bookings = () => {
 
   useEffect(()=>{
     fetchBookingList()
-  },[])
+    setSearch('')
+  },[isFocused,selecedBookingCategory])
   
+
+
+  const handleSearchChange = text => {
+    setSearch(text);
+    if (text.trim() === '') {
+      setFilteredBookingData(bookingData); // Show all data if search input is empty
+    } else {
+      const filteredData = bookingData?.filter(box =>
+        box?.get_selected_box?.title.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredBookingData(filteredData);
+    }
+  
+  };
 
   return (
     <View style={mainStyles.container}>
@@ -306,9 +242,7 @@ const Bookings = () => {
         >
           <SearchInput
             value={search}
-            onChangeText={setSearch}
-            onSearchPress={undefined}
-          />
+            onChangeText={handleSearchChange} onFocus={undefined} onBlur={undefined}          />
         </Animated.View>
         <Animated.View
           style={[
@@ -323,18 +257,17 @@ const Bookings = () => {
                 style={[
                   bookingListStyles.filterButton,
                   mainStyles.disabledBackgroundColor,
-                  selectedCategory === cat &&
+                  selecedBookingCategory === cat &&
                     mainStyles.primaryBackgroundColor,
                 ]}
-                onPress={() => setSelectedCategory(cat)}
-                activeOpacity={0.8}
-              >
+                onPress={() => setSelectedBookingCategory(cat)}
+                activeOpacity={0.8}>
                 <Text
                   style={[
                     mainStyles.lightTextColor,
                     mainStyles.fontInriaSansRegular,
                     mainStyles.fontSize14,
-                    selectedCategory === cat &&
+                    selecedBookingCategory === cat &&
                       bookingListStyles.filterTextActive,
                   ]}
                 >
@@ -344,22 +277,45 @@ const Bookings = () => {
             ))}
           </View>
         </Animated.View>
+           {isLoading ? (
+                <Animated.FlatList
+                  data={[1, 1,1,1,1]}
+                  ref={flatListRef}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{paddingTop:verticalScale(50),paddingBottom:verticalScale(100)}}
+                  renderItem={() => <BookingCardSkeleton />}
+                  onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+                    useNativeDriver: true,
+                  })}
+                  scrollEventThrottle={16}
+                
+                />
+              ):(
         <Animated.FlatList
           ref={flatListRef}
-          data={dummyBookings}
+          data={filteredBookingData}
           keyExtractor={(item) => item.id}
-          renderItem={renderBoxCard}
-          contentContainerStyle={{paddingTop:verticalScale(50),paddingHorizontal:verticalScale(5),paddingBottom:verticalScale(100)}}
+          renderItem={renderBookingCard}
+          contentContainerStyle={{paddingTop:verticalScale(50),paddingHorizontal:verticalScale(5),paddingBottom:verticalScale(100),flexGrow:1}}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <NoDataContainer style={bookingListStyles.noDataContainer} />
+            <NoDataContainer style={bookingListStyles.noDataContainer} noDataText={'No bookings yet!!'} />
           }
+
+           refreshControl={
+                     <RefreshControl
+                       refreshing={refreshing}
+                       onRefresh={fetchBookingList}
+                     />
+                   }
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: true }
           )}
           scrollEventThrottle={16}
+          
         />
+              )}
       </View>
       {showScrollToTop && (
         <TouchableOpacity

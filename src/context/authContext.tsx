@@ -28,18 +28,18 @@ export const AuthProvider = ({children}) => {
         await AsyncStorage.setItem('profileImage', userInfo.profile_pic);
 
         if (userInfo.user === 'New') {
-        
           await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
           registerNewUser(userInfo);
          
         }
         else{
-       
-        setUserInfo(userInfo); // Assuming `setUserInfo` is in scope
-        setUserToken(userInfo.api_token); // Assuming `setUserToken` is in scope
-        
+     
+        // Assuming `setUserToken` is in scope
         await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
         await saveAuthToken(userInfo.api_token);
+        setUserInfo(userInfo); // Assuming `setUserInfo` is in scope
+        setUserToken(userInfo.api_token);
+      
         }   
       } else {
         setLoginError(response.message); // Assuming `setLoginError` is in scope
