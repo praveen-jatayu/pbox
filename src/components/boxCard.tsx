@@ -18,6 +18,7 @@ import boxCardStyles from '../assets/styles/boxCardStyles';
 
 import Toast from 'react-native-toast-message';
 import { updateBookmark } from '../services/bookmarkService';
+import { images } from '../constants/image';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -65,10 +66,20 @@ const BoxCard = ({ boxData,onAction}) => {
     ).start();
   }, [pulseAnim]);
 
-  const renderImageItem = ({ item }) => (
-    <Image source={{uri:item?.image}} style={boxCardStyles.sliderImage} />
-  );
-// handle bookmark press
+  const renderImageItem = ({ item }) => {
+    return item?.image ? (
+      <Image
+        source={{ uri: item.image }}
+        style={boxCardStyles.sliderImage}
+      />
+    ) : (
+      <Image
+        source={images.scenic}
+        style={boxCardStyles.sliderImage}
+        blurRadius={10} // Ensures the fallback image has a blurred effect
+      />
+    );
+  };
 
 
   const handleBookmarkPress = async() => {

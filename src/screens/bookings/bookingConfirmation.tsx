@@ -8,7 +8,6 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../../constants/color';
 import CustomCheckBox from '../../components/checkbox';
 import bookingListStyles from '../../assets/styles/bookingListStyles';
-import { images } from '../../constants/image';
 import { icons } from '../../constants/Icon';
 import bookingConfirmationStyles from '../../assets/styles/bookingConfirmationStyles';
 import { addBooking } from '../../services/bookingService';
@@ -35,6 +34,7 @@ const BookingConfirmation = ({navigation,route}) => {
               text1: 'Success!!!',
               text2: message || 'Something went wrong!',
             });
+            navigation.replace('BottomNav', {screen: 'Booking'});
     }
     else{
       console.log(message)
@@ -66,7 +66,7 @@ const BookingConfirmation = ({navigation,route}) => {
         bookingConfirmationStyles.bookingCardContainer
       ]}
     >
-      <Image source={images.scenic} style={bookingConfirmationStyles.bookingImage} />
+      <Image source={{uri:boxData?.get_selected_box_images[0]?.image}} style={bookingConfirmationStyles.bookingImage} />
       <View style={bookingConfirmationStyles.bookingDetailsContainer}>
        
         {/* Box title, address */}
@@ -93,7 +93,7 @@ const BookingConfirmation = ({navigation,route}) => {
                   mainStyles.fontSize14,
                   bookingListStyles.addressText,
                 ]}
-                numberOfLines={2}
+                numberOfLines={3}
               >
                 {/* {item.address} */}
                {boxData.address}
@@ -103,7 +103,7 @@ const BookingConfirmation = ({navigation,route}) => {
           </View>
       
         {/* Date and slot time container */}
-        <View
+        {/* <View
           style={bookingConfirmationStyles.dateSlotContainer}
         >
           <Text
@@ -113,7 +113,7 @@ const BookingConfirmation = ({navigation,route}) => {
               mainStyles.fontNunitoMedium,
             ]}
           >
-            {/* {item.date} */}
+            
             Date:- 8 Oct 2020
           </Text>
           <Text
@@ -123,10 +123,9 @@ const BookingConfirmation = ({navigation,route}) => {
               mainStyles.fontNunitoMedium,
             ]}
           >
-            {/* {item.slotTiming} */}
             Time:- 4:00 PM to 6:00 PM
           </Text>
-        </View>
+        </View> */}
       </View>
     </View>     
         {/* apply for offers container */}
@@ -293,45 +292,27 @@ const BookingConfirmation = ({navigation,route}) => {
             Cancellation Policy
           </Text>
           <View style={[mainStyles.marginTop10, bookingConfirmationStyles.cancellationItem]}>
+          
+              {(boxData?.get_box_cancellation_policy || []).map(item => (
             <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
+                key={item.id}
+                style={[
+                    mainStyles.lightTextColor,
+                    mainStyles.fontNunitoSemibold,
+                    mainStyles.fontSize14
+                ]}
+            >
+                <Text style={{ fontSize: scale(9) }}>{'\u2B24'}</Text>{' '}
+                {item.text}
             </Text>
-            <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
-            </Text>
-            <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
-            </Text>
-            <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
-            </Text>
+        ))}
+           
+           
+          
           </View>
         </View>
 
+     
 
       </ScrollView>
       {/* Button to open payment gateway */}

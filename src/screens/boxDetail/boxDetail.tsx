@@ -83,11 +83,18 @@ const BoxDetail = ({navigation,route}:BoxDetailProps) => {
   });
 
 
-  const renderItem = ({item}) => {
-    return (
-      <View>
-        <Image source={{uri:item.image}} style={styles.image} />
-      </View>
+ const renderImageItem = ({ item }) => {
+    return item?.image ? (
+      <Image
+        source={{ uri: item.image }}
+        style={styles.image}
+      />
+    ) : (
+      <Image
+        source={images.scenic}
+        style={styles.image}
+        blurRadius={10} // Ensures the fallback image has a blurred effect
+      />
     );
   };
 
@@ -192,7 +199,7 @@ const renderAmenitiesList = (item) => (
         <Carousel
           ref={carouselRef}
           data={boxDetail?.get_selected_box_images}
-          renderItem={renderItem}
+          renderItem={renderImageItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}
           onSnapToItem={index => setActiveSlide(index)}

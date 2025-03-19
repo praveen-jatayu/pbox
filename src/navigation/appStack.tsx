@@ -14,6 +14,7 @@ import BookingConfirmation from '../screens/bookings/bookingConfirmation';
 import SlotBooking from '../screens/bookings/slotBooking';
 import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
 import BookingDetail from '../screens/bookings/bookingDetail';
+import Bookings from '../screens/bookings/bookingList';
 
 const Stack = createNativeStackNavigator();
 
@@ -117,6 +118,7 @@ const AppStack = () => {
             headerShown: false,
           }}
         />
+       
        
         
         </Stack.Navigator>
