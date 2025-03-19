@@ -46,7 +46,6 @@ const ProfileName = ({ navigation ,route}) => {
          if (response.success) {
          setUserInfo(response.data)
          setUserToken(response.data.api_token)
-         await AsyncStorage.setItem('userInfo', JSON.stringify(response.data));
          await saveAuthToken(response.data.api_token)
          
            
