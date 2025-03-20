@@ -16,3 +16,22 @@ export const requestCameraPermission = async () => {
   }
   return true; // iOS permissions are handled automatically
 };
+
+export const requestNotificationPermission = async () => {
+   if (Platform.OS === 'android') {
+    const result = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    );
+
+    if (result === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Notification permission granted!');
+      return true;  // Permission granted
+    } else {
+      console.warn('Notification permission denied on Android');
+      return false; // Permission denied
+    }
+  }
+
+
+  console.log('Notification permission granted!');
+};

@@ -1,4 +1,4 @@
-import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList } from 'react-native'
+import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList, BackHandler, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import mainStyles from '../../assets/styles/mainStyles'
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters'
@@ -12,12 +12,18 @@ import { getSportDetail } from '../../services/sportService'
 import homeStyles from '../../assets/styles/homeStyles'
 import BoxCardSkeleton from '../../components/boxCardSkeleton'
 import SportsCategorySkeleton from './sportsCategorySkeleton'
+import BottomModal from '../../components/bottomModal'
+import { requestNotificationPermission } from '../../utils/permissionUtil'
+import { useRoute } from '@react-navigation/native'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
 
 
-const Home = () => {
+const Home =  ({navigation}) => {
+  const route = useRoute();
+  const selectedCity = route.params?.selectedCity; 
+  console.log('sss',selectedCity)
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [search, setSearch] = useState('');
@@ -29,6 +35,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+   const [isNotificationPermissionModalVisible, setIsNotificationModalVisible] = useState(false);
   const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={fetchBoxList}/>;
 
   const headerTranslateY = isSearchFocused
@@ -53,30 +60,13 @@ const sliderOpacity = isSearchFocused ? 0 : scrollY.interpolate({
   extrapolate: 'clamp',
 });
 
-  // const filterTranslateY = scrollY.interpolate({
-  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
-  //   extrapolate: 'clamp',
-  // });
-
-  // const sliderTranslateY = scrollY.interpolate({
-  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
-  //   extrapolate: 'clamp',
-  // });
-
-  // Interpolating scrollY to control the slider's scale and opacity
   const sliderScale = scrollY.interpolate({
     inputRange: [0, MIN_HEADER_HEIGHT * 4],
     outputRange: [1, 0],
     extrapolate: 'clamp',
   });
 
-  // const sliderOpacity = scrollY.interpolate({
-  //   inputRange: [0, HEADER_HEIGHT * 2.2],
-  //   outputRange: [1, 0],
-  //   extrapolate: 'clamp',
-  // });
+ 
 
   const instantTranslateY =  isSearchFocused
   ? -MIN_HEADER_HEIGHT * 1.5
@@ -102,7 +92,7 @@ const searchTranslateY = isSearchFocused
       extrapolate: 'clamp',
     });
 
-  const sportsToShow = showAllSports ? sportData: sportData.slice(0,4);
+  const sportsToShow = showAllSports ? sportData: sportData.slice(0,3);
 
   const handleCategoryPress = item => {
     console.log('selected sport ',item)
@@ -209,7 +199,41 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     setSelectedCategory(null)
     fetchBoxList(null,selectedCategory)
     getSportList()
+    // hasNotificationPermission()
   },[])
+
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // Prevent default back action
+      e.preventDefault();
+
+      Alert.alert('Hold on!', 'Are you sure you want to exit?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => null,
+        },
+        {
+          text: 'YES',
+          onPress: () => BackHandler.exitApp(),
+        },
+      ]);
+    });
+
+    return unsubscribe; // Clean up the listener
+  }, [navigation]);
+
+  const toogleNotificationPermissionModal=()=>{
+    setIsNotificationModalVisible(!isNotificationPermissionModalVisible)
+  }
+  // const hasNotificationPermission = async () => {
+  //   const hasPermission = await requestNotificationPermission();
+  //   if (!hasPermission) {
+  //     setIsNotificationModalVisible(true); // Show modal only if permission is NOT granted
+  //   }
+  // }
+  
 
   return (
     <View style={mainStyles.container}>
@@ -219,7 +243,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
-        <MainHeader headerType="home" />
+        <MainHeader headerType="home" location={selectedCity} />
       </Animated.View>
 
       <Animated.View
@@ -245,7 +269,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
             </TouchableOpacity>
           </View>
           {isLoading ? (
-  <View style={{ flexDirection: 'row', width:'90%' }}> 
+      <View style={{ flexDirection: 'row', width:'90%' }}> 
     {[1, 2, 3, 4].map((_, index) => (
       <SportsCategorySkeleton key={index} />
     ))}
@@ -311,6 +335,14 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
         />
       )}
       </Animated.View>
+      {/* Notification  Permission Modal */}
+   
+      <BottomModal
+        isModalVisible={isNotificationPermissionModalVisible}
+        toggleModal={toogleNotificationPermissionModal}
+        type={'notification'}
+      />
+
     </View>
   )
 }

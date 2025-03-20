@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet } from "react-native";
 import { COLORS } from "../../constants/color";
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from "react-native-size-matters";
-import { FONTS } from "../../constants/font";
+
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); // height of the header
@@ -14,8 +14,7 @@ const homeStyles = StyleSheet.create({
       },
       sportItem: {
         alignItems: 'center',
-        marginRight: scale(17),
-        marginLeft: scale(10),
+       marginHorizontal:scale(17),
         marginBottom: verticalScale(10),
       },
       sportItemSelected: {

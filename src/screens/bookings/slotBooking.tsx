@@ -358,10 +358,10 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
                       {
                         alignItems: 'center',
                         justifyContent: 'center',
-                        paddingVertical: verticalScale(25),
-                        paddingHorizontal: scale(20),
+                        paddingVertical: verticalScale(15),
+                        paddingHorizontal: scale(6),
                         borderRadius: moderateScale(5),
-                        width: '53%',
+                        width: '50%',
                       },
                       !bookedSlots.includes(slot.id)
                       ? isSlotSelected(slot.id) 
@@ -391,8 +391,8 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
                         mainStyles.fontSize14,
                       ]}>
                       {!bookedSlots.includes(slot.id)
-                        ? `Available ₹ ${slot?.rate || '---'}`
-                        : 'Booked'}
+                        ? ` ₹ ${slot?.rate || '---'}`
+                        : ''}
                     </Text>
                   </TouchableOpacity>
                 </View>

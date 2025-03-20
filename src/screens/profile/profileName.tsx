@@ -11,6 +11,7 @@ import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 import { AuthContext } from '../../context/authContext';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showToast } from '../../components/toastMessage';
 
 
 const ProfileName = ({ navigation ,route}) => {
@@ -47,17 +48,14 @@ const ProfileName = ({ navigation ,route}) => {
          setUserInfo(response.data)
          setUserToken(response.data.api_token)
          await saveAuthToken(response.data.api_token)
-         
+         await AsyncStorage.setItem('userInfo',JSON.stringify(response.data))
            
          } else {
-          Toast.show({
-                          type: 'error',
-                          text1: 'Login Failed',
-                          text2: response.message || 'Something went wrong!',
-                        });
+       showToast('error', response.message||'Failed to update profile name!');
          }
        } catch (error) {
          console.error('Failed to Register user:', error);
+         showToast('error', error.message||'Failed to update profile name!');
        }
      };
   

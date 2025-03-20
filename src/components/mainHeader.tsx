@@ -7,7 +7,7 @@ import mainStyles from '../assets/styles/mainStyles';
 
 
 
-const MainHeader = ({headerType = 'home'}) => {
+const MainHeader = ({headerType = 'home',location}) => {
   const navigation = useNavigation();
 
   // Render header left component based on headerType prop
@@ -15,7 +15,7 @@ const MainHeader = ({headerType = 'home'}) => {
     if (headerType === 'home') {
       return (
         <TouchableOpacity 
-          onPress={() => navigation.navigate('SelectCity')}
+          onPress={() => navigation.navigate('SelectLocation')}
           style={styles.locationContainer}
           activeOpacity={0.8}>
           <Image

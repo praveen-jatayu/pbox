@@ -21,24 +21,25 @@ const BookingConfirmation = ({navigation,route}) => {
 
 
   const handlePay=async()=>{
-    const requestData={
-      box_id:boxData?.id,
-      total_amount:totalAmountToBePaid,
-      selectedSlots:slotBookingData
-    }
-    const {success,message}=await addBooking(requestData)
-    if(success){
-      console.log('booking added successfully')
-        Toast.show({
-              type: 'success',
-              text1: 'Success!!!',
-              text2: message || 'Something went wrong!',
-            });
-            navigation.replace('BottomNav', {screen: 'Booking'});
-    }
-    else{
-      console.log(message)
-    }
+    // const requestData={
+    //   box_id:boxData?.id,
+    //   total_amount:totalAmountToBePaid,
+    //   selectedSlots:slotBookingData
+    // }
+    // const {success,message}=await addBooking(requestData)
+    // if(success){
+    //   console.log('booking added successfully')
+    //     Toast.show({
+    //           type: 'success',
+    //           text1: 'Success!!!',
+    //           text2: message || 'Something went wrong!',
+    //         });
+            // navigation.replace('BottomNav', {screen: 'Booking'});
+            navigation.navigate('AddRatingAndReview',{boxData:boxData})
+    // }
+    // else{
+    //   console.log(message)
+    // }
   }
   return (
     <View style={mainStyles.container}>

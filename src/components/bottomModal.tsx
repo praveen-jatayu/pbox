@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity, Alert, Linking} from 'react-native';
 import React, {useState} from 'react';
 import Modal from 'react-native-modal';
 import PrimaryButton from './primaryButton';
@@ -8,7 +8,7 @@ import {images} from '../constants/image';
 import {COLORS} from '../constants/color';
 import {FONTS} from '../constants/font';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { requestCameraPermission } from '../utils/permissionUtil';
+import { requestCameraPermission, requestNotificationPermission } from '../utils/permissionUtil';
 
 
 
@@ -22,7 +22,9 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
       title: 'Can We Notify You?',
       subtitle: 'Please allow us to send you Notifications',
       primaryButtonTitle:"ALLOW",
-      secondaryButtonTitle:'NO,OTHER TIME'
+      secondaryButtonTitle:'NO,OTHER TIME',
+      onPrimaryButtonPress: requestNotificationPermission,
+      onSecondaryButtonPress:toggleModal
     },
     imageUpload: {
       image: images.uploadImage, // Replace with appropriate image
@@ -48,7 +50,6 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
   };
 
   const chooseImageFromGallery = () => {
-    console.log('clikee')
     const options = {
       mediaType: 'photo',
       quality: 1,
@@ -66,6 +67,7 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
       }
     });
   };
+
 
   const captureImageWithCamera = async() => {
 
@@ -93,6 +95,8 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
       }
     });
   };
+
+
   const content = modalContentMapping[type] || modalContentMapping.other;
 
   return (
@@ -100,6 +104,8 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
       isVisible={isModalVisible}
       onBackdropPress={toggleModal}
       backdropOpacity={0.4}
+      animationIn={'slideInUp'}
+      animationOut={'slideOutDown'}
       statusBarTranslucent={true}
       style={styles.modal}>
       <View style={styles.container}>
@@ -120,11 +126,7 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
 
         <PrimaryButton onPress={content.onPrimaryButtonPress} title={content.primaryButtonTitle} disabled={undefined} style={undefined} />
         <SecondaryButton onPress={content.onSecondaryButtonPress} title={content.secondaryButtonTitle} disabled={undefined} />
-     {serverProfileImage && (
-      <TouchableOpacity>
-        <Text>Remove Profile Picture</Text>
-      </TouchableOpacity>
-     )}
+     
       </View>
     </Modal>
   );

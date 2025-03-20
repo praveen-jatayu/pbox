@@ -21,7 +21,7 @@ type ProfileScreenProps = {
 const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
   
   const{logout,userInfo}=useContext(AuthContext)
-
+console.log('userrrrr',userInfo)
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -44,10 +44,15 @@ const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
         <View style={[profileStyles.profileInfoContainer]}>
           {/* Profile pic container */}
           <View style={[profileStyles.profilePicContainer, mainStyles.contentCenter,mainStyles.iconBackgroundColor]}>
+           {userInfo.profile_pic ?(
+           <Image  source={{uri:userInfo.profile_pic}}
+           style={[profileStyles.profilePicContainer]}/>
+           ):(
             <Image
               source={icons.userIcon}
               style={profileStyles.userIconStyle}
             />
+           )}
           </View>
           {/* Name & phone container */}
           <View>

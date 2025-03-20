@@ -19,6 +19,7 @@ import boxCardStyles from '../assets/styles/boxCardStyles';
 import Toast from 'react-native-toast-message';
 import { updateBookmark } from '../services/bookmarkService';
 import { images } from '../constants/image';
+import { showToast } from './toastMessage';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -94,21 +95,13 @@ const BoxCard = ({ boxData,onAction}) => {
                  await  onAction && onAction()
     }
     else{
-      Toast.show({
-        type: 'error',
-        text1: 'Failed!!!',
-        text2: message || 'Something went wrong!',
-      });
+      showToast('error', message||'Failed to update bookmark!');
      console.log(message)
     }
   }
   catch(error) {
     console.log(error.message);
-    Toast.show({
-      type: 'error',
-      text1: 'Failed!!!',
-      text2: error.message || 'Something went wrong!',
-    });
+    showToast('error', error.message||'Failed to update bookmark!');
   }
 }
 
@@ -203,7 +196,7 @@ const BoxCard = ({ boxData,onAction}) => {
               {boxData.address || '123 Cricket Lane, Sportstown'}
             </Text>
           </View>
-          <Text style={boxCardStyles.rating}>⭐ {boxData.rating || '4.5'}</Text>
+          <Text style={boxCardStyles.rating}>⭐ {boxData?.avg_rating || 'N/A'}</Text>
         </View>
         {/* Second Row: Starting Price and Offers */}
         <View style={boxCardStyles.secondRow}>

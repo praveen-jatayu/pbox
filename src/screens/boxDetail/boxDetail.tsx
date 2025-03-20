@@ -117,7 +117,7 @@ const BoxDetail = ({navigation,route}:BoxDetailProps) => {
 // Show limited amenities initially
 const amenitiesToShow = showAllAmenities 
     ? amenitiesData 
-    : amenitiesData.slice(0, 3); // Change 3 to however many you want to show initially
+    : amenitiesData.slice(0, 2); // Change 3 to however many you want to show initially
 
 const renderAmenitiesList = (item) => (
     <View key={item.id} style={[styles.amenityItem]}>
@@ -261,7 +261,7 @@ const renderAmenitiesList = (item) => (
             </Text>
           </View>
           <Text style={boxCardStyles.rating}>
-            ⭐ {boxDetail?.rating || '4.5'}
+            ⭐ {boxDetail?.avg_rating || 'N/A'}
           </Text>
         </View>
 

@@ -25,6 +25,9 @@ export const API_ENDPOINTS = {
   GET_BOOKING_LIST:'get-booking-list'
 
   },
+  REVIEW_AND_RATING:{
+   UPDATE_BOOKING_RATING_REVIEW: 'update-booking-rating-review'
+  },
   NOTIFICATION: {
     GET_NOTIFICATION_LIST: 'get-notification-list',
   },
