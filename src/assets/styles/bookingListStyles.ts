@@ -27,7 +27,8 @@ const bookingListStyles=StyleSheet.create({
         paddingBottom: verticalScale(20),
       },
       noDataContainer: {
-        marginTop: verticalScale(50),
+        marginTop: verticalScale(100),
+        alignSelf:'center'
       },
       bookingCardContainer: {
         borderRadius: moderateScale(7),
@@ -39,7 +40,7 @@ const bookingListStyles=StyleSheet.create({
       },
       courtImage: {
         width: scale(90),
-        height: verticalScale(114),
+        height: verticalScale(100),
         borderRadius: moderateScale(7),
         resizeMode: 'cover',
       },
@@ -48,7 +49,7 @@ const bookingListStyles=StyleSheet.create({
         paddingLeft: scale(10),
       },
       categoryHeaderContainer: {
-        paddingBottom: verticalScale(5),
+        paddingBottom: verticalScale(12),
       },
       sportsCategoryImage: {
         width: scale(16),

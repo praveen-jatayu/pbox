@@ -1,4 +1,4 @@
-import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList } from 'react-native'
+import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList, BackHandler, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import mainStyles from '../../assets/styles/mainStyles'
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters'
@@ -12,12 +12,21 @@ import { getSportDetail } from '../../services/sportService'
 import homeStyles from '../../assets/styles/homeStyles'
 import BoxCardSkeleton from '../../components/boxCardSkeleton'
 import SportsCategorySkeleton from './sportsCategorySkeleton'
+import BottomModal from '../../components/bottomModal'
+import Geolocation from '@react-native-community/geolocation';
+import GetLocation from 'react-native-get-location'
+import Geocoder from 'react-native-geocoding';
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { requestLocationPermission } from '../../utils/permissionUtil'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
 
 
-const Home = () => {
+const Home =  () => {
+  const route = useRoute();
+  const navigation=useNavigation()
+ console.log('route',route)
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [search, setSearch] = useState('');
@@ -29,6 +38,9 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [location, setLocation] = useState([]);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(true);
+   const [isNotificationPermissionModalVisible, setIsNotificationModalVisible] = useState(false);
   const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={fetchBoxList}/>;
 
   const headerTranslateY = isSearchFocused
@@ -53,30 +65,11 @@ const sliderOpacity = isSearchFocused ? 0 : scrollY.interpolate({
   extrapolate: 'clamp',
 });
 
-  // const filterTranslateY = scrollY.interpolate({
-  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
-  //   extrapolate: 'clamp',
-  // });
-
-  // const sliderTranslateY = scrollY.interpolate({
-  //   inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-  //   outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
-  //   extrapolate: 'clamp',
-  // });
-
-  // Interpolating scrollY to control the slider's scale and opacity
   const sliderScale = scrollY.interpolate({
     inputRange: [0, MIN_HEADER_HEIGHT * 4],
     outputRange: [1, 0],
     extrapolate: 'clamp',
   });
-
-  // const sliderOpacity = scrollY.interpolate({
-  //   inputRange: [0, HEADER_HEIGHT * 2.2],
-  //   outputRange: [1, 0],
-  //   extrapolate: 'clamp',
-  // });
 
   const instantTranslateY =  isSearchFocused
   ? -MIN_HEADER_HEIGHT * 1.5
@@ -105,7 +98,6 @@ const searchTranslateY = isSearchFocused
   const sportsToShow = showAllSports ? sportData: sportData.slice(0,4);
 
   const handleCategoryPress = item => {
-    console.log('selected sport ',item)
     setSelectedCategory(item.id===selectedCategory?null:item.id);
     fetchBoxList(null,item.id===selectedCategory?null:item.id)
   
@@ -144,7 +136,7 @@ const searchTranslateY = isSearchFocused
           mainStyles.fontSize14,
           { textAlign: 'center' }
         ]}
-      >
+     numberOfLines={2} >
         {item.name}
       </Text>
     </TouchableOpacity>
@@ -209,7 +201,86 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     setSelectedCategory(null)
     fetchBoxList(null,selectedCategory)
     getSportList()
+    // hasNotificationPermission()
   },[])
+
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // Prevent default back action
+      e.preventDefault();
+
+      Alert.alert('Hold on!', 'Are you sure you want to exit?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => null,
+        },
+        {
+          text: 'YES',
+          onPress: () => BackHandler.exitApp(),
+        },
+      ]);
+    });
+
+    return unsubscribe; // Clean up the listener
+  }, [navigation]);
+
+  
+  useEffect(() => {
+    setIsFetchingLocation(true)
+    if (route?.params?.location) {
+      setLocation(route.params.location);
+      setIsFetchingLocation(false)
+      console.log('Updated Selected City:', route.params.location);
+    }
+  }, [route.params?.location]);
+
+  useEffect(() => {
+    if (!route.params?.location) {
+      fetchCurrentLocation();
+    }
+  }, []);
+// fetching current Location
+async function fetchCurrentLocation() {
+  setIsFetchingLocation(true); // Start fetching
+  
+  const hasPermission = await requestLocationPermission();
+if (!hasPermission) {
+      Alert.alert('Permission Denied', 'Location access is required!');
+      return;
+    }
+  try {
+    const locationData = await GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 30000,
+      maximumAge: 10000,
+    });
+
+    const { latitude, longitude } = locationData;
+    Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
+
+    const geoData = await Geocoder.from(latitude, longitude);
+    console.log('sssdrere',geoData)
+    if (geoData.results.length > 0) {
+      const addressComponents = geoData.results[0].address_components;
+      const area = addressComponents.find(component => component.types.includes('sublocality'))?.long_name;
+      const city = addressComponents.find(component => component.types.includes('locality'))?.long_name;
+
+      setLocation([area, city]); // Set area and city
+    }
+  } catch (error) {
+    console.error('Error fetching location:', error);
+  } finally {
+    setIsFetchingLocation(false); // Finished fetching
+  }
+}
+
+  const toogleNotificationPermissionModal=()=>{
+    setIsNotificationModalVisible(!isNotificationPermissionModalVisible)
+  }
+  
+  
 
   return (
     <View style={mainStyles.container}>
@@ -219,7 +290,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
-        <MainHeader headerType="home" />
+        <MainHeader headerType="home" location={location} isFetchingLocation={isFetchingLocation} />
       </Animated.View>
 
       <Animated.View
@@ -245,7 +316,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
             </TouchableOpacity>
           </View>
           {isLoading ? (
-  <View style={{ flexDirection: 'row', width:'90%' }}> 
+      <View style={{ flexDirection: 'row', width:'90%' }}> 
     {[1, 2, 3, 4].map((_, index) => (
       <SportsCategorySkeleton key={index} />
     ))}
@@ -271,7 +342,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
       </Animated.View>
 
       <Animated.View style={[{ transform: [{ translateY: instantTranslateY }] }]}>
-      {(isLoading || boxData.length===0) ? (
+      {isLoading && boxData.length===0 ? (
         <Animated.FlatList
           data={[1, 1,1,1]}
           ref={flatListRef}
@@ -296,9 +367,9 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
             useNativeDriver: true,
           })}
           scrollEventThrottle={16}
-          ListEmptyComponent={
-            <NoDataContainer style={undefined} noDataText='No box  available!!' />
-          }
+          // ListEmptyComponent={
+          //   <NoDataContainer style={undefined} noDataText='No box  available!!' />
+          // }
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -311,6 +382,14 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
         />
       )}
       </Animated.View>
+      {/* Notification  Permission Modal */}
+   
+      <BottomModal
+        isModalVisible={isNotificationPermissionModalVisible}
+        toggleModal={toogleNotificationPermissionModal}
+        type={'notification'}
+      />
+
     </View>
   )
 }

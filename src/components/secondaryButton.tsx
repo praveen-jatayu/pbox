@@ -4,11 +4,12 @@ import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { COLORS } from '../constants/color';
 import { FONTS } from '../constants/font';
 
-const SecondaryButton = ({title,onPress,disabled}) => {
+const SecondaryButton = ({title,onPress,disabled,style}) => {
 return (
     <TouchableOpacity
       style={[
         styles.button, 
+        style,
         // disabled ? styles.disabledButton : styles.enabledButton
       ]}
       onPress={onPress}

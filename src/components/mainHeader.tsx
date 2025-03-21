@@ -7,7 +7,7 @@ import mainStyles from '../assets/styles/mainStyles';
 
 
 
-const MainHeader = ({headerType = 'home'}) => {
+const MainHeader = ({headerType = 'home',isFetchingLocation,location}) => {
   const navigation = useNavigation();
 
   // Render header left component based on headerType prop
@@ -15,7 +15,7 @@ const MainHeader = ({headerType = 'home'}) => {
     if (headerType === 'home') {
       return (
         <TouchableOpacity 
-          onPress={() => navigation.navigate('SelectCity')}
+          onPress={() => navigation.navigate('SelectLocation')}
           style={styles.locationContainer}
           activeOpacity={0.8}>
           <Image
@@ -23,7 +23,20 @@ const MainHeader = ({headerType = 'home'}) => {
             style={styles.locationIcon}
           />
           <View style={styles.locationTextContainer}>
-            <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize18]}>Sector 75</Text>
+            <View>
+            {!isFetchingLocation ? (
+              <View>
+                <Text style={[mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize18]}>
+                  {location[0]}
+                </Text>
+                <Text style={[mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize14]}>
+                  {location[1]}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.skeletonPlaceholder} />
+            )}
+            </View>
             <Image
               source={icons.downArrowIcon}
               style={styles.downArrowIcon}
@@ -109,6 +122,12 @@ const styles = StyleSheet.create({
     width: moderateScale(23),
     height: moderateVerticalScale(23),
     marginLeft: scale(10),
+  },
+  skeletonPlaceholder: {
+    width: scale(80),
+    height: verticalScale(16),
+    backgroundColor: '#E0E0E0', // Light grey color for skeleton
+    borderRadius: scale(4),
   },
   
 });

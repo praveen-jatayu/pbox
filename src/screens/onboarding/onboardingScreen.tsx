@@ -49,7 +49,7 @@ const OnboardingScreen = ({ navigation }) => {
         </View>
 
         <Animated.View style={[onBoardingStyles.middleSection, { transform: [{ translateY: textAnim }] }]}>
-          <Text style={[mainStyles.fontInriaSansBold,mainStyles.darkTextColor,mainStyles.fontSize24]}>Find Players In</Text>
+          <Text style={[mainStyles.fontInriaSansBold,mainStyles.darkTextColor,mainStyles.fontSize24]}>Find Box In</Text>
           <Text style={[mainStyles.fontInriaSansBold,mainStyles.darkTextColor,mainStyles.fontSize24]}>Your Neighbourhood</Text>
           <Text style={[mainStyles.fontNunitoSemibold,mainStyles.lightTextColor,mainStyles.fontSize16,{ marginTop: verticalScale(12),
                   textAlign: 'center',}]}>Just Like You Did as a Kid!</Text>

@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity, Alert, Linking} from 'react-native';
 import React, {useState} from 'react';
 import Modal from 'react-native-modal';
 import PrimaryButton from './primaryButton';
@@ -7,39 +7,96 @@ import SecondaryButton from './secondaryButton';
 import {images} from '../constants/image';
 import {COLORS} from '../constants/color';
 import {FONTS} from '../constants/font';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { requestCameraPermission, requestNotificationPermission } from '../utils/permissionUtil';
 
 
 
-const modalContentMapping = {
-  notification: {
-    image: images.liveNotification,
-    title: 'Can We Notify You?',
-    subtitle: 'Please allow us to send you Notifications',
-    primaryButtonTitle:"ALLOW",
-    secondaryButtonTitle:'NO,OTHER TIME'
-  },
-  imageUpload: {
-    image: images.uploadImage, // Replace with appropriate image
-    title: 'Upload Your Profile',
-    subtitle: 'Choose Your Profile  from Gallery Or Take a photo in camera',
-    primaryButtonTitle:"UPLOAD FROM GALLERY",
-    secondaryButtonTitle:'OPEN,CAMERA'
-  },
-  deleteAccount: {
-    image: images.deleteImage, // Replace with appropriate image
-    title: 'Delete Account?',
-    subtitle: 'Are Your Sure You Want To Delete Your Account?',
-     primaryButtonTitle:"DELETE",
-    secondaryButtonTitle:'NO,KEEP MY ACCOUNT'
-  },
-  other: {
-    image: images.scenic, // Replace as needed
-    title: 'Default Title',
-    subtitle: 'Default message goes here.',
-  },
-};
 
-const BottomModal = ({isModalVisible,toggleModal,type}) => {
+const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileImage,serverProfileImage,setDisplayProfileImage}) => {
+ 
+
+  const modalContentMapping = {
+    notification: {
+      image: images.liveNotification,
+      title: 'Can We Notify You?',
+      subtitle: 'Please allow us to send you Notifications',
+      primaryButtonTitle:"ALLOW",
+      secondaryButtonTitle:'NO,OTHER TIME',
+      onPrimaryButtonPress: requestNotificationPermission,
+      onSecondaryButtonPress:toggleModal
+    },
+    imageUpload: {
+      image: images.uploadImage, // Replace with appropriate image
+      title: 'Upload Your Profile',
+      subtitle: 'Choose Your Profile  from Gallery Or Take a photo in camera',
+      primaryButtonTitle:"UPLOAD FROM GALLERY",
+      secondaryButtonTitle:'OPEN,CAMERA',
+      onPrimaryButtonPress:()=>chooseImageFromGallery(),
+      onSecondaryButtonPress:()=>captureImageWithCamera()
+    },
+    deleteAccount: {
+      image: images.deleteImage, // Replace with appropriate image
+      title: 'Delete Account?',
+      subtitle: 'Are Your Sure You Want To Delete Your Account?',
+       primaryButtonTitle:"DELETE",
+      secondaryButtonTitle:'NO,KEEP MY ACCOUNT'
+    },
+    other: {
+      image: images.scenic, // Replace as needed
+      title: 'Default Title',
+      subtitle: 'Default message goes here.',
+    },
+  };
+
+  const chooseImageFromGallery = () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorMessage) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else {
+        const selectedImage = response.assets[0];
+        setProfileImage(selectedImage.uri);
+        setDisplayProfileImage(selectedImage.uri);
+        toggleModal();
+      }
+    });
+  };
+
+
+  const captureImageWithCamera = async() => {
+
+    const hasPermission = await requestCameraPermission();
+  
+  if (!hasPermission) {
+    console.log('Camera permission denied');
+    return;
+  }
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+    launchCamera(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled camera');
+      } else if (response.errorMessage) {
+        console.log('Camera Error: ', response.errorMessage);
+      } else {
+        const capturedImage = response.assets[0];
+        setProfileImage(capturedImage.uri);
+        setDisplayProfileImage(capturedImage.uri);
+
+        toggleModal();
+      }
+    });
+  };
+
+
   const content = modalContentMapping[type] || modalContentMapping.other;
 
   return (
@@ -47,6 +104,8 @@ const BottomModal = ({isModalVisible,toggleModal,type}) => {
       isVisible={isModalVisible}
       onBackdropPress={toggleModal}
       backdropOpacity={0.4}
+      animationIn={'slideInUp'}
+      animationOut={'slideOutDown'}
       statusBarTranslucent={true}
       style={styles.modal}>
       <View style={styles.container}>
@@ -65,8 +124,9 @@ const BottomModal = ({isModalVisible,toggleModal,type}) => {
           </Text>
         </View>
 
-        <PrimaryButton onPress={toggleModal} title={content.primaryButtonTitle} disabled={undefined} style={undefined} />
-        <SecondaryButton onPress={toggleModal} title={content.secondaryButtonTitle} disabled={undefined} />
+        <PrimaryButton onPress={content.onPrimaryButtonPress} title={content.primaryButtonTitle} disabled={undefined} style={undefined} />
+        <SecondaryButton onPress={content.onSecondaryButtonPress} title={content.secondaryButtonTitle} disabled={undefined} />
+     
       </View>
     </Modal>
   );

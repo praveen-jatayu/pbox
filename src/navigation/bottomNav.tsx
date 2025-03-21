@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useRef } from 'react'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native'
+import { SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native'
 import {COLORS} from '../constants/color'
 import * as Animatable from 'react-native-animatable'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -58,9 +58,11 @@ const TabButton = (props) => {
         </TouchableOpacity>
     )
 }
-export default function AnimTab1() {
+export default function AnimTab1({route}) {
+    console.log('route',route)
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <>
+             {/* <StatusBar backgroundColor="#ffffff" barStyle="dark-content"/> */}
             <Tab.Navigator
                 screenOptions={{
                     headerShown: false,
@@ -70,6 +72,7 @@ export default function AnimTab1() {
                 <Tab.Screen
                     name="Home"
                     component={Home}
+                    initialParams={{ location: route.params?.location }}
                     options={{
                         tabBarShowLabel: false,
                         tabBarButton: (props) => (
@@ -111,7 +114,7 @@ export default function AnimTab1() {
                     }}
                 />
             </Tab.Navigator>
-        </SafeAreaView>
+        </>
     )
 }
 const styles = StyleSheet.create({

@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView, Settings, StatusBar } from 'react-native';
 import BottomNav from './bottomNav';
-import SelectCity from '../screens/selectCity/selectCity';
+import SelectCity from '../screens/selectCity/selectLocation';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
 import ClientReview from '../screens/clientReview/clientReview';
@@ -13,11 +13,13 @@ import BoxDetail from '../screens/boxDetail/boxDetail';
 import BookingConfirmation from '../screens/bookings/bookingConfirmation';
 import SlotBooking from '../screens/bookings/slotBooking';
 import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
+import BookingDetail from '../screens/bookings/bookingDetail';
+import SelectLocation from '../screens/selectCity/selectLocation';
 
 const Stack = createNativeStackNavigator();
 
-const AppStack = () => {
-
+const AppStack = ({route}) => {
+console.log('route',route)
 
   return (
   <>
@@ -33,8 +35,8 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="SelectCity"
-          component={SelectCity}
+          name="SelectLocation"
+          component={SelectLocation}
           options={{
             headerShown: false,
           }}
@@ -82,6 +84,13 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
+          name="BookingDetail"
+          component={BookingDetail}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="SlotBooking"
           component={SlotBooking}
           options={{
@@ -109,6 +118,7 @@ const AppStack = () => {
             headerShown: false,
           }}
         />
+       
        
         
         </Stack.Navigator>

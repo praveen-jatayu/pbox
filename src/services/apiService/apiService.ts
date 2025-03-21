@@ -10,7 +10,7 @@ const PUBLIC_API_ROUTES = [API_ENDPOINTS.AUTH.LOGIN,API_ENDPOINTS.AUTH.OTP,API_E
 // Create an Axios instance
 const apiClient = axios.create({
   baseURL: baseURL, // API base URL from environment config
-  timeout: 30000,
+  timeout: 3000,
   headers: {
     Accept: 'application/json',
   },

@@ -8,7 +8,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Animated
+  Animated,
+  Linking,
+  Alert
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -23,6 +25,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes';
 import { RouteProp } from '@react-navigation/native';
+import { handleShowLocation } from '../../utils/showLocationUtil';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
@@ -79,20 +82,19 @@ const BoxDetail = ({navigation,route}:BoxDetailProps) => {
     extrapolate: 'clamp',
   });
 
-  // const sliderScale = scrollY.interpolate({
-  //   inputRange: [0, sliderHeight],
-  //   outputRange: [1, 0.5],
-  //   extrapolate: 'clamp',
-  // });
 
-  // Show header when slider disappears
- 
-
-  const renderItem = ({item}) => {
-    return (
-      <View>
-        <Image source={{uri:item.image}} style={styles.image} />
-      </View>
+ const renderImageItem = ({ item }) => {
+    return item?.image ? (
+      <Image
+        source={{ uri: item.image }}
+        style={styles.image}
+      />
+    ) : (
+      <Image
+        source={images.scenic}
+        style={styles.image}
+        blurRadius={10} // Ensures the fallback image has a blurred effect
+      />
     );
   };
 
@@ -115,7 +117,7 @@ const BoxDetail = ({navigation,route}:BoxDetailProps) => {
 // Show limited amenities initially
 const amenitiesToShow = showAllAmenities 
     ? amenitiesData 
-    : amenitiesData.slice(0, 3); // Change 3 to however many you want to show initially
+    : amenitiesData.slice(0, 2); // Change 3 to however many you want to show initially
 
 const renderAmenitiesList = (item) => (
     <View key={item.id} style={[styles.amenityItem]}>
@@ -195,7 +197,7 @@ const renderAmenitiesList = (item) => (
         <Carousel
           ref={carouselRef}
           data={boxDetail?.get_selected_box_images}
-          renderItem={renderItem}
+          renderItem={renderImageItem}
           sliderWidth={screenWidth}
           itemWidth={screenWidth}
           onSnapToItem={index => setActiveSlide(index)}
@@ -257,11 +259,12 @@ const renderAmenitiesList = (item) => (
             </Text>
           </View>
           <Text style={boxCardStyles.rating}>
-            ⭐ {boxDetail?.rating || '4.5'}
+            ⭐ {boxDetail?.avg_rating || 'N/A'}
           </Text>
         </View>
 
-        <TouchableOpacity style={[styles.locationButton,mainStyles.primaryBorderColor]}>
+        <TouchableOpacity style={[styles.locationButton,mainStyles.primaryBorderColor]} 
+        onPress={() => handleShowLocation(boxDetail?.latitude, boxDetail?.longitude)}>
           <Image
             source={images.googleMapsPin}
             style={{width: moderateScale(15,0.8), height: moderateVerticalScale(20)}}
@@ -536,26 +539,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  header: {
-    position: 'absolute',
-    top: 40,
-    left: 0,
-    right: 0,
-    height: 50,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 10,
-    elevation: 5,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 10,
-  },
+  
+ 
+  
 
 });

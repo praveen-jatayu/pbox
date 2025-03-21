@@ -8,13 +8,39 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../../constants/color';
 import CustomCheckBox from '../../components/checkbox';
 import bookingListStyles from '../../assets/styles/bookingListStyles';
-import { images } from '../../constants/image';
 import { icons } from '../../constants/Icon';
 import bookingConfirmationStyles from '../../assets/styles/bookingConfirmationStyles';
+import { addBooking } from '../../services/bookingService';
+import Toast from 'react-native-toast-message';
 
-const BookingConfirmation = ({navigation}) => {
+const BookingConfirmation = ({navigation,route}) => {
+  const {slotBookingData,boxData,totalAmountToBePaid}=route?.params
   const [isTandCChecked, setIsTandCChecked] = useState(false);
   const [paymentOption, setPaymentOption] = useState('100%');
+
+
+
+  const handlePay=async()=>{
+    // const requestData={
+    //   box_id:boxData?.id,
+    //   total_amount:totalAmountToBePaid,
+    //   selectedSlots:slotBookingData
+    // }
+    // const {success,message}=await addBooking(requestData)
+    // if(success){
+    //   console.log('booking added successfully')
+    //     Toast.show({
+    //           type: 'success',
+    //           text1: 'Success!!!',
+    //           text2: message || 'Something went wrong!',
+    //         });
+            // navigation.replace('BottomNav', {screen: 'Booking'});
+            navigation.navigate('AddRatingAndReview',{boxData:boxData})
+    // }
+    // else{
+    //   console.log(message)
+    // }
+  }
   return (
     <View style={mainStyles.container}>
       <SubHeader
@@ -41,7 +67,7 @@ const BookingConfirmation = ({navigation}) => {
         bookingConfirmationStyles.bookingCardContainer
       ]}
     >
-      <Image source={images.scenic} style={bookingConfirmationStyles.bookingImage} />
+      <Image source={{uri:boxData?.get_selected_box_images[0]?.image}} style={bookingConfirmationStyles.bookingImage} />
       <View style={bookingConfirmationStyles.bookingDetailsContainer}>
        
         {/* Box title, address */}
@@ -51,13 +77,13 @@ const BookingConfirmation = ({navigation}) => {
               style={[
                 mainStyles.darkTextColor,
                 mainStyles.fontInriaSansRegular,
-                mainStyles.fontSize20,
+                mainStyles.fontSize18,
               ]}
               numberOfLines={1}
             >
               {/* {item.title} */}
 
-              Box Title dfsfds dfdfdfs dfsfds
+             {boxData?.title || 'N/A'}
             </Text>
            <View style={[mainStyles.flexContainer,bookingConfirmationStyles.addressContainer]}>
             <Image source={icons.locationIcon} style={bookingConfirmationStyles.locationIcon}/>
@@ -68,17 +94,17 @@ const BookingConfirmation = ({navigation}) => {
                   mainStyles.fontSize14,
                   bookingListStyles.addressText,
                 ]}
-                numberOfLines={1}
+                numberOfLines={3}
               >
                 {/* {item.address} */}
-                Box address dfdsf dfsdfs sfdsd
+               {boxData.address}
               </Text>
               </View>
            
           </View>
       
         {/* Date and slot time container */}
-        <View
+        {/* <View
           style={bookingConfirmationStyles.dateSlotContainer}
         >
           <Text
@@ -88,7 +114,7 @@ const BookingConfirmation = ({navigation}) => {
               mainStyles.fontNunitoMedium,
             ]}
           >
-            {/* {item.date} */}
+            
             Date:- 8 Oct 2020
           </Text>
           <Text
@@ -98,10 +124,9 @@ const BookingConfirmation = ({navigation}) => {
               mainStyles.fontNunitoMedium,
             ]}
           >
-            {/* {item.slotTiming} */}
             Time:- 4:00 PM to 6:00 PM
           </Text>
-        </View>
+        </View> */}
       </View>
     </View>     
         {/* apply for offers container */}
@@ -174,7 +199,7 @@ const BookingConfirmation = ({navigation}) => {
                   mainStyles.fontSize16,
                   mainStyles.darkTextColor,
                 ]}>
-                ₹ 300.00
+                ₹ {totalAmountToBePaid}
               </Text>
             </View>
             <View style={[mainStyles.flexContainer]}>
@@ -210,7 +235,7 @@ const BookingConfirmation = ({navigation}) => {
                   mainStyles.fontInriaSansBold,
                   mainStyles.lightTextColor,
                 ]}>
-                ₹ 300.00
+                ₹ {totalAmountToBePaid}
               </Text>
             </View>
           </View>
@@ -268,51 +293,33 @@ const BookingConfirmation = ({navigation}) => {
             Cancellation Policy
           </Text>
           <View style={[mainStyles.marginTop10, bookingConfirmationStyles.cancellationItem]}>
+          
+              {(boxData?.get_box_cancellation_policy || []).map(item => (
             <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
+                key={item.id}
+                style={[
+                    mainStyles.lightTextColor,
+                    mainStyles.fontNunitoSemibold,
+                    mainStyles.fontSize14
+                ]}
+            >
+                <Text style={{ fontSize: scale(9) }}>{'\u2B24'}</Text>{' '}
+                {item.text}
             </Text>
-            <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
-            </Text>
-            <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
-            </Text>
-            <Text
-              style={[
-                mainStyles.lightTextColor,
-                mainStyles.fontNunitoSemibold,
-                mainStyles.fontSize14,
-              ]}>
-              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>  Lorem ipsum,
-              dolorsit amet,cons
-            </Text>
+        ))}
+           
+           
+          
           </View>
         </View>
 
+     
 
       </ScrollView>
       {/* Button to open payment gateway */}
       <PrimaryButton
-        title={'Pay ₹300.00 SECURELY'}
-        onPress={()=>navigation.navigate('AddRatingAndReview')}
+        title={`Pay ₹ ${totalAmountToBePaid} SECURELY`}
+        onPress={handlePay}
         style={bookingConfirmationStyles.primaryButton}
         disabled={!isTandCChecked}
       />

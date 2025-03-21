@@ -31,6 +31,12 @@ import PrimaryButton from '../../components/primaryButton';
 import BottomModal from '../../components/bottomModal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { AuthContext } from '../../context/authContext';
+import { updateProfile } from '../../services/apiService/profileService';
+import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showToast } from '../../components/toastMessage';
+import { requestNotificationPermission } from '../../utils/permissionUtil';
+
 
 
 // Define types for navigation
@@ -51,6 +57,7 @@ type FormValues = {
   mobileNo?: string;
   email?: string;
   dob?: string;
+  profileImage?: any;
 };
 
 // Create Yup schema with only "name" as required
@@ -59,15 +66,20 @@ const schema = Yup.object().shape({
   mobileNo: Yup.string(), // optional
   email: Yup.string().email('Invalid email'),
   dob: Yup.string(),
+  profileImage: Yup.mixed().nullable(),
 });
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
-  const {userInfo}=useContext(AuthContext)
+  const {userInfo,setUserInfo}=useContext(AuthContext)
   console.log('user',userInfo)
   const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const[isLoading,setIsLoading]=useState(false)
   const [dobDisplay, setDobDisplay] = useState('');
   const [dobServer, setDobServer] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+  const [serverProfileImage, setServerProfileImage] = useState('');
+  const [displayProfileImage, setDisplayProfileImage] = useState('');
  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const {
     control,
@@ -81,14 +93,51 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       mobileNo:'+91 ' + userInfo.mobile_no,
       email: '',
       dob: '',
+      profileImage: userInfo.profile_pic, 
     },
   });
 
   // Handler for form submission
-  const onSubmit = (data: FormValues) => {
-    console.log('Form Data:', data);
-    // Make your API call here, e.g., apiPost('/profile/update', data)
+  const onSubmit = async(data: FormValues) => {     
+    setIsLoading(true)
+   const formData=new FormData();
+   formData.append('name',data.name)      
+   formData.append('email',data.email)
+   formData.append('dob',data.dob)
+   formData.append('mobile_no',data.mobileNo)
+   if (profileImage !== '') {
+   let document_file = {
+      uri: profileImage,
+      type: 'image/jpeg',
+      name: 'document.jpg',
+    };
+    formData.append('profile_pic', document_file);
+  }
+try{
+   const {success,message,updatedData}=await updateProfile(formData)
+   if(success){
+    showToast('success', message||'Profile Updated Successfully!');
+    await AsyncStorage.setItem('userInfo', JSON.stringify(updatedData));
+    setUserInfo(updatedData)
+    setServerProfileImage(updatedData.profile_pic)
+    await AsyncStorage.setItem('profileImage', updatedData.profile_pic);
+   
+    navigation.navigate('BottomNav')
+   }
+   else{
+    showToast('error', message||'Failed to  updated profile !');
+   }
+  }
+  catch(error){
+    showToast('error', error.message||'Failed to  updated profile !');
+
+  }
+  finally{
+    setIsLoading(false)
+  }
+
   };
+  
 
   const toggleImagePickerModalVisible=()=>{
     setIsImagePickerModalVisible(!isImagePickerModalVisible)
@@ -136,6 +185,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     };
   }, []); 
 
+
+  const handleImageSelection = (imageUri) => {
+    setValue('profileImage', imageUri); // Set image in react-hook-form
+    setProfileImage(imageUri); // Maintain local state for display
+  };
   return (
     <KeyboardAvoidingView
     style={[mainStyles.container]}
@@ -160,24 +214,57 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             { paddingHorizontal: scale(0) },
           ]}
         >
-          {/* Profile Picture Container */}
-          <Pressable
-            style={[
-              mainStyles.iconBackgroundColor,
-              mainStyles.contentCenter,
-              {
-                alignSelf: 'center',
-                width: moderateScale(70, 0.6),
-                height: moderateVerticalScale(70, 0.4),
-                borderRadius: moderateScale(50),
-              },
-            ]}
-          onPress={()=>setIsImagePickerModalVisible(true)}>
-            <Image
-              source={icons.userIcon}
-              style={{ width: scale(35), height: verticalScale(35) }}
-            />
-          </Pressable>
+          
+
+<Controller
+  control={control}
+  name="profileImage"
+  render={({ field: { value, onChange } }) => (
+    <>
+      <Pressable
+        style={[
+          mainStyles.iconBackgroundColor,
+          mainStyles.contentCenter,
+          {
+            alignSelf: 'center',
+            width: moderateScale(70, 0.6),
+            height: moderateVerticalScale(70, 0.4),
+            borderRadius: moderateScale(50),
+          },
+        ]}
+        onPress={() => setIsImagePickerModalVisible(true)}
+      >
+        {value ? (
+          <Image
+            source={{ uri: value }}
+            style={{
+              width: moderateScale(65, 0.6),
+              height: moderateVerticalScale(65, 0.4),
+              borderRadius: moderateScale(50),
+              resizeMode: 'cover',
+            }}
+          />
+        ) : (
+          <Image
+            source={icons.userIcon}
+            style={{ width: scale(35), height: verticalScale(35) }}
+          />
+        )}
+      </Pressable>
+
+      {/* Image Picker Modal */}
+      <BottomModal
+        isModalVisible={isImagePickerModalVisible}
+        toggleModal={toggleImagePickerModalVisible}
+        type={'imageUpload'}
+        profileImage={profileImage}
+        setProfileImage={handleImageSelection} // Pass hook form's setter
+        serverProfileImage={serverProfileImage}
+        setDisplayProfileImage={setDisplayProfileImage}
+      />
+    </>
+  )}
+/>
 
           {/* Edit Form */}
           <View style={{ marginTop: verticalScale(12) }}>
@@ -277,10 +364,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       <PrimaryButton
           title={'SAVE'}
           onPress={handleSubmit(onSubmit)}
-          disabled={false}
+          disabled={isLoading}
           style={styles.saveButton}
         />
-         <BottomModal isModalVisible={isImagePickerModalVisible} toggleModal={toggleImagePickerModalVisible} type={'imageUpload'} />
+        
     </KeyboardAvoidingView>
   );
 };

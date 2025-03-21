@@ -13,7 +13,7 @@ const mainStyles= StyleSheet.create({
       flexContainer:{
         flexDirection:'row',
         alignItems:'center',
-        justifyContent:'space-between'
+        justifyContent:'space-between',
       },
       contentCenter:{
         alignItems:'center',

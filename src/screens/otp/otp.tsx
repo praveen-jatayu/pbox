@@ -129,7 +129,6 @@ const translateY = useRef(new Animated.Value(80)).current;
  
 // navigate to register profile name screen when the new user login for the first time
   const registerNewUser=async(userInfo)=>{
-    console.log('check',navigation)
       navigation.navigate('ProfileName',{userDetail:userInfo});
     
   }

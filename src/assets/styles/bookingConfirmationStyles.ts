@@ -25,7 +25,7 @@ const bookingConfirmationStyles = StyleSheet.create({
     paddingLeft: scale(12),
   },
   bookingTitleContainer: {
-    width: '75%',
+    width: '70%',
   },
   addressContainer: {
     gap: scale(5),
