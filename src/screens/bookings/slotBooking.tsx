@@ -10,7 +10,12 @@ import {
 import React, {useEffect, useMemo, useState} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
+import {
+  moderateScale,
+  moderateVerticalScale,
+  scale,
+  verticalScale,
+} from 'react-native-size-matters';
 import CustomCheckBox from '../../components/checkbox';
 import PrimaryButton from '../../components/primaryButton';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -27,6 +32,7 @@ import {formatTimeTo12Hour} from '../../utils/timeCoverterUtil';
 import NoDataContainer from '../../components/noDataContainer';
 import SlotContainerSkeleton from './slotContainerSkeleton';
 import DateSlider from '../../utils/dateSelectorUtil';
+import slotBookingStyles from '../../assets/styles/slotBookingStyles';
 type SlotBookingNavigationProp = StackNavigationProp<
   RootStackParamList,
   'SlotBooking'
@@ -49,26 +55,28 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
   const [selectedSlot, setSelectedSlot] = useState({});
   const [slotDetail, setSlotDetail] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
-  const[totalBookingAmount,setTotalBookingAmount]=useState(0)
+  const [totalBookingAmount, setTotalBookingAmount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   // date slection function
   const handleDateSelection = (date: string) => {
-    
     setSelectedDate(date);
     if (selectedCourt) {
       fetchAvailableAndBookedSlots(date, selectedCourt);
     }
   };
-// court selection function
+  // court selection function
   const handleCourtSelection = (court: string) => {
     setSelectedCourt(court.id);
     if (selectedDate) {
       fetchAvailableAndBookedSlots(selectedDate, court.id);
     }
   };
-// api call to fetch available and booked slots
-  const fetchAvailableAndBookedSlots = async (date: string,courtId: string | null, ) => {
+  // api call to fetch available and booked slots
+  const fetchAvailableAndBookedSlots = async (
+    date: string,
+    courtId: string | null,
+  ) => {
     if (!courtId) return;
 
     const formData = new FormData();
@@ -76,17 +84,16 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
     formData.append('box_court_id', courtId);
     try {
       const response = await getSlotDetailByDate(formData);
-      
+
       setSlotDetail(response.all_slots);
-      setBookedSlots(response.booked_slot)
+      setBookedSlots(response.booked_slot);
     } catch (error) {
       console.error('Failed to fetch available slots:', error);
-    }
-    finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
-// api call to fetch available courts
+  // api call to fetch available courts
   const fetchCourtByBoxId = async boxData => {
     const formData = new FormData();
     formData.append('box_id', boxData.id);
@@ -110,94 +117,101 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
     fetchCourtByBoxId(boxInfo);
   }, []);
 
-
-  const handleSlotSelection = (slotId,slotPrice) => {
+  const handleSlotSelection = (slotId, slotPrice) => {
     const numericPrice = parseFloat(slotPrice); // Ensure it's treated as a number
     setSelectedSlot(prevState => {
       const updatedSlots = {...prevState};
-  
+
       // Initialize date entry if it doesn't exist
       if (!updatedSlots[selectedDate]) {
         updatedSlots[selectedDate] = {};
       }
-  
+
       // Initialize court entry if it doesn't exist
       if (!updatedSlots[selectedDate][selectedCourt]) {
         updatedSlots[selectedDate][selectedCourt] = [];
       }
-  
+
       const courtSlots = updatedSlots[selectedDate][selectedCourt];
-  
+
       // Add or remove slot ID
       if (courtSlots.includes(slotId)) {
-        updatedSlots[selectedDate][selectedCourt] = courtSlots.filter(id => id !== slotId);
+        updatedSlots[selectedDate][selectedCourt] = courtSlots.filter(
+          id => id !== slotId,
+        );
 
-           // **Subtract slot price when removed**
-           setTotalBookingAmount(prevAmount => (parseFloat(prevAmount) - numericPrice).toFixed(2));
-  
+        // **Subtract slot price when removed**
+        setTotalBookingAmount(prevAmount =>
+          (parseFloat(prevAmount) - numericPrice).toFixed(2),
+        );
+
         // Remove court entry if no slots remain
         if (updatedSlots[selectedDate][selectedCourt].length === 0) {
           delete updatedSlots[selectedDate][selectedCourt];
         }
       } else {
         updatedSlots[selectedDate][selectedCourt].push(slotId);
-           // **Add slot price when added**
-      setTotalBookingAmount(prevAmount => (parseFloat(prevAmount) + numericPrice).toFixed(2));;
+        // **Add slot price when added**
+        setTotalBookingAmount(prevAmount =>
+          (parseFloat(prevAmount) + numericPrice).toFixed(2),
+        );
       }
-  
+
       // Remove date entry if no courts remain
       if (Object.keys(updatedSlots[selectedDate]).length === 0) {
         delete updatedSlots[selectedDate];
       }
-  
+
       return updatedSlots;
     });
   };
 
-  const isSlotSelected = (slotId) => {
-    console.log('eeh',selectedSlot)
+  const isSlotSelected = slotId => {
+    console.log('eeh', selectedSlot);
     const dateEntry = selectedSlot[selectedDate];
-  
+
     if (!dateEntry) return false; // No slots for the selected date
-  
+
     // Check if the court exists and contains the slotId
     return dateEntry[selectedCourt]?.includes(slotId) || false;
   };
 
-  const hasSlotsInCourt = (courtId) => {
+  const hasSlotsInCourt = courtId => {
     const dateEntry = selectedSlot[selectedDate];
-  
+
     if (!dateEntry) return false; // No slots for the selected date
-  
+
     return !!dateEntry[courtId] && dateEntry[courtId].length > 0;
   };
 
   const slotCount = useMemo(() => {
     const slotCountMap = {};
-    
-    Object.keys(selectedSlot).forEach((date) => {
+
+    Object.keys(selectedSlot).forEach(date => {
       const courts = selectedSlot[date];
       const totalSlots = Object.values(courts).reduce(
         (sum, slots) => sum + slots.length,
-        0
+        0,
       );
-  
+
       if (totalSlots > 0) {
         slotCountMap[date] = totalSlots;
       }
     });
-  
+
     return slotCountMap;
   }, [selectedSlot]);
-
-  
 
   return (
     <View style={[mainStyles.container]}>
       <SubHeader
         title={boxInfo.title}
         onPress={() => navigation.goBack()}
-        style={[{height: verticalScale(80), paddingTop: verticalScale(20),gap:scale(110)},boxInfo.title.length>10 &&{ gap:scale(90)},boxInfo.title.length>=20 &&{ gap:scale(60)}]}
+        style={[
+          slotBookingStyles.customHeaderStyles,
+          boxInfo.title.length > 10 && {gap: scale(90)},
+          boxInfo.title.length >= 20 && {gap: scale(60)},
+        ]}
       />
       <StatusBar
         // translucent
@@ -215,7 +229,10 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
             ]}>
             Date
           </Text>
-          <DateSlider onDateSelected={handleDateSelection} countLabel={slotCount}/>
+          <DateSlider
+            onDateSelected={handleDateSelection}
+            countLabel={slotCount}
+          />
         </View>
         {/* Court slection container */}
 
@@ -229,24 +246,13 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
             Court
           </Text>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: moderateScale(12),
-            }}>
+          <View style={slotBookingStyles.rowWithGap}>
             {loading ? (
               // Skeleton Loader for Court Selection
               Array.from({length: 4}).map((_, index) => (
                 <View
                   key={index}
-                  style={{
-                    width: moderateScale(35),
-                    height: moderateVerticalScale(35),
-                    backgroundColor: '#E0E0E0', // Skeleton background
-                    borderRadius: moderateScale(5),
-                    opacity: 0.6,
-                  }}
+                  style={slotBookingStyles.courtSelectionContainerSkeleton}
                 />
               ))
             ) : availableCourts.length > 0 ? (
@@ -259,27 +265,28 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
                     mainStyles.borderWidth1,
                     selectedCourt === court.id &&
                       mainStyles.primaryBackgroundColor,
-                    {
-                      borderRadius: moderateScale(5),
-                      height:moderateVerticalScale(35),
-                      width:moderateScale(35),
-                      alignItems:'center',
-                      justifyContent:'center'
-                    },
+                    slotBookingStyles.courtSelectionButton,
                   ]}>
-                    <View>
-                      {hasSlotsInCourt(court.id) && 
-                    <View style={[{height:verticalScale(4),width:moderateScale(4),borderRadius:moderateScale(10),position:'absolute',right:moderateScale(-7),top:moderateVerticalScale(-3)},mainStyles.primaryBackgroundColor,selectedCourt===court.id && mainStyles.secondaryBackgroundColor]}/>
-                      }
-                  <Text
-                    style={[
-                      mainStyles.primaryTextColor,
-                      mainStyles.fontSize14,
-                      mainStyles.fontNunitoMedium,
-                      selectedCourt === court.id && {color: '#FFFFFF'},
-                    ]}>
-                    {court?.name}
-                  </Text>
+                  <View>
+                    {hasSlotsInCourt(court.id) && (
+                      <View
+                        style={[
+                          slotBookingStyles.courtHasSlotsIndicator,
+                          mainStyles.primaryBackgroundColor,
+                          selectedCourt === court.id &&
+                            mainStyles.secondaryBackgroundColor,
+                        ]}
+                      />
+                    )}
+                    <Text
+                      style={[
+                        mainStyles.primaryTextColor,
+                        mainStyles.fontSize14,
+                        mainStyles.fontNunitoMedium,
+                        selectedCourt === court.id && {color: '#FFFFFF'},
+                      ]}>
+                      {court?.name}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               ))
@@ -310,21 +317,16 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
           contentContainerStyle={{paddingBottom: verticalScale(100)}}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
-
           {loading ? (
-              // Skeleton Loader for Court Selection
-              Array.from({length: 4}).map((_, index) => (
-              <SlotContainerSkeleton   key={index}/>
-              ))
-              ):selectedDate && selectedCourt && slotDetail.length > 0 ? (
+            // Skeleton Loader for Court Selection
+            Array.from({length: 4}).map((_, index) => (
+              <SlotContainerSkeleton key={index} />
+            ))
+          ) : selectedDate && selectedCourt && slotDetail.length > 0 ? (
             slotDetail.map((slot, index) => (
               <View
                 key={index}
-                style={{
-                  marginTop: verticalScale(10),
-                  paddingHorizontal: scale(16),
-                  paddingBottom: verticalScale(12),
-                }}>
+                style={slotBookingStyles.slotSelectionContainer}>
                 <View style={[mainStyles.flexContainer]}>
                   <View>
                     <Text
@@ -342,36 +344,25 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
                           ? icons.moonIcon
                           : icons.sunIcon
                       }
-                      style={{
-                        width: scale(24),
-                        height: verticalScale(24),
-                        marginTop: verticalScale(5),
-                      }}
+                      style={slotBookingStyles.dayNightIconContainer}
                     />
                   </View>
-                  
+
                   <TouchableOpacity
-                  onPress={() => handleSlotSelection(slot?.id,slot?.rate)}
+                    onPress={() => handleSlotSelection(slot?.id, slot?.rate)}
                     disabled={bookedSlots.includes(slot?.id)}
                     style={[
                       mainStyles.borderWidth1,
-                      {
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        paddingVertical: verticalScale(15),
-                        paddingHorizontal: scale(6),
-                        borderRadius: moderateScale(5),
-                        width: '50%',
-                      },
+                      slotBookingStyles.slotButton,
                       !bookedSlots.includes(slot.id)
-                      ? isSlotSelected(slot.id) 
+                        ? isSlotSelected(slot.id)
                           ? {backgroundColor: '#FDEBE9', borderColor: '#FF4F0A'} // Selected slot
                           : [
                               mainStyles.secondaryInfoBackgroundColor,
                               mainStyles.infoBorderColor,
                             ] // Available slot
                         : [
-                           {backgroundColor:'#D3D3D3'},
+                            {backgroundColor: '#D3D3D3'},
                             mainStyles.primaryBorderColor,
                           ], // Booked slot
                     ]}>
@@ -380,9 +371,10 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
                         mainStyles.infoTextColor,
                         mainStyles.fontInriaSansBold,
                         mainStyles.fontSize16,
-                        bookedSlots.includes(slot.id) && mainStyles.lightTextColor,
+                        bookedSlots.includes(slot.id) &&
+                          mainStyles.lightTextColor,
                       ]}>
-                      {slot?.discount || '50'}% Discount
+                      {slot?.discount || 'N/A'}% Discount
                     </Text>
                     <Text
                       style={[
@@ -413,19 +405,12 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
           mainStyles.dropShadowEffect,
           slotBookingStyles.bottomInfoContainer,
         ]}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: scale(10),
-            }}>
-            <CustomCheckBox style={{backgroundColor:'#D3D3D3'}} disabled={true} />
+        <View style={slotBookingStyles.rowContainer}>
+          <View style={slotBookingStyles.rowWithGap}>
+            <CustomCheckBox
+              style={slotBookingStyles.bookedCheckBox}
+              disabled={true}
+            />
             <Text
               style={[
                 mainStyles.fontNunitoSemibold,
@@ -435,12 +420,7 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
               Booked
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: scale(10),
-            }}>
+          <View style={slotBookingStyles.rowWithGap}>
             <CustomCheckBox
               style={[
                 mainStyles.borderWidth1,
@@ -457,16 +437,11 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
               Available
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: scale(10),
-            }}>
+          <View style={slotBookingStyles.rowWithGap}>
             <CustomCheckBox
               style={[
                 mainStyles.borderWidth1,
-                {backgroundColor: '#FDEBE9', borderColor: '#FF4F0A'},
+                slotBookingStyles.selectedCheckBox,
               ]}
               disabled={true}
             />
@@ -483,13 +458,16 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
 
         <View
           style={[mainStyles.flexContainer, {marginTop: verticalScale(16)}]}>
-            {totalBookingAmount ===0 ? (
-              <Text style={[
+          {totalBookingAmount === 0 ? (
+            <Text
+              style={[
                 mainStyles.fontInriaSansRegular,
                 mainStyles.fontSize16,
                 mainStyles.primaryTextColor,
-              ]}>No Slots Selected!!</Text>
-            ):(
+              ]}>
+              No Slots Selected!!
+            </Text>
+          ) : (
             <Text
               style={[
                 mainStyles.fontInriaSansRegular,
@@ -498,14 +476,19 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
               ]}>
               TOTAL : ₹ {totalBookingAmount}
             </Text>
-            )}
-          
+          )}
+
           <PrimaryButton
             title={'CONTINUE'}
-            style={{width: '50%'}}
-            disabled={Object.keys(selectedSlot).length === 0 }
-            onPress={() => navigation.navigate('BookingConfirmation',{slotBookingData:selectedSlot,boxData:boxInfo,totalAmountToBePaid:totalBookingAmount})}
-            
+            style={slotBookingStyles.continueButton}
+            disabled={Object.keys(selectedSlot).length === 0}
+            onPress={() =>
+              navigation.navigate('BookingConfirmation', {
+                slotBookingData: selectedSlot,
+                boxData: boxInfo,
+                totalAmountToBePaid: totalBookingAmount,
+              })
+            }
           />
         </View>
       </View>
@@ -515,37 +498,3 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
 
 export default SlotBooking;
 
-const slotBookingStyles = StyleSheet.create({
-  bottomInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: verticalScale(110),
-    width: '100%',
-    paddingHorizontal: scale(12),
-    paddingVertical: verticalScale(12),
-    paddingBottom: verticalScale(30),
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 6},
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  courtSelectionContainer: {
-    paddingHorizontal: moderateScale(12),
-    paddingVertical: verticalScale(6),
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: scale(20),
-  },
-  datePickerContainer: {
-    paddingHorizontal: scale(12),
-    paddingTop: verticalScale(18),
-  },
-  bannerContainer: {
-    paddingHorizontal: scale(10),
-    paddingVertical: verticalScale(10),
-    marginVertical: verticalScale(12),
-  },
-});

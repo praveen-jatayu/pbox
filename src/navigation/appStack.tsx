@@ -18,8 +18,8 @@ import SelectLocation from '../screens/selectCity/selectLocation';
 
 const Stack = createNativeStackNavigator();
 
-const AppStack = () => {
-
+const AppStack = ({route}) => {
+console.log('route',route)
 
   return (
   <>

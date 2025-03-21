@@ -35,3 +35,28 @@ export const requestNotificationPermission = async () => {
 
   console.log('Notification permission granted!');
 };
+
+export const requestLocationPermission = async () => {
+  try {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message:
+            'This app needs access to your location to function properly.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } else if (Platform.OS === 'ios') {
+      const result = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      return result === RESULTS.GRANTED;
+    }
+  } catch (error) {
+    console.error('Error requesting location permission:', error);
+    return false;
+  }
+};

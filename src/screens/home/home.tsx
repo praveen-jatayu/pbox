@@ -13,17 +13,20 @@ import homeStyles from '../../assets/styles/homeStyles'
 import BoxCardSkeleton from '../../components/boxCardSkeleton'
 import SportsCategorySkeleton from './sportsCategorySkeleton'
 import BottomModal from '../../components/bottomModal'
-import { requestNotificationPermission } from '../../utils/permissionUtil'
-import { useRoute } from '@react-navigation/native'
+import Geolocation from '@react-native-community/geolocation';
+import GetLocation from 'react-native-get-location'
+import Geocoder from 'react-native-geocoding';
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { requestLocationPermission } from '../../utils/permissionUtil'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
 
 
-const Home =  ({navigation}) => {
+const Home =  () => {
   const route = useRoute();
-  const selectedCity = route.params?.selectedCity; 
-  console.log('sss',selectedCity)
+  const navigation=useNavigation()
+ console.log('route',route)
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [search, setSearch] = useState('');
@@ -35,6 +38,8 @@ const Home =  ({navigation}) => {
   const [refreshing, setRefreshing] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [location, setLocation] = useState([]);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(true);
    const [isNotificationPermissionModalVisible, setIsNotificationModalVisible] = useState(false);
   const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={fetchBoxList}/>;
 
@@ -66,8 +71,6 @@ const sliderOpacity = isSearchFocused ? 0 : scrollY.interpolate({
     extrapolate: 'clamp',
   });
 
- 
-
   const instantTranslateY =  isSearchFocused
   ? -MIN_HEADER_HEIGHT * 1.5
   :scrollY.interpolate({
@@ -92,10 +95,9 @@ const searchTranslateY = isSearchFocused
       extrapolate: 'clamp',
     });
 
-  const sportsToShow = showAllSports ? sportData: sportData.slice(0,3);
+  const sportsToShow = showAllSports ? sportData: sportData.slice(0,4);
 
   const handleCategoryPress = item => {
-    console.log('selected sport ',item)
     setSelectedCategory(item.id===selectedCategory?null:item.id);
     fetchBoxList(null,item.id===selectedCategory?null:item.id)
   
@@ -134,7 +136,7 @@ const searchTranslateY = isSearchFocused
           mainStyles.fontSize14,
           { textAlign: 'center' }
         ]}
-      >
+     numberOfLines={2} >
         {item.name}
       </Text>
     </TouchableOpacity>
@@ -224,15 +226,60 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     return unsubscribe; // Clean up the listener
   }, [navigation]);
 
+  
+  useEffect(() => {
+    setIsFetchingLocation(true)
+    if (route?.params?.location) {
+      setLocation(route.params.location);
+      setIsFetchingLocation(false)
+      console.log('Updated Selected City:', route.params.location);
+    }
+  }, [route.params?.location]);
+
+  useEffect(() => {
+    if (!route.params?.location) {
+      fetchCurrentLocation();
+    }
+  }, []);
+// fetching current Location
+async function fetchCurrentLocation() {
+  setIsFetchingLocation(true); // Start fetching
+  
+  const hasPermission = await requestLocationPermission();
+if (!hasPermission) {
+      Alert.alert('Permission Denied', 'Location access is required!');
+      return;
+    }
+  try {
+    const locationData = await GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 30000,
+      maximumAge: 10000,
+    });
+
+    const { latitude, longitude } = locationData;
+    Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
+
+    const geoData = await Geocoder.from(latitude, longitude);
+    console.log('sssdrere',geoData)
+    if (geoData.results.length > 0) {
+      const addressComponents = geoData.results[0].address_components;
+      const area = addressComponents.find(component => component.types.includes('sublocality'))?.long_name;
+      const city = addressComponents.find(component => component.types.includes('locality'))?.long_name;
+
+      setLocation([area, city]); // Set area and city
+    }
+  } catch (error) {
+    console.error('Error fetching location:', error);
+  } finally {
+    setIsFetchingLocation(false); // Finished fetching
+  }
+}
+
   const toogleNotificationPermissionModal=()=>{
     setIsNotificationModalVisible(!isNotificationPermissionModalVisible)
   }
-  // const hasNotificationPermission = async () => {
-  //   const hasPermission = await requestNotificationPermission();
-  //   if (!hasPermission) {
-  //     setIsNotificationModalVisible(true); // Show modal only if permission is NOT granted
-  //   }
-  // }
+  
   
 
   return (
@@ -243,7 +290,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
-        <MainHeader headerType="home" location={selectedCity} />
+        <MainHeader headerType="home" location={location} isFetchingLocation={isFetchingLocation} />
       </Animated.View>
 
       <Animated.View
@@ -295,7 +342,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
       </Animated.View>
 
       <Animated.View style={[{ transform: [{ translateY: instantTranslateY }] }]}>
-      {(isLoading || boxData.length===0) ? (
+      {isLoading && boxData.length===0 ? (
         <Animated.FlatList
           data={[1, 1,1,1]}
           ref={flatListRef}
@@ -320,9 +367,9 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
             useNativeDriver: true,
           })}
           scrollEventThrottle={16}
-          ListEmptyComponent={
-            <NoDataContainer style={undefined} noDataText='No box  available!!' />
-          }
+          // ListEmptyComponent={
+          //   <NoDataContainer style={undefined} noDataText='No box  available!!' />
+          // }
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

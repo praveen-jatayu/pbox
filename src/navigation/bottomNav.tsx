@@ -58,7 +58,8 @@ const TabButton = (props) => {
         </TouchableOpacity>
     )
 }
-export default function AnimTab1() {
+export default function AnimTab1({route}) {
+    console.log('route',route)
     return (
         <>
              {/* <StatusBar backgroundColor="#ffffff" barStyle="dark-content"/> */}
@@ -71,6 +72,7 @@ export default function AnimTab1() {
                 <Tab.Screen
                     name="Home"
                     component={Home}
+                    initialParams={{ location: route.params?.location }}
                     options={{
                         tabBarShowLabel: false,
                         tabBarButton: (props) => (

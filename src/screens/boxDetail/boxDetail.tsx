@@ -179,8 +179,6 @@ const renderAmenitiesList = (item) => (
   };
 
 
-  
-
   return (
     <View style={mainStyles.container}>
       {/* Make StatusBar transparent */}
@@ -266,7 +264,7 @@ const renderAmenitiesList = (item) => (
         </View>
 
         <TouchableOpacity style={[styles.locationButton,mainStyles.primaryBorderColor]} 
-        onPress={() => handleShowLocation(boxDetail?.get_selected_box?.latitude, boxDetail?.get_selected_box?.longitude)}>
+        onPress={() => handleShowLocation(boxDetail?.latitude, boxDetail?.longitude)}>
           <Image
             source={images.googleMapsPin}
             style={{width: moderateScale(15,0.8), height: moderateVerticalScale(20)}}

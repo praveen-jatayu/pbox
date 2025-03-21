@@ -10,12 +10,16 @@ const homeStyles = StyleSheet.create({
         marginTop: verticalScale(10),
         flexDirection: 'row',
         flexWrap: 'wrap',
+        alignItems:'center',
         width:'110%'
       },
       sportItem: {
         alignItems: 'center',
-       marginHorizontal:scale(17),
-        marginBottom: verticalScale(10),
+      //  marginHorizontal:scale(17),
+      marginRight:scale(20),
+        marginBottom: verticalScale(12),
+
+
       },
       sportItemSelected: {
         borderWidth: 1,
@@ -24,8 +28,8 @@ const homeStyles = StyleSheet.create({
         borderColor:COLORS.primary
       },
       sportLogoBackground: {
-        width: moderateScale(40),
-        height: moderateVerticalScale(40),
+        width: moderateScale(40,0.3),
+        height: moderateVerticalScale(40,0.3),
         borderRadius: moderateScale(30),
         backgroundColor: COLORS.itemBackground,
         alignItems: 'center',
