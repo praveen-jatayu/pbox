@@ -14,13 +14,10 @@ import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import { icons } from '../constants/Icon';
 import boxCardStyles from '../assets/styles/boxCardStyles';
-
-
-import Toast from 'react-native-toast-message';
 import { updateBookmark } from '../services/bookmarkService';
-import { images } from '../constants/image';
 import { showToast } from './toastMessage';
-
+import { LazyImage } from 'react-native-lazy-image-loader';
+import { images } from '../constants/image';
 const { width: screenWidth } = Dimensions.get('window');
 
 
@@ -68,18 +65,16 @@ const BoxCard = ({ boxData,onAction}) => {
   }, [pulseAnim]);
 
   const renderImageItem = ({ item }) => {
-    return item?.image ? (
-      <Image
+    return  (
+      <LazyImage
         source={{ uri: item.image }}
         style={boxCardStyles.sliderImage}
+        priority='normal'
+        blurRadius={5}
+        cullingDistance={200}   
+        fallbackSource={images.scenic}    
       />
-    ) : (
-      <Image
-        source={images.scenic}
-        style={boxCardStyles.sliderImage}
-        blurRadius={10} // Ensures the fallback image has a blurred effect
-      />
-    );
+    ) 
   };
 
 
@@ -145,10 +140,6 @@ const BoxCard = ({ boxData,onAction}) => {
           inactiveDotOpacity={1}
           inactiveDotScale={1}
         />
-        {/* Card label */}
-        <View style={boxCardStyles.cardLabel}>
-          <Text style={boxCardStyles.labelText}>Bookable</Text>
-        </View>
         {/* Sports category label */}
         <View style={boxCardStyles.sportsCategoryLabel}>
   {boxData?.get_selected_available_sport?.slice(0, 2).map((sport, index) => (
@@ -204,7 +195,7 @@ const BoxCard = ({ boxData,onAction}) => {
             <Image source={icons.offerIcon} style={boxCardStyles.offerIcon} />
             <Text style={boxCardStyles.offers}>{boxData.offers || 'Upto 30% Off'}</Text>
           </Animated.View>
-          <Text style={boxCardStyles.price}> INR {boxData?.price_start_from || ' 00 '} Onwards</Text>
+          <Text style={boxCardStyles.price}> INR {boxData?.price_start_from || ' N/A '} Onwards</Text>
         </View>
       </View>
     </Animated.View>

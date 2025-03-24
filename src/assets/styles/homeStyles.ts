@@ -81,6 +81,17 @@ const homeStyles = StyleSheet.create({
         marginHorizontal:scale(10),
         zIndex: 12,
       },
+      loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        top: '80%',
+        left: 0,
+        right: 0,
+        transform: [{ translateY: 100 }],
+        zIndex: 44, // Ensure it appears above the list
+      },
       
 })
 export default homeStyles

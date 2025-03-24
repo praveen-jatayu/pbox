@@ -22,11 +22,13 @@ export const API_ENDPOINTS = {
   GET_BOX_BY_COURT:'get-box-by-court',
   GET_BOX_COURT_DATE_BY_SLOT:'get-box-court-date-by-slot',
   ADD_BOOKING:'add-booking',
-  GET_BOOKING_LIST:'get-booking-list'
+  GET_BOOKING_LIST:'get-booking-list',
+
 
   },
   REVIEW_AND_RATING:{
-   UPDATE_BOOKING_RATING_REVIEW: 'update-booking-rating-review'
+   UPDATE_BOOKING_RATING_REVIEW: 'update-booking-rating-review',
+  GET_BOOKING_RATING_REVIEW: 'get-booking-rating-review'
   },
   NOTIFICATION: {
     GET_NOTIFICATION_LIST: 'get-notification-list',

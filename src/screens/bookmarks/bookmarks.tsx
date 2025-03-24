@@ -159,6 +159,7 @@ const Bookmarks = () => {
         ListEmptyComponent={
           <NoDataContainer style={undefined} noDataText='No bookmarks available!!' />
         }
+        
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

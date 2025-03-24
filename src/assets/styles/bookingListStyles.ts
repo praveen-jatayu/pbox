@@ -27,8 +27,11 @@ const bookingListStyles=StyleSheet.create({
         paddingBottom: verticalScale(20),
       },
       noDataContainer: {
-        marginTop: verticalScale(100),
-        alignSelf:'center'
+        // flex:1,
+        alignSelf:'center',
+        justifyContent:'center',
+        transform: [{ translateY: 100 }],
+
       },
       bookingCardContainer: {
         borderRadius: moderateScale(7),
