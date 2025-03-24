@@ -1,4 +1,4 @@
-import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList, BackHandler, Alert } from 'react-native'
+import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList, BackHandler, Alert, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import mainStyles from '../../assets/styles/mainStyles'
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters'
@@ -18,6 +18,7 @@ import GetLocation from 'react-native-get-location'
 import Geocoder from 'react-native-geocoding';
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { requestLocationPermission } from '../../utils/permissionUtil'
+import { COLORS } from '../../constants/color'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
@@ -37,6 +38,7 @@ const Home =  () => {
   const [filteredBoxData,setFilteredBoxData]=useState([])
   const [refreshing, setRefreshing] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSportsLoading,setIsSportsLoading]=useState(true)
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [location, setLocation] = useState([]);
   const [isFetchingLocation, setIsFetchingLocation] = useState(true);
@@ -98,6 +100,7 @@ const searchTranslateY = isSearchFocused
   const sportsToShow = showAllSports ? sportData: sportData.slice(0,4);
 
   const handleCategoryPress = item => {
+    setIsLoading(true)
     setSelectedCategory(item.id===selectedCategory?null:item.id);
     fetchBoxList(null,item.id===selectedCategory?null:item.id)
   
@@ -171,7 +174,6 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
   }
 };
   const getSportList = async () => {
-   setIsLoading(true)
     try {
      
       const response = await  getSportDetail()
@@ -191,8 +193,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
      
     }
     finally{
-      setRefreshing(false)
-      setIsLoading(false)
+      setIsSportsLoading(false)
     }
   };
 
@@ -315,7 +316,7 @@ if (!hasPermission) {
               </Text>
             </TouchableOpacity>
           </View>
-          {isLoading ? (
+          {isSportsLoading ? (
       <View style={{ flexDirection: 'row', width:'90%' }}> 
     {[1, 2, 3, 4].map((_, index) => (
       <SportsCategorySkeleton key={index} />
@@ -342,8 +343,8 @@ if (!hasPermission) {
       </Animated.View>
 
       <Animated.View style={[{ transform: [{ translateY: instantTranslateY }] }]}>
-      {isLoading && boxData.length===0 ? (
-        <Animated.FlatList
+      {isLoading && boxData.length === 0 ? (
+          <Animated.FlatList
           data={[1, 1,1,1]}
           ref={flatListRef}
           showsVerticalScrollIndicator={false}
@@ -355,21 +356,29 @@ if (!hasPermission) {
           scrollEventThrottle={16}
         
         />
-      ):(
+      ): isLoading && boxData.length !== 0 ? (
+        // Show Activity Indicator when switching categories and data exists
+        <View style={homeStyles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      ) : (
         <Animated.FlatList  
           ref={flatListRef}
           data={filteredBoxData}
           renderItem={renderBoxCard}
           keyExtractor={item => item.id}
-          contentContainerStyle={[homeStyles.flatListContainer,filteredBoxData.length<=2 && {paddingBottom:verticalScale(500)}]}
+          contentContainerStyle={[homeStyles.flatListContainer,filteredBoxData.length<=2 && boxData.length<=2 &&{paddingBottom:verticalScale(300)}]}
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
             useNativeDriver: true,
           })}
           scrollEventThrottle={16}
-          // ListEmptyComponent={
-          //   <NoDataContainer style={undefined} noDataText='No box  available!!' />
-          // }
+          ListEmptyComponent={
+            <NoDataContainer
+              style={undefined}
+              noDataText={'No boxes available!!'}
+            />
+          }
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -387,8 +396,7 @@ if (!hasPermission) {
       <BottomModal
         isModalVisible={isNotificationPermissionModalVisible}
         toggleModal={toogleNotificationPermissionModal}
-        type={'notification'}
-      />
+        type={'notification'} profileImage={undefined} setProfileImage={undefined} serverProfileImage={undefined} setDisplayProfileImage={undefined}      />
 
     </View>
   )

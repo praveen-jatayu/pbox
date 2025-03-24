@@ -7,6 +7,7 @@ import {
   FlatList,
   Animated,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -18,6 +19,7 @@ import MainHeader from '../../components/mainHeader';
 import { getBookingList } from '../../services/bookingService';
 import BookingCardSkeleton from './bookingCardSkeleton';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { COLORS } from '../../constants/color';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
 
@@ -136,7 +138,7 @@ const Bookings = ({navigation}) => {
   const flatListRef = useRef(null);
   const[bookingData,setBookingData]=useState([])
   const[filteredBookingData,setFilteredBookingData]=useState([])
-  const [isLoading,setIsLoading]=useState(true)
+  const [isLoading,setIsLoading]=useState(false)
   const [refreshing,setRefreshing]=useState(true)
   
 
@@ -182,13 +184,12 @@ const Bookings = ({navigation}) => {
   const renderBookingCard = ({ item }) => <BookingCard item={item} navigation={navigation}/>;
 
   const fetchBookingList = async () => {
-
+setIsLoading(true)
     let formData=new FormData()
     formData.append('booking_status',selecedBookingCategory)
       try {
           const response = await getBookingList(formData);
           if (response) {
-              console.log('booking4444',response)
             
               setBookingData(response);
              setFilteredBookingData(response)
@@ -276,46 +277,59 @@ const Bookings = ({navigation}) => {
               </TouchableOpacity>
             ))}
           </View>
+         
         </Animated.View>
-           {isLoading ? (
-                <Animated.FlatList
-                  data={[1, 1,1,1,1]}
-                  ref={flatListRef}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{paddingTop:verticalScale(50),paddingBottom:verticalScale(100)}}
-                  renderItem={() => <BookingCardSkeleton />}
-                  onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-                    useNativeDriver: true,
-                  })}
-                  scrollEventThrottle={16}
-                
-                />
-              ):(
-        <Animated.FlatList
-          ref={flatListRef}
-          data={filteredBookingData}
-          keyExtractor={(item) => item.id}
-          renderItem={renderBookingCard}
-          contentContainerStyle={{paddingTop:verticalScale(50),paddingHorizontal:verticalScale(5),paddingBottom:verticalScale(100),flexGrow:1}}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <NoDataContainer style={bookingListStyles.noDataContainer} noDataText={'No bookings yet!!'} />
-          }
+        {isLoading && bookingData.length === 0 ? (
+  // Show Skeleton Loader (initial data fetch)
+  <Animated.FlatList
+    data={[1, 1, 1, 1, 1]} // Dummy data for skeleton
+    ref={flatListRef}
+    showsVerticalScrollIndicator={false}
+    contentContainerStyle={{
+      paddingTop: verticalScale(50),
+      paddingBottom: verticalScale(100),
+    }}
+    renderItem={() => <BookingCardSkeleton />}
+    onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+      useNativeDriver: true,
+    })}
+    scrollEventThrottle={16}
+  />
+) : isLoading && bookingData.length !== 0 ? (
+  // Show Activity Indicator when switching categories and data exists
+  <View style={styles.loadingContainer}>
+    <ActivityIndicator size="large" color={COLORS.primary} />
+  </View>
+) : (
+  // Show the list only when loading is false & data exists
+  <Animated.FlatList
+    ref={flatListRef}
+    data={filteredBookingData}
+    keyExtractor={(item) => item.id}
+    renderItem={renderBookingCard}
+    contentContainerStyle={{
+      paddingTop: verticalScale(50),
+      paddingHorizontal: verticalScale(5),
+      paddingBottom: verticalScale(100),
+      flexGrow: 1,
+    }}
+    ListEmptyComponent={
+      <NoDataContainer
+        style={bookingListStyles.noDataContainer}
+        noDataText={'No bookings yet!!'}
+      />
+    }
+    showsVerticalScrollIndicator={false}
+    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchBookingList} />}
+    onScroll={Animated.event(
+      [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+      { useNativeDriver: true }
+    )}
+    scrollEventThrottle={16}
+  />
+  
 
-           refreshControl={
-                     <RefreshControl
-                       refreshing={refreshing}
-                       onRefresh={fetchBookingList}
-                     />
-                   }
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
-          )}
-          scrollEventThrottle={16}
-          
-        />
-              )}
+)}
       </View>
       {showScrollToTop && (
         <TouchableOpacity
@@ -362,6 +376,17 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 12,
    paddingBottom:verticalScale(6)
+  },
+  loadingContainer: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: '80%',
+    left: 0,
+    right: 0,
+    transform: [{ translateY: 300 }],
+    zIndex: 44, // Ensure it appears above the list
   },
  
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView, Settings, StatusBar } from 'react-native';
 import BottomNav from './bottomNav';
-import SelectCity from '../screens/selectCity/selectLocation';
+import SelectCity from '../screens/selectLocation/selectLocation';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
 import ClientReview from '../screens/clientReview/clientReview';
@@ -14,7 +14,7 @@ import BookingConfirmation from '../screens/bookings/bookingConfirmation';
 import SlotBooking from '../screens/bookings/slotBooking';
 import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
 import BookingDetail from '../screens/bookings/bookingDetail';
-import SelectLocation from '../screens/selectCity/selectLocation';
+import SelectLocation from '../screens/selectLocation/selectLocation';
 
 const Stack = createNativeStackNavigator();
 

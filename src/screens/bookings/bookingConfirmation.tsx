@@ -35,7 +35,7 @@ const BookingConfirmation = ({navigation,route}) => {
     //           text2: message || 'Something went wrong!',
     //         });
             // navigation.replace('BottomNav', {screen: 'Booking'});
-            navigation.navigate('AddRatingAndReview',{boxData:boxData})
+            navigation.navigate('BottomNav',{screen:'Booking'})
     // }
     // else{
     //   console.log(message)

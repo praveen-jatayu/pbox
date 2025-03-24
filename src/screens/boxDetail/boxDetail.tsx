@@ -1,16 +1,13 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
   Dimensions,
   Image,
   StatusBar,
-  StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Animated,
-  Linking,
-  Alert
+  
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -26,34 +23,17 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigationTypes';
 import { RouteProp } from '@react-navigation/native';
 import { handleShowLocation } from '../../utils/showLocationUtil';
+import { LazyImage } from 'react-native-lazy-image-loader';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import LinearGradient from 'react-native-linear-gradient';
+import boxDetailStyles from '../../assets/styles/boxDetailStyles';
+import { getBookingRatingReview } from '../../services/ratingAndReviewService';
+import { showToast } from '../../components/toastMessage';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
 
-const dummyReviews = [
-  {
-    id: '1',
-    profilePic: images.profile, // update with your image
-    name: 'John Doe',
-    review: 'Great facility and well maintained.',
-    date: '2025-01-10'
-  },
-  {
-    id: '2',
-    profilePic: images.profile, // update with your image
-    name: 'Jane Smith',
-    review: 'Had an amazing experience here.',
-    date: '2025-01-12'
-  },
-  {
-    id: '3',
-    profilePic: images.profile, // update with your image
-    name: 'Alex Johnson',
-    review: 'Good value for money!',
-    date: '2025-01-15'
-  },
-  // ... add more reviews as needed
-];
+
 
 type BoxDetailNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -71,11 +51,28 @@ const BoxDetail = ({navigation,route}:BoxDetailProps) => {
   const {boxDetail,isBookmarked} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
-  const [showAllReview, setShowAllReviews] = useState(false);
+  const [reviewData, setReviewData] = useState([]);
   const carouselRef = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
-
+  const mapRef = useRef(null);
+  const rotationAngle = useRef(0);
   // Animate slider (opacity and scale)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (mapRef.current) {
+        rotationAngle.current = (rotationAngle.current + 20) % 360; // Increase heading
+        mapRef.current.animateCamera({
+          center: { latitude: Number(boxDetail?.latitude), longitude: Number(boxDetail?.longitude)}, // Fixed marker position
+          pitch: 90, // 3D tilt
+          heading: rotationAngle.current, // Rotating angle
+          zoom: 15.5, // Keep zoom level constant
+        }, { duration: 3000 }); // Smooth transition
+      }
+    }, 2700); // Change every 2 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+  
   const sliderOpacity = scrollY.interpolate({
     inputRange: [0, sliderHeight / 2, sliderHeight],
     outputRange: [1, 0.6, 0],
@@ -84,24 +81,22 @@ const BoxDetail = ({navigation,route}:BoxDetailProps) => {
 
 
  const renderImageItem = ({ item }) => {
-    return item?.image ? (
-      <Image
-        source={{ uri: item.image }}
-        style={styles.image}
-      />
-    ) : (
-      <Image
-        source={images.scenic}
-        style={styles.image}
-        blurRadius={10} // Ensures the fallback image has a blurred effect
-      />
-    );
+    return  (
+         <LazyImage
+           source={{ uri: item.image }}
+           style={boxDetailStyles.image}
+           priority='normal'
+           blurRadius={7}
+          //  cullingDistance={200}   
+           fallbackSource={images.scenic}    
+         />
+       ) 
   };
 
   const renderSportCategory = item => (
-    <View key={item.id} style={[styles.sportItem,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:5}]}>
+    <View key={item.id} style={[boxDetailStyles.sportItem,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:5}]}>
       
-        <Image source={item.logo} style={styles.sportLogo} />
+        <Image source={item.logo} style={boxDetailStyles.sportLogo} />
 
       <Text style={[mainStyles.fontNunitoRegular,mainStyles.fontSize14,mainStyles.darkTextColor]}>{item.name}</Text>
     </View>
@@ -120,15 +115,14 @@ const amenitiesToShow = showAllAmenities
     : amenitiesData.slice(0, 2); // Change 3 to however many you want to show initially
 
 const renderAmenitiesList = (item) => (
-    <View key={item.id} style={[styles.amenityItem]}>
-        <Image source={{ uri: item.icon }} style={styles.amenityIcon} />
+    <View key={item.id} style={[boxDetailStyles.amenityItem]}>
+        <Image source={{ uri: item.icon }} style={boxDetailStyles.amenityIcon} />
         <Text style={[mainStyles.fontNunitoRegular, mainStyles.fontSize14, mainStyles.darkTextColor]}>
             {item.name}
         </Text>
     </View>
 );
 
-  const reviewsToShow = dummyReviews.slice(0, 2);
 
 
   const AnimatedHeader = ({ scrollY, boxDetail }) => {
@@ -170,14 +164,40 @@ const renderAmenitiesList = (item) => (
         barStyle="light-content"
         />
         <EvilIcons name="chevron-left" size={38} color={'white'} onPress={()=>navigation.goBack()}/>
-        <View>
+        <View style={{width:'80%',gap:verticalScale(3)}}>
         <Text style={[mainStyles.fontSize16,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxDetail?.title}</Text>
-        <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]}>{boxDetail?.address}</Text>
+        <Text style={[mainStyles.fontSize14,mainStyles.fontNunitoRegular,{color:'white'}]} numberOfLines={2}>{boxDetail?.address}</Text>
         </View>
       </Animated.View>
     );
   };
 
+
+  const fetchReviews=async()=>{
+    const formData=new FormData()
+    formData.append('box_id',boxDetail.id)
+    try{
+      const response=await getBookingRatingReview(formData)
+      if(response){
+        console.log('review',response)
+        // const reviewsToShow=response.slice(0,2)
+        setReviewData(response) 
+      }
+        else{
+          console.log('Failed to fetch reviews')
+          showToast('error','Failed to fetch reviews')
+        }
+        
+
+      }
+      catch(error){
+        console.log(error.message)
+        showToast('error',error.message)
+      }
+    }
+    useEffect(()=>{
+      fetchReviews()
+    },[])
 
   return (
     <View style={mainStyles.container}>
@@ -188,12 +208,12 @@ const renderAmenitiesList = (item) => (
         barStyle="light-content"
         />
           <AnimatedHeader scrollY={scrollY} boxDetail={boxDetail} />
-          <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100)}} showsVerticalScrollIndicator={false}
+          <Animated.ScrollView contentContainerStyle={{flexGrow:1, paddingBottom: verticalScale(100),minHeight:verticalScale(300)}} showsVerticalScrollIndicator={false}
        onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: false})}
        scrollEventThrottle={16}>
         
       {/* Top slider  */}
-      <Animated.View style={[styles.sliderContainer, {opacity: sliderOpacity}]}>
+      <Animated.View style={[boxDetailStyles.sliderContainer, {opacity: sliderOpacity}]}>
         <Carousel
           ref={carouselRef}
           data={boxDetail?.get_selected_box_images}
@@ -207,24 +227,24 @@ const renderAmenitiesList = (item) => (
         <Pagination
           dotsLength={boxDetail?.get_selected_box_images?.length}
           activeDotIndex={activeSlide}
-          containerStyle={styles.paginationContainer}
-          dotStyle={[styles.paginationDot,mainStyles.primaryBackgroundColor]}
+          containerStyle={boxDetailStyles.paginationContainer}
+          dotStyle={[boxDetailStyles.paginationDot,mainStyles.primaryBackgroundColor]}
           inactiveDotStyle={mainStyles.secondaryBackgroundColor}
           inactiveDotOpacity={1}
           inactiveDotScale={1}
         />
         {/* top navigating icons container */}
-        <View style={styles.topIconsContainer}>
+        <View style={boxDetailStyles.topIconsContainer}>
       <TouchableOpacity
-        style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
+        style={[boxDetailStyles.iconButton, mainStyles.secondaryBackgroundColor]}
         onPress={() => navigation.goBack()}
         activeOpacity={0.8}
       >
         <EvilIcons name="chevron-left" size={moderateScale(28)} />
       </TouchableOpacity>
-      <View style={styles.rightIconsContainer}>
+      <View style={boxDetailStyles.rightIconsContainer}>
         <TouchableOpacity
-          style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
+          style={[boxDetailStyles.iconButton, mainStyles.secondaryBackgroundColor]}
           onPress={undefined}
           activeOpacity={0.8}
         >
@@ -237,7 +257,7 @@ const renderAmenitiesList = (item) => (
           
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.iconButton, mainStyles.secondaryBackgroundColor]}
+          style={[boxDetailStyles.iconButton, mainStyles.secondaryBackgroundColor]}
           onPress={undefined}
           activeOpacity={0.8}
         >
@@ -248,7 +268,7 @@ const renderAmenitiesList = (item) => (
         </Animated.View>
     
       {/* You can add more content below the slider */}
-      <View style={styles.content}>
+      <View style={boxDetailStyles.content}>
         <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
           <View style={boxCardStyles.titleContainer}>
             <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
@@ -263,11 +283,11 @@ const renderAmenitiesList = (item) => (
           </Text>
         </View>
 
-        <TouchableOpacity style={[styles.locationButton,mainStyles.primaryBorderColor]} 
+        <TouchableOpacity style={[boxDetailStyles.locationButton,mainStyles.primaryBorderColor]} 
         onPress={() => handleShowLocation(boxDetail?.latitude, boxDetail?.longitude)}>
           <Image
             source={images.googleMapsPin}
-            style={{width: moderateScale(15,0.8), height: moderateVerticalScale(20)}}
+            style={{width: moderateScale(16,0.8), height: moderateVerticalScale(22)}}
           />
           <Text
             style={[
@@ -281,7 +301,7 @@ const renderAmenitiesList = (item) => (
 
         {/* box offer container */}
 
-        <View style={styles.offerContainer}>
+        <View style={boxDetailStyles.offerContainer}>
           <Image
             source={icons.offerIcon}
             style={{width: scale(30), height: verticalScale(30)}}
@@ -316,7 +336,7 @@ const renderAmenitiesList = (item) => (
             ]}>
             Available Sports
           </Text>
-          <View style={styles.sportsContainer}>
+          <View style={boxDetailStyles.sportsContainer}>
           {(boxDetail?.get_selected_available_sport || []).map(item =>
         renderSportCategory({
             id: item.get_single_sports.id,
@@ -349,7 +369,7 @@ const renderAmenitiesList = (item) => (
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.sportsContainer}>
+            <View style={boxDetailStyles.sportsContainer}>
                 {amenitiesToShow.map(item => renderAmenitiesList(item))}
             </View>
         </View>
@@ -386,26 +406,33 @@ const renderAmenitiesList = (item) => (
       <View style={[mainStyles.marginTop20]}>
        <View style={[mainStyles.flexContainer]}>
          <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize18]}>What Client Says</Text>
-         <TouchableOpacity onPress={()=>navigation.navigate('ClientReview',{ reviews: dummyReviews })}>
-         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.primaryTextColor,mainStyles.fontSize16]}>   {showAllReview ? 'Show Less' : 'See All'}</Text>
+         <TouchableOpacity onPress={()=>navigation.navigate('ClientReview',{ boxDetail: boxDetail })}>
+         <Text style={[mainStyles.fontInriaSansRegular,mainStyles.primaryTextColor,mainStyles.fontSize16]}> {'See All'}</Text>
          </TouchableOpacity>
             
          </View>
-         {reviewsToShow.map((review,index) => (
-              <View key={review.id} style={[styles.reviewContainer,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:1.5}]}>
+         {reviewData.slice(0,2).map((review,index) => (
+              <View key={review?.id} style={[boxDetailStyles.reviewContainer,mainStyles.secondaryBackgroundColor,mainStyles.dropShadowEffect,{elevation:1.5}]}>
                <View style={{flexDirection:'row',alignItems:'center',gap:scale(20)}}>
                 
-                <Image source={review.profilePic} style={styles.profilePic} />
+               <Image 
+  source={ 
+    review?.get_selected_user?.profile_pic
+      ? { uri: review.get_selected_user.profile_pic }
+      : images.profile // Local fallback image
+  } 
+  style={boxDetailStyles.profilePic} 
+/>
                 <View style={{width:'59%'}}>
                   <Text style={[mainStyles.fontNunitoMedium, mainStyles.darkTextColor,mainStyles.fontSize16]}>
-                    {review.name}
+                    {review?.get_selected_user?.name}
                   </Text>
                   <View style={[mainStyles.flexContainer,{gap:scale(12)}]}>
                   <Text style={[mainStyles.fontNunitoMedium, mainStyles.fontSize14, mainStyles.lightTextColor]} numberOfLines={2}>
-                    {review.review}
+                    {review?.review}
                   </Text>
                   <Text style={[mainStyles.fontNunitoMedium,mainStyles.fontSize12,mainStyles.lightTextColor]}>
-                    {review.date}
+                    {review?.booking_date}
                   </Text>
                   </View>
                 </View>
@@ -413,6 +440,44 @@ const renderAmenitiesList = (item) => (
               </View>
             ))}
       </View>
+
+
+
+    {/* box roating location map view */}
+    <View style={boxDetailStyles.mapViewContainer}>
+      {/* <View style={boxDetailStyles.mapWrapper}> */}
+      <MapView
+        ref={mapRef}
+        provider={PROVIDER_GOOGLE}
+        style={boxDetailStyles.map}
+        initialCamera={{
+          center: { latitude:Number( boxDetail?.latitude), longitude: Number(boxDetail?.longitude) }, // San Francisco
+          pitch: 60, // Adjust 3D tilt
+          heading: 45, // Rotate the map
+          altitude: 500, // Zoom level
+          zoom: 15,
+        }}
+        mapType="terrain"
+        showsBuildings={true} // Enables 3D buildings
+        showsCompass={true} // Shows compass to rotate map
+        scrollEnabled={false}  // Disables scrolling/panning
+        zoomEnabled={false}    // Disables zooming
+        pitchEnabled={false}   // Disables tilt/3D angle change
+        rotateEnabled={false} 
+        onRegionChangeComplete={(region) => {
+          console.log('Map Region:', region);
+        }}
+        
+      >
+         {/* Fixed Marker */}
+         <Marker coordinate={{ latitude:Number( boxDetail?.latitude), longitude: Number(boxDetail?.longitude) }} />
+      </MapView>
+      {/* </View> */}
+      <LinearGradient
+        colors={['rgba(255,255,255,0.8)', 'rgba(255,255,255,0)']} // Fade from white to transparent
+        style={boxDetailStyles.gradientOverlay}
+      />
+    </View>
       </View>
     </Animated.ScrollView>
       <PrimaryButton title={'BOOK NOW'} onPress={() => navigation.navigate('SlotBooking',{boxInfo:boxDetail})} disabled={undefined} style={{position:'absolute',bottom:moderateVerticalScale(10),width:'90%'}} />
@@ -422,125 +487,4 @@ const renderAmenitiesList = (item) => (
 
 export default BoxDetail;
 
-const styles = StyleSheet.create({
-  sliderContainer: {
-    height: sliderHeight,
-  },
 
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  paginationContainer: {
-    position: 'absolute',
-    bottom: -16,
-    alignSelf: 'center',
-    // paddingVertical: 8,
-  },
-  paginationDot: {
-    width: scale(5),
-    height: verticalScale(5),
-    borderRadius: moderateScale(6),
-    marginHorizontal: scale(-3),
-  },
-  content: {
-    paddingHorizontal: scale(16),
-    paddingTop: verticalScale(14),
-  },
-  locationButton: {
-    borderRadius: moderateScale(7),
-    width: '97%',
-    borderWidth: 1,
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    paddingVertical: verticalScale(12),
-    marginTop: verticalScale(10),
-    flexDirection: 'row',
-    gap: scale(10),
-  },
-  offerContainer: {
-    // height:verticalScale(55),
-    width: '97%',
-    alignSelf: 'center',
-    backgroundColor: '#C1F5CF',
-    marginTop: verticalScale(15),
-    borderRadius: moderateScale(8),
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: verticalScale(14),
-    paddingHorizontal: scale(10),
-    gap: scale(12),
-  },
-  sportItem:{
-    alignItems: 'center',
-    justifyContent:'center',
-    marginRight: scale(15),
-    marginBottom: verticalScale(10),
-    width:scale(85),
-    height:verticalScale(60),
-    borderRadius:moderateScale(4)
-  },
-  sportsContainer: {
-    marginTop: verticalScale(10),
-    flexDirection: 'row',
-    justifyContent:'space-evenly',
-    flexWrap: 'wrap',
-  },
-  sportLogo:{
-    width:scale(22),
-    height:verticalScale(22),
-    marginBottom:verticalScale(5)
-  },
-  amenityItem:{
-    alignItems: 'center',
-    flexDirection:'row',
-    marginRight: scale(20),
-    gap:scale(10),
-    marginBottom: verticalScale(10),
-  },
-  amenityIcon: {
-    width: moderateScale(22),
-    height: moderateVerticalScale(22),
-    resizeMode: 'cover'
-    
-},
-  reviewContainer:{
-    paddingTop:verticalScale(5),
-    paddingBottom:verticalScale(10),
-    paddingHorizontal:scale(12),
-    marginTop:verticalScale(16),
-    borderRadius:moderateScale(9),
-  },
-  profilePic:{
-    width:moderateScale(32),
-    height:moderateVerticalScale(32),
-    borderRadius:moderateScale(20)
-  },
-  topIconsContainer: {
-    position: 'absolute',
-    top: verticalScale(36),
-    left: scale(20),
-    width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  rightIconsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: scale(10), // Note: if 'gap' is not supported, use margin on children
-  },
-  iconButton: {
-    width: moderateScale(26,0.8),
-    height: moderateVerticalScale(26,0.6),
-    borderRadius: moderateScale(20),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  
- 
-  
-
-});
