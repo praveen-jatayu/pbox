@@ -1,12 +1,11 @@
 import { View, Text, ImageBackground, Dimensions, StatusBar } from 'react-native';
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/color';
 import { images } from '../../constants/image';
 import { FONTS } from '../../constants/font';
 import { scale } from 'react-native-size-matters';
 
-const SplashScreen = () => {
+const SplashScreen = () => {        
 
   return (
     <View style={styles.container}>

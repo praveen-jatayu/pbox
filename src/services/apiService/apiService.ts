@@ -5,6 +5,7 @@ import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 
 
 
+
 const PUBLIC_API_ROUTES = [API_ENDPOINTS.AUTH.LOGIN,API_ENDPOINTS.AUTH.OTP,API_ENDPOINTS.USER.UPDATE_USERNAME];
 
 // Create an Axios instance

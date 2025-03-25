@@ -1,20 +1,44 @@
-import { View, Text, BackHandler } from 'react-native'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiPost, saveAuthToken } from '../services/apiService/apiService';
 import { API_ENDPOINTS } from '../constants/apiEndPoinst';
 
+interface AuthProviderProps {
+  children: ReactNode; // Accepts React children
+} 
 
+interface UserInfo {
+  api_token: string;
+  name:string|null;
+  profile_pic: string;
+  user: 'New' | 'Old';
+  email:string|null;
+  role:number;
+  mobile_no:string
+  status:number
+  
+}
 
-export const AuthContext = createContext();
-export const AuthProvider = ({children}) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [userToken, setUserToken] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
-  const [loginError, setLoginError] = useState('');
+interface AuthContextType {
+  login: (mobileNo: string, registerNewUser: (userInfo: UserInfo) => void) => Promise<void>;
+  logout: () => Promise<void>;
+  isLoading: boolean;
+  userToken: string | null;
+  userInfo: UserInfo | null;
+  setUserToken: React.Dispatch<React.SetStateAction<string | null>>;
+  setUserInfo: React.Dispatch<React.SetStateAction<UserInfo | null>>;
+  loginError: string;
+}
+
+export const AuthContext = createContext<AuthContextType|null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [userToken, setUserToken] = useState<string|null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo|null>(null);
+  const [loginError, setLoginError] = useState<string>('');
   
 
-  const login = async (mobileNo,registerNewUser) => {
+  const login = async (mobileNo:string,registerNewUser: (userInfo: UserInfo) => void):Promise<void> => {
     try {
       // let fcmToken = await AsyncStorage.getItem('fcmToken');
 
@@ -46,7 +70,7 @@ export const AuthProvider = ({children}) => {
       }
 
      
-    } catch (error) {
+    } catch (error:unknown) {
       setLoginError('Invaild username or password');
       console.error('Login Error:', error);
      
@@ -60,14 +84,14 @@ export const AuthProvider = ({children}) => {
 
   
   
-  const isLoggedIn = async () => {
+  const isLoggedIn = async ():Promise<void> => {
     try {
       setIsLoading(true);
       let userToken = await AsyncStorage.getItem('authToken');
-      let userInfo = await AsyncStorage.getItem('userInfo');
+      const userInfoString = await AsyncStorage.getItem('userInfo');
 
-      userInfo = JSON.parse(userInfo);
-      if (userInfo) {
+      if (userInfoString) {
+        const userInfo: UserInfo = JSON.parse(userInfoString);
         setUserToken(userToken);
         setUserInfo(userInfo);
       }
@@ -79,7 +103,7 @@ export const AuthProvider = ({children}) => {
   };
 
  
-  const logout = async () => {
+  const logout = async ():Promise<void> => {
     setUserToken(null);
     setUserInfo(null);
     // await clearAuthToken();

@@ -72,7 +72,7 @@ export default function AnimTab1({route}) {
                 <Tab.Screen
                     name="Home"
                     component={Home}
-                    initialParams={{ location: route.params?.location }}
+                    initialParams={{ location: route.params?.location,lat:route.params?.lat,long:route.params?.long }}
                     options={{
                         tabBarShowLabel: false,
                         tabBarButton: (props) => (

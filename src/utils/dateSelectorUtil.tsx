@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   AppState,
+  AppStateStatus
 } from 'react-native';
 import moment from 'moment';
 import {
@@ -16,12 +17,23 @@ import {
 } from 'react-native-size-matters';
 import mainStyles from '../assets/styles/mainStyles';
 
-const DateSlider = ({onDateSelected,countLabel}) => {
-  const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(
+interface DateItem {
+  formattedDate: string;
+  displayDay: string;
+  displayDate: string;
+  displayMonth: string;
+}
+interface DateSliderProps {
+  onDateSelected: (date: string) => void;
+  countLabel: Record<string, number>;
+}
+
+const DateSlider: React.FC<DateSliderProps> = ({onDateSelected,countLabel}) => {
+  const [dates, setDates] = useState<DateItem[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>(
     moment().format('YYYY-MM-DD'),
   );
-  const listRef = useRef(null);
+  const listRef = useRef<FlatList<DateItem>>(null);
 
   useEffect(() => {
     generateWeeklyDates(moment().format('YYYY-MM-DD')); // Load weekly dates
@@ -29,7 +41,7 @@ const DateSlider = ({onDateSelected,countLabel}) => {
   }, []);
 
   useEffect(() => {
-    const handleAppStateChange = nextAppState => {
+    const handleAppStateChange = (nextAppState:AppStateStatus) => {
       if (nextAppState === 'active') {
         const currentDate = moment().format('YYYY-MM-DD');
 
@@ -52,8 +64,8 @@ const DateSlider = ({onDateSelected,countLabel}) => {
   }, [selectedDate]);
 
   // Generate weekly dates based on the selected date
-  const generateWeeklyDates = startDate => {
-    let tempDates = [];
+  const generateWeeklyDates = (startDate:string) => {
+    let tempDates:DateItem[] = [];
     let currentDate = moment(startDate); // Start from today's date
 
     for (let i = 0; i < 7; i++) {
@@ -70,7 +82,7 @@ const DateSlider = ({onDateSelected,countLabel}) => {
   };
 
   // Handle date selection
-  const handleDateSelection = date => {
+  const handleDateSelection = (date:string) => {
     setSelectedDate(date);
     onDateSelected(date);
 
@@ -82,7 +94,7 @@ const DateSlider = ({onDateSelected,countLabel}) => {
   };
 
   return (
-    <FlatList
+    <FlatList<DateItem>
       ref={listRef}
       data={dates}
       horizontal

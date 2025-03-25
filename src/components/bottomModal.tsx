@@ -11,9 +11,13 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { requestCameraPermission, requestNotificationPermission } from '../utils/permissionUtil';
 
 
+interface BottomModalProps {
+  isModalVisible:boolean;
+  toggleModal:()=>void;
+  type: "notification" | "imageUpload" | "deleteAccount" | "other";
+}
 
-
-const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileImage,serverProfileImage,setDisplayProfileImage}) => {
+const BottomModal:React.FC<BottomModalProps> = ({isModalVisible,toggleModal,type,profileImage,setProfileImage,serverProfileImage,setDisplayProfileImage}) => {
  
 
   const modalContentMapping = {
@@ -23,7 +27,7 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
       subtitle: 'Please allow us to send you Notifications',
       primaryButtonTitle:"ALLOW",
       secondaryButtonTitle:'NO,OTHER TIME',
-      onPrimaryButtonPress: requestNotificationPermission,
+      onPrimaryButtonPress: ()=>handlePermissionRequest(),
       onSecondaryButtonPress:toggleModal
     },
     imageUpload: {
@@ -95,12 +99,21 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
       }
     });
   };
-
+  const handlePermissionRequest = async () => {
+    const granted = await requestNotificationPermission();
+    toggleModal(); 
+    if (granted) {
+      Alert.alert("Permission Granted", "You will now receive notifications.");
+    } else {
+      Alert.alert("Permission Denied", "You can enable notifications in settings.");
+    }
+   
+  };
 
   const content = modalContentMapping[type] || modalContentMapping.other;
 
   return (
-    <Modal
+    <Modal    
       isVisible={isModalVisible}
       onBackdropPress={toggleModal}
       backdropOpacity={0.4}
@@ -125,7 +138,7 @@ const BottomModal = ({isModalVisible,toggleModal,type,profileImage,setProfileIma
         </View>
 
         <PrimaryButton onPress={content.onPrimaryButtonPress} title={content.primaryButtonTitle} disabled={undefined} style={undefined} />
-        <SecondaryButton onPress={content.onSecondaryButtonPress} title={content.secondaryButtonTitle} disabled={undefined} />
+        <SecondaryButton onPress={content.onSecondaryButtonPress} title={content.secondaryButtonTitle} disabled={undefined} style={undefined} />
      
       </View>
     </Modal>
