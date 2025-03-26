@@ -27,19 +27,19 @@ import { verticalScale } from 'react-native-size-matters';
 import { AuthContext } from '../../context/authContext';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../../constants/color';
+import { useAuth } from '../../customHooks/useAuth';
 
 const OTP = ({ route }) => {
   const {mobileNo,actualOtp}=route.params
-  // console.log('check',mobileNo,actualOtp)
   const navigation = useNavigation();
-  const [resendTimer, setResendTimer] = useState(0);
+  const [resendTimer, setResendTimer] = useState<number>(0);
   const [otp, setOtp] = useState(['', '', '', '']);
- const {login}=useContext(AuthContext)
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isVerifiedPressed, setIsVerifiedPressed] = useState(false);
+ const {login}=useAuth()
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isVerifiedPressed, setIsVerifiedPressed] = useState<boolean>(false);
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const [loading,setLoading]=useState(false)
+  const [isKeyboardVisible, setKeyboardVisible] = useState<boolean>(false);
+  const [loading,setLoading]=useState<boolean>(false)
 const translateY = useRef(new Animated.Value(80)).current;
     const opacity = useRef(new Animated.Value(0.7)).current;
 
@@ -197,8 +197,7 @@ const translateY = useRef(new Animated.Value(80)).current;
               <SecondaryButton
                 title={resendTimer > 0 ? `Resend OTP in ${formatResendTimer()}` : 'RESEND OTP'}
                 onPress={handleResendOtp}
-                disabled={resendTimer > 0}
-              />
+                disabled={resendTimer > 0} style={undefined}  />
          
           </View>
         </ImageBackground>

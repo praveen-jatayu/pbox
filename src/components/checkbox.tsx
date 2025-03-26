@@ -1,16 +1,17 @@
 // CustomCheckBox.js
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../assets/styles/mainStyles';
 
-const CustomCheckBox = ({
-  value = false,
-  onValueChange = () => {},
-  disabled = false,
-  style,
-}) => {
+const CustomCheckBox: React.FC<{
+  value?: boolean;
+  onValueChange?: (newValue: boolean) => void;
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+}> = ({ value = false, onValueChange = () => {}, disabled = false, style }) => {
+  
   const handlePress = () => {
     if (!disabled) {
       onValueChange(!value);

@@ -1,10 +1,17 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { COLORS } from '../constants/color';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { FONTS } from '../constants/font';
+import mainStyles from '../assets/styles/mainStyles';
 
-const PrimaryButton = ({ title, disabled, onPress,style }) => {
+interface PrimaryButtonProps{
+   style?: StyleProp<ViewStyle>;  
+   title:string;
+   disabled:boolean;
+   onPress:()=>void
+}
+
+const PrimaryButton:React.FC<PrimaryButtonProps> = ({ title, disabled, onPress,style }) => {
   return (
     <TouchableOpacity
       style={[
@@ -14,7 +21,7 @@ const PrimaryButton = ({ title, disabled, onPress,style }) => {
       onPress={onPress}
       disabled={disabled}
     >
-      <Text style={[styles.buttonText, disabled && styles.disabledText]}>{title}</Text>
+      <Text style={[mainStyles.fontSize16,mainStyles.fontInriaSansBold,mainStyles.secondaryTextColor, disabled && mainStyles.lightTextColor]}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -42,15 +49,8 @@ const styles = StyleSheet.create({
     elevation: 0, // Removes shadow
     shadowColor: 'transparent', // Ensures no shadow effect
   },
-  buttonText: {
-    fontSize: scale(16),
-    fontFamily: FONTS.inriaSansBold,
-    lineHeight: verticalScale(17),
-    color: COLORS.secondary,
-  },
-  disabledText: {
-    color: COLORS.lightText, // Lighter text when disabled
-  },
+
+  
   
 });
 

@@ -6,10 +6,10 @@ import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import { images } from '../../constants/image';
 import mainStyles from '../../assets/styles/mainStyles';
 import { verticalScale } from 'react-native-size-matters';
+import { AuthStackScreenProps } from '../../navigation/navigationTypes';
 
 
-
-const OnboardingScreen = ({ navigation }) => {
+const OnboardingScreen:React.FC<AuthStackScreenProps<"OnboardingScreen">> = ({ navigation }) => {
   const textAnim = useRef(new Animated.Value(50)).current;
   const buttonAnim = useRef(new Animated.Value(50)).current;
 

@@ -17,7 +17,7 @@ import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/navigationTypes';
+import { AppStackParamList, AppStackScreenProps, RootStackParamList } from '../../navigation/navigationTypes';
 import profileStyles from '../../assets/styles/profileStyles';
 import { icons } from '../../constants/Icon';
 import {
@@ -35,19 +35,6 @@ import { showToast } from '../../components/toastMessage';
 import { updateProfile } from '../../services/profileService';
 import { useAuth } from '../../customHooks/useAuth';
 
-
-
-// Define types for navigation
-type EditProfileNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'EditProfile'
->;
-type EditProfileRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
-
-type EditProfileProps = {
-  navigation: EditProfileNavigationProp;
-  route: EditProfileRouteProp;
-};
 
 // Define form values type
 type FormValues = {
@@ -67,7 +54,7 @@ const schema = Yup.object().shape({
   profileImage: Yup.mixed().nullable(),
 });
 
-const EditProfile = ({ navigation }: EditProfileProps) => {
+const EditProfile:React.FC<AppStackScreenProps<"EditProfile">> = ({ navigation }) => {
   const {userInfo,setUserInfo}=useAuth()
   const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState<boolean>(false);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);

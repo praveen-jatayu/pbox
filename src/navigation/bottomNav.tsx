@@ -9,9 +9,10 @@ import Bookings from '../screens/bookings/bookingList';
 import Bookmarks from '../screens/bookmarks/bookmarks';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../assets/styles/mainStyles';
+import { BottomTabParamList } from './navigationTypes';
 
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<BottomTabParamList>();
 const animate1 = { 0: { scale: .5, translateY: 7 }, .92: { translateY: -34 }, 1: { scale: 1.2, translateY: -24 } }
 const animate2 = { 0: { scale: 1.2, translateY: -24 }, 1: { scale: 1, translateY: 7 } }
 const circle1 = { 0: { scale: 1 }, 0.2: { scale: .10 }, 0.5: { scale: .2 }, 0.10: { scale: .7 }, 1: { scale: 1 } }

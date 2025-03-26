@@ -1,10 +1,17 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native'
 import React from 'react'
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { COLORS } from '../constants/color';
 import { FONTS } from '../constants/font';
 
-const SecondaryButton = ({title,onPress,disabled,style}) => {
+interface PrimaryButtonProps{
+   style?: StyleProp<ViewStyle>;  
+   title:string;
+   disabled:boolean;
+   onPress:()=>void
+}
+
+const SecondaryButton:React.FC<PrimaryButtonProps> = ({title,onPress,disabled,style}) => {
 return (
     <TouchableOpacity
       style={[

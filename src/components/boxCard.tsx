@@ -6,11 +6,10 @@ import {
   TouchableOpacity, 
   Pressable, 
   Animated, 
-  StyleSheet, 
   Dimensions 
 } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
+import { scale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
 import { icons } from '../constants/Icon';
 import boxCardStyles from '../assets/styles/boxCardStyles';
@@ -23,9 +22,9 @@ const { width: screenWidth } = Dimensions.get('window');
 
 
 const BoxCard = ({ boxData,onAction}) => {
-  const carouselRef = useRef(null);
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [isBookmarked, setIsBookmarked] = useState(
+  const carouselRef = useRef<Carousel<{ image: string }> | null>(null);
+  const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [isBookmarked, setIsBookmarked] = useState<number>(
     boxData?.get_selected_user_book_mark?.length > 0 ? 1 : 0
   );
   const navigation = useNavigation();
@@ -94,8 +93,8 @@ const BoxCard = ({ boxData,onAction}) => {
      console.log(message)
     }
   }
-  catch(error) {
-    console.log(error.message);
+  catch(error:unknown) {
+    if(error instanceof Error)
     showToast('error', error.message||'Failed to update bookmark!');
   }
 }

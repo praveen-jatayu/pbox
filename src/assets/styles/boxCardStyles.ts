@@ -3,7 +3,7 @@ import { moderateScale, moderateVerticalScale, scale, verticalScale } from "reac
 import { COLORS } from "../../constants/color"
 import { FONTS } from "../../constants/font"
 
-export default boxCardStyles=StyleSheet.create({
+ const boxCardStyles=StyleSheet.create({
     cardContainer: {
         backgroundColor: COLORS.secondary,
         borderRadius: moderateScale(10),
@@ -156,3 +156,5 @@ export default boxCardStyles=StyleSheet.create({
         height: verticalScale(20),
       },
 })
+
+export default boxCardStyles

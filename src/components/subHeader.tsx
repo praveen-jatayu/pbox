@@ -1,10 +1,17 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import React from 'react';
 import { icons } from '../constants/Icon';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../assets/styles/mainStyles';
 
-const SubHeader = ({ title, onPress, style }) => {
+
+interface SubHeaderProps {
+  title: string;
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+}
+
+const SubHeader: React.FC<SubHeaderProps> = ({ title, onPress, style }) => {
   return (
     <View style={[styles.container,mainStyles.secondaryBackgroundColor,mainStyles.widthFull,mainStyles.dropShadowEffect, style]}>
       <TouchableOpacity onPress={onPress}>

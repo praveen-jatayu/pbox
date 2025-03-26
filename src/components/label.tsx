@@ -4,7 +4,11 @@ import { scale } from 'react-native-size-matters';
 import { COLORS } from '../constants/color';
 import { FONTS } from '../constants/font';
 
-const Label = ({ text, required = false }) => {
+interface LabelProps{
+  text:string;
+  required:boolean;
+}
+const Label:React.FC<LabelProps> = ({ text, required = false }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{text}</Text>

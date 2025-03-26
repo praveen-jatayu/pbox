@@ -4,11 +4,18 @@ import {useNavigation} from '@react-navigation/native';
 import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
 import { icons } from '../constants/Icon';
 import mainStyles from '../assets/styles/mainStyles';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../navigation/navigationTypes';
 
+interface MainHeaderProps {
+  headerType?: 'home' | 'booking' | 'bookmark';
+  isFetchingLocation: boolean;
+  location: string[]; // Ensure location is an array of strings
+}
+type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
-
-const MainHeader = ({headerType = 'home',isFetchingLocation,location}) => {
-  const navigation = useNavigation();
+const MainHeader:React.FC<MainHeaderProps> = ({headerType = 'home',isFetchingLocation,location}) => {
+  const navigation = useNavigation<NavigationProp>();
 
   // Render header left component based on headerType prop
   const renderLeftContent = () => {
