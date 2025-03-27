@@ -14,8 +14,11 @@ import { useFocusEffect } from '@react-navigation/native';
 import { apiPost } from '../../services/apiService/apiService';
 import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 import Toast from 'react-native-toast-message';
+import {  AuthStackScreenProps } from '../../navigation/navigationTypes';
 
-const Login = ({navigation}) => {
+
+
+const Login:React.FC<AuthStackScreenProps<"Login">> = ({navigation}) => {
   const [isTandCChecked, setIsTandCChecked] = useState(false);
   const [loading,setLoading]=useState(false)
   const [mobileNo, setMobileNo] = useState('');
@@ -43,7 +46,6 @@ const Login = ({navigation}) => {
              
               navigation.navigate('OTP',{ mobileNo: mobileNo,
                 actualOtp: response.data.verify_otp.toString()})
-                console.log('nav',navigation)
             }
             else{
               Toast.show({
@@ -77,7 +79,7 @@ const Login = ({navigation}) => {
     );
  
 
-  const formatPhoneNumber = (text) => {
+  const formatPhoneNumber = (text:string):void => {
     // Remove all non-numeric characters
     let cleaned = text.replace(/\D/g, '');
 

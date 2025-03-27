@@ -1,10 +1,15 @@
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, StyleProp,ViewStyle} from 'react-native';
 import React, {useMemo} from 'react';
 import mainStyles from '../assets/styles/mainStyles';
 import {images} from '../constants/image';
-import {moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
+import {moderateVerticalScale, scale, verticalScale, } from 'react-native-size-matters';
 
-const NoDataContainer = ({style,noDataText}) => {
+interface NoDataContainerProps {
+  style?: StyleProp<ViewStyle>;  
+  noDataText?: string;
+}
+
+const NoDataContainer:React.FC<NoDataContainerProps> = ({style,noDataText}) => {
   const randomImage = useMemo(() => {
     const noDataImages = [images.noData1, images.noData2, images.noData3];
     return noDataImages[Math.floor(Math.random() * noDataImages.length)];

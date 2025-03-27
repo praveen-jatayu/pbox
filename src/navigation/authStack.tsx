@@ -7,10 +7,11 @@ import Otp from '../screens/otp/otp';
 import TermsAndCondition from '../screens/policy/termsAndCondition';
 import PrivacyPolicy from '../screens/policy/privacyPolicy';
 import ProfileName from '../screens/profile/profileName';
+import { AuthStackParamList } from './navigationTypes';
 
 
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthStack = () => {
 

@@ -4,6 +4,7 @@ import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import NoDataContainer from '../../components/noDataContainer';
+import { AppStackScreenProps } from '../../navigation/navigationTypes';
 
 // Dummy data for notifications
 const notifications: string | ArrayLike<any> | null | undefined = [
@@ -37,7 +38,7 @@ const notifications: string | ArrayLike<any> | null | undefined = [
   // },
 ];
 
-const NotificationScreen = ({ navigation }) => {
+const NotificationScreen:React.FC<AppStackScreenProps<"NotificationScreen">> = ({ navigation }) => {
   return (
     <View style={[mainStyles.container]}>
       <SubHeader title="Notification" onPress={() => navigation.goBack()} style={undefined} />
@@ -59,7 +60,7 @@ const NotificationScreen = ({ navigation }) => {
         )}
         contentContainerStyle={notifications.length === 0 ? styles.emptyContainer : styles.flatListContent}
   ListEmptyComponent={
-    <NoDataContainer style={undefined} />
+    <NoDataContainer style={undefined} noDataText={"No Notification received yet"} />
   }
 />
     

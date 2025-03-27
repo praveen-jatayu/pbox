@@ -1,12 +1,11 @@
-import { View, Text, ImageBackground, Dimensions, StatusBar } from 'react-native';
+import { View, Text, ImageBackground, Dimensions, StatusBar, StyleSheet } from 'react-native';
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/color';
 import { images } from '../../constants/image';
 import { FONTS } from '../../constants/font';
 import { scale } from 'react-native-size-matters';
 
-const SplashScreen = () => {
+const SplashScreen = () => {        
 
   return (
     <View style={styles.container}>
@@ -23,13 +22,13 @@ const SplashScreen = () => {
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.primary,
   },
   backgroundImage: {
-    flex: 1,  // Takes full screen
+    flex: 1,  
     width: '100%',
     height: '100%',
     justifyContent: 'center',
@@ -40,6 +39,5 @@ const styles = {
     fontFamily: FONTS.inriaSansBold,
     fontSize: scale(60),
   },
-};
-
+});
 export default SplashScreen;

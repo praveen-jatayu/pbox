@@ -2,22 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigationTypes';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { COLORS } from '../../constants/color';
 import ToggleSwitch from 'toggle-switch-react-native';
+import { AppStackScreenProps } from '../../navigation/navigationTypes';
 
-type SettingsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Settings'>;
-type SettingsScreenRouteProp = RouteProp<RootStackParamList, 'Settings'>;
 
-type SettingsScreenProps = {
-  navigation: SettingsScreenNavigationProp;
-  route: SettingsScreenRouteProp;
-};
 
-const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
+const SettingsScreen:React.FC<AppStackScreenProps<"Settings">> = ({ navigation }) => {
   const [pushEnabled, setPushEnabled] = useState(false);
   const [smsEnabled, setSmsEnabled] = useState(false);
 

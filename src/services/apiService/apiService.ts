@@ -5,12 +5,13 @@ import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 
 
 
+
 const PUBLIC_API_ROUTES = [API_ENDPOINTS.AUTH.LOGIN,API_ENDPOINTS.AUTH.OTP,API_ENDPOINTS.USER.UPDATE_USERNAME];
 
 // Create an Axios instance
 const apiClient = axios.create({
   baseURL: baseURL, // API base URL from environment config
-  timeout: 3000,
+  timeout: 5000,
   headers: {
     Accept: 'application/json',
   },
@@ -24,7 +25,7 @@ apiClient.interceptors.request.use(
       config.headers['Content-Type'] = 'multipart/form-data';
     } 
 
-    if (PUBLIC_API_ROUTES.includes(config.url)) {
+    if (config.url && PUBLIC_API_ROUTES.includes(config.url)) {
       return config;
     }
     else{

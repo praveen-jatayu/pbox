@@ -17,6 +17,8 @@ const SelectLocation = ({ navigation }) => {
   const inputRef = useRef(null);
 
   const handleSelectLocation = (data, details) => {
+  
+  console.log('details lat long',details.geometry.location.lat)
     const addressComponents = details?.address_components;
   
     if (!addressComponents) return;
@@ -39,8 +41,8 @@ const SelectLocation = ({ navigation }) => {
       setLocation(locationArray);
       
       // Pass array as navigation params
-      navigation.getParent()?.setParams({ location: locationArray });
-      navigation.navigate('BottomNav', { screen: 'Home', location: locationArray });
+      navigation.getParent()?.setParams({ location: locationArray ,lat:details?.geometry?.location.lat,long:details?.geometry?.location.lng});
+      navigation.navigate('BottomNav', { screen: 'Home', location: locationArray ,lat:details?.geometry?.location.lat,long:details?.geometry?.location.lng});
     }
   };
   async function fetchCurrentLocation() {
@@ -62,7 +64,6 @@ const SelectLocation = ({ navigation }) => {
       Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
   
       const geoData = await Geocoder.from(latitude, longitude);
-      console.log('sssdrere',geoData)
       if (geoData.results.length > 0) {
         const addressComponents = geoData.results[0].address_components;
         const area = addressComponents.find(component => component.types.includes('sublocality'))?.long_name;
@@ -70,7 +71,7 @@ const SelectLocation = ({ navigation }) => {
   
         setLocation([area, city]); // Set area and city
         navigation.getParent()?.setParams({ location: location });
-      navigation.navigate('BottomNav', { screen: 'Home', location: location });
+      navigation.navigate('BottomNav', { screen: 'Home', location: location,lat:latitude,long:longitude });
       }
     } catch (error) {
       console.error('Error fetching location:', error);

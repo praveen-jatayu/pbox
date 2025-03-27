@@ -8,7 +8,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/navigationTypes';
 import profileStyles from '../../assets/styles/profileStyles';
-import { AuthContext } from '../../context/authContext';
+import { useAuth } from '../../customHooks/useAuth';
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ProfileScreen'>;
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ProfileScreen'>;
@@ -20,8 +20,7 @@ type ProfileScreenProps = {
 
 const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
   
-  const{logout,userInfo}=useContext(AuthContext)
-console.log('userrrrr',userInfo)
+  const{logout,userInfo}=useAuth()
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -44,7 +43,7 @@ console.log('userrrrr',userInfo)
         <View style={[profileStyles.profileInfoContainer]}>
           {/* Profile pic container */}
           <View style={[profileStyles.profilePicContainer, mainStyles.contentCenter,mainStyles.iconBackgroundColor]}>
-           {userInfo.profile_pic ?(
+           {userInfo?.profile_pic ?(
            <Image  source={{uri:userInfo.profile_pic}}
            style={[profileStyles.profilePicContainer]}/>
            ):(
@@ -57,10 +56,10 @@ console.log('userrrrr',userInfo)
           {/* Name & phone container */}
           <View>
             <Text style={[ mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize20]}>
-             {userInfo.name}
+             {userInfo?.name}
             </Text>
             <Text style={[profileStyles.profilePhone, mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize14]}>
-              +91 {userInfo.mobile_no}
+              +91 {userInfo?.mobile_no}
             </Text>
           </View>
         </View>

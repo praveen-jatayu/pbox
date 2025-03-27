@@ -26,8 +26,11 @@ export const getBookingRatingReview = async (data) => {
     } else {
       return [];
     }
-  } catch (error) {
-    console.error('Error fetching sports data:', error.message);
-    throw error; // Propagate the error if needed
+  }catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching reviews:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("An unknown error occurred");
   }
 };

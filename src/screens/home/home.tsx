@@ -12,13 +12,12 @@ import { getSportDetail } from '../../services/sportService'
 import homeStyles from '../../assets/styles/homeStyles'
 import BoxCardSkeleton from '../../components/boxCardSkeleton'
 import SportsCategorySkeleton from './sportsCategorySkeleton'
-import BottomModal from '../../components/bottomModal'
-import Geolocation from '@react-native-community/geolocation';
 import GetLocation from 'react-native-get-location'
 import Geocoder from 'react-native-geocoding';
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { requestLocationPermission } from '../../utils/permissionUtil'
+import { requestLocationPermission, requestNotificationPermission } from '../../utils/permissionUtil'
 import { COLORS } from '../../constants/color'
+import Modal from 'react-native-modal'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
@@ -27,22 +26,22 @@ const MIN_HEADER_HEIGHT = moderateVerticalScale(150);
 const Home =  () => {
   const route = useRoute();
   const navigation=useNavigation()
- console.log('route',route)
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const [search, setSearch] = useState('');
-  const [showAllSports, setShowAllSports] = useState(false);
+  const [showAllSports, setShowAllSports] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [boxData,setBoxData]=useState([])
   const [sportData,setSportData]=useState([])
   const [filteredBoxData,setFilteredBoxData]=useState([])
-  const [refreshing, setRefreshing] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSportsLoading,setIsSportsLoading]=useState(true)
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSportsLoading,setIsSportsLoading]=useState<boolean>(true)
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [location, setLocation] = useState([]);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(true);
-   const [isNotificationPermissionModalVisible, setIsNotificationModalVisible] = useState(false);
+  const [latitude,setLatitude]=useState<number|null>(null)
+  const [longitude,setLongitude]=useState<number|null>(null)
+  const [isFetchingLocation, setIsFetchingLocation] = useState<boolean>(true);
   const renderBoxCard = ({ item }) => <BoxCard boxData={item} onAction={fetchBoxList}/>;
 
   const headerTranslateY = isSearchFocused
@@ -146,7 +145,7 @@ const searchTranslateY = isSearchFocused
 );
 
 const fetchBoxList = async (boxData = null, sportId = null) => {
-  console.log('sportId', sportId);
+ 
 
   const formData = new FormData();
   if (boxData !== null || sportId !== null) {
@@ -156,10 +155,12 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     if (sportId) {
       formData.append('sport_id', sportId);  // Correctly appending sport_id
     }
+ 
   }
-
+  formData.append('latitude',latitude)
+  formData.append('longitude',longitude)
   try {
-    const response = await getBoxDetail(boxData !== null || sportId !== null?formData:null);  // Pass the correct `formData`
+    const response = await getBoxDetail(formData);  // Pass the correct `formData`
     if (response) {
       setBoxData(response);
       setFilteredBoxData(response);
@@ -173,19 +174,17 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     setIsLoading(false);
   }
 };
-  const getSportList = async () => {
+  const getSportList = async ():Promise<void> => {
     try {
      
       const response = await  getSportDetail()
-      console.log('sports',response)
   
       if (response) {
         console.log('sportData',response)
        setSportData(response)
       } else {
-       console.log('error occured',response.error)
+       console.log('error occured',response.message)
       }
-  
      
     } catch (error) {
       
@@ -198,12 +197,12 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
   };
 
 
-  useEffect(()=>{
-    setSelectedCategory(null)
-    fetchBoxList(null,selectedCategory)
-    getSportList()
-    // hasNotificationPermission()
-  },[])
+  useEffect(() => {
+    if (!isFetchingLocation) {
+      setSelectedCategory(null);
+      fetchBoxList(null, selectedCategory);
+    }
+  }, [isFetchingLocation]);
 
 
   useEffect(() => {
@@ -227,19 +226,24 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     return unsubscribe; // Clean up the listener
   }, [navigation]);
 
+  useEffect(()=>{
+    getSportList()
+  },[])
   
   useEffect(() => {
     setIsFetchingLocation(true)
     if (route?.params?.location) {
       setLocation(route.params.location);
       setIsFetchingLocation(false)
-      console.log('Updated Selected City:', route.params.location);
+      setLatitude(route.params?.lat)
+      setLongitude(route.params?.long)
     }
   }, [route.params?.location]);
 
   useEffect(() => {
     if (!route.params?.location) {
       fetchCurrentLocation();
+     
     }
   }, []);
 // fetching current Location
@@ -262,7 +266,6 @@ if (!hasPermission) {
     Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
 
     const geoData = await Geocoder.from(latitude, longitude);
-    console.log('sssdrere',geoData)
     if (geoData.results.length > 0) {
       const addressComponents = geoData.results[0].address_components;
       const area = addressComponents.find(component => component.types.includes('sublocality'))?.long_name;
@@ -277,11 +280,6 @@ if (!hasPermission) {
   }
 }
 
-  const toogleNotificationPermissionModal=()=>{
-    setIsNotificationModalVisible(!isNotificationPermissionModalVisible)
-  }
-  
-  
 
   return (
     <View style={mainStyles.container}>
@@ -391,13 +389,34 @@ if (!hasPermission) {
         />
       )}
       </Animated.View>
-      {/* Notification  Permission Modal */}
-   
-      <BottomModal
-        isModalVisible={isNotificationPermissionModalVisible}
-        toggleModal={toogleNotificationPermissionModal}
-        type={'notification'} profileImage={undefined} setProfileImage={undefined} serverProfileImage={undefined} setDisplayProfileImage={undefined}      />
+     
 
+
+{isFetchingLocation && (
+   
+   <Modal transparent={true} animationType="fade" visible={isFetchingLocation} style={{ justifyContent: 'flex-end',
+    margin: 0,}}
+    statusBarTranslucent={true}>
+     <View style={{
+      flex:1,
+       justifyContent: 'center', 
+       alignItems: 'center', 
+       margin:0,
+       backgroundColor: 'rgba(0,0,0,0.5)' // Semi-transparent overlay
+     }}>
+       <View style={{
+          padding:16,
+         backgroundColor: 'white', 
+         borderRadius: 10,
+         alignItems: 'center'
+       }}>
+         <ActivityIndicator size="large" color={COLORS.primary} />
+         <Text style={{ marginTop: 10 }}>Fetching Location...</Text>
+       </View>
+     </View>
+   </Modal>
+   
+ )}
     </View>
   )
 }

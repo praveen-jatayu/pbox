@@ -11,8 +11,9 @@ import TextInputComponent from '../../components/textInputComponent';
 import PrimaryButton from '../../components/primaryButton';
 import CustomCheckBox from '../../components/checkbox';
 import BottomModal from '../../components/bottomModal';
+import { AppStackScreenProps } from '../../navigation/navigationTypes';
 
-const DeleteAccount = ({ navigation }) => {
+const DeleteAccount:React.FC<AppStackScreenProps<'DeleteAccount'>> = ({ navigation }) => {
   const [reasonForDeleteAccount, setReasonForDeleteAccount] = useState('');
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);

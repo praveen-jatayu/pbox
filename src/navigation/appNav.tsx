@@ -5,13 +5,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AuthStack from './authStack';
 import AppStack from './appStack';
 import SplashScreen from '../screens/splashScreen/splashScreen';
-import { AuthContext } from '../context/authContext';
 import { COLORS } from '../constants/color';
+import { useAuth } from '../customHooks/useAuth';
 
 
 function AppNav() {
   const [isSplashVisible, setIsSplashVisible] = useState(true); // Show splash initially
-  const { userToken,isLoading } = useContext(AuthContext);
+  const { userToken, isLoading } = useAuth(); 
   console.log('userToken',userToken)
 
   useEffect(() => {
@@ -36,7 +36,7 @@ function AppNav() {
       {isSplashVisible ? (
         <SplashScreen />
       ) : userToken!== null ? (
-        <AppStack />
+        <AppStack route={undefined} />
       ) : (
         <AuthStack />
       )}

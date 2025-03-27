@@ -8,15 +8,15 @@ import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
 import { apiPost, saveAuthToken } from '../../services/apiService/apiService';
 import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
-import { AuthContext } from '../../context/authContext';
-import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../components/toastMessage';
+import { useAuth } from '../../customHooks/useAuth';
+import { AuthStackScreenProps } from '../../navigation/navigationTypes';
 
 
-const ProfileName = ({ navigation ,route}) => {
+const ProfileName:React.FC<AuthStackScreenProps<"ProfileName">> = ({ navigation ,route}) => {
  const {userDetail}=route.params
- const {setUserInfo,setUserToken}=useContext(AuthContext)
+ const {setUserInfo,setUserToken}=useAuth()
  
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -26,7 +26,7 @@ const ProfileName = ({ navigation ,route}) => {
     return firstName.trim().length > 0;
   };
 
-  const handleNameChange = (text) => {
+  const handleNameChange = (text:string):void => {
     setFirstName(text);
     if (text.trim().length === 0) {
       setNameError('First name is required');
@@ -53,8 +53,9 @@ const ProfileName = ({ navigation ,route}) => {
          } else {
        showToast('error', response.message||'Failed to update profile name!');
          }
-       } catch (error) {
+       } catch (error:unknown) {
          console.error('Failed to Register user:', error);
+         if(error instanceof Error)
          showToast('error', error.message||'Failed to update profile name!');
        }
      };

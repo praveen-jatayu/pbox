@@ -3,6 +3,7 @@ import AppNav from './src/navigation/appNav';
 import { AuthProvider } from './src/context/authContext';
 
 import { ToastMessage } from './src/components/toastMessage';
+import InternetCheck from './src/utils/internetCheck';
 
 
 const App = () => {
@@ -10,9 +11,11 @@ const App = () => {
   
   return (
     <>
+    
   <AuthProvider>
+  <InternetCheck>
   <AppNav/>
- 
+  </InternetCheck>
   </AuthProvider>
   <ToastMessage />
 

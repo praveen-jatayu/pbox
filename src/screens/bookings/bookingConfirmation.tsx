@@ -12,6 +12,7 @@ import { icons } from '../../constants/Icon';
 import bookingConfirmationStyles from '../../assets/styles/bookingConfirmationStyles';
 import { addBooking } from '../../services/bookingService';
 import Toast from 'react-native-toast-message';
+import { showToast } from '../../components/toastMessage';
 
 const BookingConfirmation = ({navigation,route}) => {
   const {slotBookingData,boxData,totalAmountToBePaid}=route?.params
@@ -21,25 +22,25 @@ const BookingConfirmation = ({navigation,route}) => {
 
 
   const handlePay=async()=>{
-    // const requestData={
-    //   box_id:boxData?.id,
-    //   total_amount:totalAmountToBePaid,
-    //   selectedSlots:slotBookingData
-    // }
-    // const {success,message}=await addBooking(requestData)
-    // if(success){
-    //   console.log('booking added successfully')
-    //     Toast.show({
-    //           type: 'success',
-    //           text1: 'Success!!!',
-    //           text2: message || 'Something went wrong!',
-    //         });
-            // navigation.replace('BottomNav', {screen: 'Booking'});
-            navigation.navigate('BottomNav',{screen:'Booking'})
-    // }
-    // else{
-    //   console.log(message)
-    // }
+    const requestData={
+      box_id:boxData?.id,
+      total_amount:totalAmountToBePaid,
+      selectedSlots:slotBookingData
+    }
+    const {success,message}=await addBooking(requestData)
+    if(success){
+        Toast.show({
+              type: 'success',
+              text1: 'Success!!!',
+              text2: message || 'Something went wrong!',
+            });
+            navigation.replace('BottomNav', {screen: 'Booking'});
+          
+    }
+    else{
+      console.log(message)
+      showToast('error','Failed to add booking')
+    }
   }
   return (
     <View style={mainStyles.container}>

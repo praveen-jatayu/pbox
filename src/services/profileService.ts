@@ -1,5 +1,6 @@
-import { API_ENDPOINTS } from "../../constants/apiEndPoinst"
-import { apiPost } from "./apiService"
+import { API_ENDPOINTS } from "../constants/apiEndPoinst"
+import { apiPost } from "./apiService/apiService"
+
 
 
 

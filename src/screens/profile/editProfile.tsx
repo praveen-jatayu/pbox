@@ -17,7 +17,7 @@ import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/navigationTypes';
+import { AppStackParamList, AppStackScreenProps, RootStackParamList } from '../../navigation/navigationTypes';
 import profileStyles from '../../assets/styles/profileStyles';
 import { icons } from '../../constants/Icon';
 import {
@@ -30,26 +30,11 @@ import TextInputComponent from '../../components/textInputComponent';
 import PrimaryButton from '../../components/primaryButton';
 import BottomModal from '../../components/bottomModal';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { AuthContext } from '../../context/authContext';
-import { updateProfile } from '../../services/apiService/profileService';
-import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../components/toastMessage';
-import { requestNotificationPermission } from '../../utils/permissionUtil';
+import { updateProfile } from '../../services/profileService';
+import { useAuth } from '../../customHooks/useAuth';
 
-
-
-// Define types for navigation
-type EditProfileNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'EditProfile'
->;
-type EditProfileRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
-
-type EditProfileProps = {
-  navigation: EditProfileNavigationProp;
-  route: EditProfileRouteProp;
-};
 
 // Define form values type
 type FormValues = {
@@ -69,18 +54,17 @@ const schema = Yup.object().shape({
   profileImage: Yup.mixed().nullable(),
 });
 
-const EditProfile = ({ navigation }: EditProfileProps) => {
-  const {userInfo,setUserInfo}=useContext(AuthContext)
-  console.log('user',userInfo)
-  const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const[isLoading,setIsLoading]=useState(false)
+const EditProfile:React.FC<AppStackScreenProps<"EditProfile">> = ({ navigation }) => {
+  const {userInfo,setUserInfo}=useAuth()
+  const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState<boolean>(false);
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const[isLoading,setIsLoading]=useState<boolean>(false)
   const [dobDisplay, setDobDisplay] = useState('');
   const [dobServer, setDobServer] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const [serverProfileImage, setServerProfileImage] = useState('');
   const [displayProfileImage, setDisplayProfileImage] = useState('');
- const [keyboardVisible, setKeyboardVisible] = useState(false);
+ const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
   const {
     control,
     handleSubmit,
@@ -89,11 +73,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: userInfo.name,
-      mobileNo:'+91 ' + userInfo.mobile_no,
+      name: userInfo?.name,
+      mobileNo:'+91 ' + userInfo?.mobile_no,
       email: '',
       dob: '',
-      profileImage: userInfo.profile_pic, 
+      profileImage: userInfo?.profile_pic, 
     },
   });
 
@@ -128,7 +112,8 @@ try{
     showToast('error', message||'Failed to  updated profile !');
    }
   }
-  catch(error){
+  catch(error:unknown){
+    if(error instanceof Error)
     showToast('error', error.message||'Failed to  updated profile !');
 
   }
@@ -160,7 +145,7 @@ try{
     setShowDatePicker(!showDatePicker);
 };
 
-  const formatDate = (rawDate, type) => {
+  const formatDate = (rawDate, type:string) => {
     let date = new Date(rawDate);
     let year = date.getFullYear();
     let month = (date.getMonth() + 1).toString().padStart(2, '0');
