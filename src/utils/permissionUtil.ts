@@ -60,3 +60,4 @@ export const requestLocationPermission = async () => {
     return false;
   }
 };
+
