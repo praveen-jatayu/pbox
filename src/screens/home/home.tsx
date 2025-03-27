@@ -392,7 +392,7 @@ if (!hasPermission) {
      
 
 
-{isFetchingLocation && (
+{/* {isFetchingLocation && (
    
    <Modal transparent={true} animationType="fade" visible={isFetchingLocation} style={{ justifyContent: 'flex-end',
     margin: 0,}}
@@ -416,7 +416,7 @@ if (!hasPermission) {
      </View>
    </Modal>
    
- )}
+ )} */}
     </View>
   )
 }
