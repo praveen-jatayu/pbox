@@ -390,8 +390,7 @@ if (!hasPermission) {
       )}
       </Animated.View>
      
-
-
+{/* error here */}
 {/* {isFetchingLocation && (
    
    <Modal transparent={true} animationType="fade" visible={isFetchingLocation} style={{ justifyContent: 'flex-end',
