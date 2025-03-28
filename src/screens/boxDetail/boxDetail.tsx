@@ -556,7 +556,6 @@ const BoxDetail = ({navigation, route}: BoxDetailProps) => {
             {/* <View style={boxDetailStyles.mapWrapper}> */}
             <MapView
               ref={mapRef}
-              provider={PROVIDER_GOOGLE}
               style={boxDetailStyles.map}
               initialCamera={{
                 center: {

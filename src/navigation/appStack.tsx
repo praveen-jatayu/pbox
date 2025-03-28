@@ -118,7 +118,7 @@ const AppStack = () => {
         <Stack.Screen
           name="BoxDetail"
           component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
+            <CustomSafeAreaView excludeSafeArea={true}>
               <BoxDetail {...props} />
             </CustomSafeAreaView>
           )}
