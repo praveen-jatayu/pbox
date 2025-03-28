@@ -11,8 +11,9 @@ import SecondaryButton from '../../components/secondaryButton';
 import GetLocation from 'react-native-get-location';
 import Geocoder from 'react-native-geocoding';
 import { requestLocationPermission } from '../../utils/permissionUtil';
+import { AppStackScreenProps } from '../../navigation/navigationTypes';
 
-const SelectLocation = ({ navigation }) => {
+const SelectLocation:React.FC<AppStackScreenProps<"SelectLocation">> = ({ navigation }) => {
   const [location, setLocation] = useState([]);
   const inputRef = useRef(null);
 
