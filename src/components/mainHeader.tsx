@@ -1,11 +1,16 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {moderateScale, moderateVerticalScale, scale, verticalScale} from 'react-native-size-matters';
-import { icons } from '../constants/Icon';
+import {
+  moderateScale,
+  moderateVerticalScale,
+  scale,
+  verticalScale,
+} from 'react-native-size-matters';
+import {icons} from '../constants/Icon';
 import mainStyles from '../assets/styles/mainStyles';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AppStackParamList } from '../navigation/navigationTypes';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AppStackParamList} from '../navigation/navigationTypes';
 
 interface MainHeaderProps {
   headerType?: 'home' | 'booking' | 'bookmark';
@@ -14,54 +19,75 @@ interface MainHeaderProps {
 }
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
-const MainHeader:React.FC<MainHeaderProps> = ({headerType = 'home',isFetchingLocation,location}) => {
+const MainHeader: React.FC<MainHeaderProps> = ({
+  headerType = 'home',
+  isFetchingLocation,
+  location,
+}) => {
   const navigation = useNavigation<NavigationProp>();
 
   // Render header left component based on headerType prop
   const renderLeftContent = () => {
     if (headerType === 'home') {
       return (
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => navigation.navigate('SelectLocation')}
           style={styles.locationContainer}
           activeOpacity={0.8}>
-          <Image
-            source={icons.locationIcon}
-            style={styles.locationIcon}
-          />
+          <Image source={icons.locationIcon} style={styles.locationIcon} />
           <View style={styles.locationTextContainer}>
             <View>
-            {!isFetchingLocation ? (
-              <View>
-                <Text style={[mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize18]}>
-                  {location[0]}
-                </Text>
-                <Text style={[mainStyles.fontInriaSansRegular, mainStyles.darkTextColor, mainStyles.fontSize14]}>
-                  {location[1]}
-                </Text>
-              </View>
-            ) : (
-              <View style={styles.skeletonPlaceholder} />
-            )}
+              {!isFetchingLocation ? (
+                <View>
+                  <Text
+                    style={[
+                      mainStyles.fontInriaSansRegular,
+                      mainStyles.darkTextColor,
+                      mainStyles.fontSize18,
+                    ]}>
+                    {location[0]}
+                  </Text>
+                  <Text
+                    style={[
+                      mainStyles.fontInriaSansRegular,
+                      mainStyles.darkTextColor,
+                      mainStyles.fontSize14,
+                    ]}>
+                    {location[1]}
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.skeletonPlaceholder} />
+              )}
             </View>
-            <Image
-              source={icons.downArrowIcon}
-              style={styles.downArrowIcon}
-            />
+            <Image source={icons.downArrowIcon} style={styles.downArrowIcon} />
           </View>
         </TouchableOpacity>
       );
     } else if (headerType === 'booking') {
       return (
         <View style={styles.locationContainer}>
-          <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize18]}>Bookings</Text>
-          </View>
-      
+          <Text
+            style={[
+              mainStyles.darkTextColor,
+              mainStyles.fontInriaSansRegular,
+              mainStyles.fontSize18,
+            ]}>
+            Bookings
+          </Text>
+        </View>
       );
     } else if (headerType === 'bookmark') {
       return (
         <View style={styles.locationContainer}>
-        <Text style={[mainStyles.darkTextColor,mainStyles.fontInriaSansRegular,mainStyles.fontSize18]}>Bookmarks</Text>
+          <Text
+            style={[
+              mainStyles.darkTextColor,
+              mainStyles.fontInriaSansRegular,
+              mainStyles.fontSize18,
+            ]}>
+            Bookmarks
+          </Text>
         </View>
       );
     } else {
@@ -71,20 +97,24 @@ const MainHeader:React.FC<MainHeaderProps> = ({headerType = 'home',isFetchingLoc
   };
 
   return (
-    <View style={[styles.headerContainer, mainStyles.secondaryBackgroundColor, mainStyles.widthFull, mainStyles.dropShadowEffect]}>
+    <View
+      style={[
+        styles.headerContainer,
+        mainStyles.secondaryBackgroundColor,
+        mainStyles.widthFull,
+        mainStyles.dropShadowEffect,
+      ]}>
       {renderLeftContent()}
       <View style={styles.iconGroup}>
-        <TouchableOpacity onPress={() => navigation.navigate('NotificationScreen')} activeOpacity={0.5}>
-          <Image 
-            source={icons.notificationIcon}
-            style={styles.headerIcon}
-          />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('NotificationScreen')}
+          activeOpacity={0.5}>
+          <Image source={icons.notificationIcon} style={styles.headerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')} activeOpacity={0.5}>
-          <Image 
-            source={icons.userIcon}
-            style={styles.headerIcon}
-          />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ProfileScreen')}
+          activeOpacity={0.5}>
+          <Image source={icons.userIcon} style={styles.headerIcon} />
         </TouchableOpacity>
       </View>
     </View>
@@ -97,11 +127,10 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: moderateVerticalScale(65, 0.8),
+    height: moderateVerticalScale(50, 0.8),
     justifyContent: 'space-between',
-    paddingHorizontal: scale(13),
-    paddingTop: verticalScale(25),
-    paddingBottom: verticalScale(15),
+    paddingHorizontal: scale(10),
+    paddingBottom: verticalScale(10),
   },
   locationContainer: {
     flexDirection: 'row',
@@ -116,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: scale(10),
   },
- 
+
   downArrowIcon: {
     width: scale(17),
     height: verticalScale(17),
@@ -136,5 +165,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0', // Light grey color for skeleton
     borderRadius: scale(4),
   },
-  
 });

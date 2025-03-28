@@ -1,6 +1,7 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useEffect, useRef} from 'react';
 import {
+  Platform,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -34,6 +35,7 @@ const animate2 = {
   0: {scale: 1.2, translateY: -24},
   1: {scale: 1, translateY: 7},
 };
+
 const circle1 = {
   0: {scale: 1},
   0.2: {scale: 0.1},
@@ -65,7 +67,10 @@ const TabButton = props => {
       onPress={onPress}
       activeOpacity={1}
       style={styles.container}>
-      <Animatable.View ref={viewRef} duration={1000} style={styles.container}>
+      <Animatable.View
+        ref={viewRef}
+        duration={1000}
+        style={styles.containerAnnimated}>
         <View style={[styles.btn]}>
           <Animatable.View ref={circleRef} style={styles.circle} />
           <Ionicons
@@ -115,6 +120,11 @@ export default function AnimTab1({route}) {
                   label: 'Home',
                   icon: 'home',
                 }}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingBottom: Platform.OS === 'ios' ? 10 : 0, // Adjust for iOS
+                }}
               />
             ),
           }}
@@ -131,6 +141,11 @@ export default function AnimTab1({route}) {
                   route: 'Booking',
                   label: 'Booking',
                   icon: 'newspaper-outline',
+                }}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingBottom: Platform.OS === 'ios' ? 10 : 0, // Adjust for iOS
                 }}
               />
             ),
@@ -149,6 +164,11 @@ export default function AnimTab1({route}) {
                   label: 'Bookmarks',
                   icon: 'bookmarks-outline',
                 }}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingBottom: Platform.OS === 'ios' ? 10 : 0, // Adjust for iOS
+                }}
               />
             ),
           }}
@@ -160,7 +180,14 @@ export default function AnimTab1({route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'center', // Ensures vertical centering
+    alignItems: 'center',
+    height: verticalScale(60),
+    paddingTop: Platform.OS === 'ios' ? 5 : 10, // Adjust padding for iOS
+  },
+  containerAnnimated: {
+    flex: 1,
+    justifyContent: 'center', // Center elements
     alignItems: 'center',
     height: verticalScale(60),
   },
@@ -168,14 +195,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: moderateScale(16),
     borderTopRightRadius: moderateScale(16),
     borderRadius: moderateScale(10),
-    height: moderateVerticalScale(60),
-    backgroundColor: COLORS.secondary,
-    shadowColor: COLORS.primary,
-    shadowOffset: {width: 0, height: -3},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    // Android shadow
-    elevation: 10,
+    height: moderateVerticalScale(60), // Increase height slightly for better spacing
+    alignItems: 'center', // Ensure all content is aligned properly
+    justifyContent: 'center',
+    paddingBottom: Platform.OS === 'ios' ? 15 : 0, // Adjust bottom padding for iOS
+    elevation: 10, // Android shadow
   },
   btn: {
     width: moderateScale(40),
