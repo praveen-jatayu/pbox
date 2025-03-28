@@ -17,7 +17,6 @@ import Geocoder from 'react-native-geocoding';
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { requestLocationPermission, requestNotificationPermission } from '../../utils/permissionUtil'
 import { COLORS } from '../../constants/color'
-import Modal from 'react-native-modal'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 

@@ -1,17 +1,16 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {View, ActivityIndicator} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import AuthStack from './authStack';
 import AppStack from './appStack';
 import SplashScreen from '../screens/splashScreen/splashScreen';
 import {COLORS} from '../constants/color';
 import {useAuth} from '../customHooks/useAuth';
+import SafeAreaWrapper from '../utils/safeAreaWrapper';
 
 function AppNav() {
   const [isSplashVisible, setIsSplashVisible] = useState(true); // Show splash initially
   const {userToken, isLoading} = useAuth();
-  console.log('userToken', userToken);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,6 +30,7 @@ function AppNav() {
 
   return (
     <NavigationContainer>
+        
       {isSplashVisible ? (
         <SplashScreen />
       ) : userToken !== null ? (
@@ -38,6 +38,7 @@ function AppNav() {
       ) : (
         <AuthStack />
       )}
+    
     </NavigationContainer>
   );
 }

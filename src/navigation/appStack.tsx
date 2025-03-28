@@ -1,6 +1,6 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {SafeAreaView, Settings, StatusBar} from 'react-native';
+import {SafeAreaView, Settings, StatusBar, View} from 'react-native';
 import BottomNav from './bottomNav';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
@@ -18,18 +18,30 @@ import {AppStackParamList} from './navigationTypes';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
-const AppStack = ({route}) => {
-  console.log('route', route);
+const AppStack = () => {
 
+
+  const CustomSafeAreaView = ({ children, excludeSafeArea }) => {
+    return excludeSafeArea ? (
+      <View style={{ flex: 1 }}>{children}</View>
+    ) : (
+      <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
+    );
+  };
   return (
     <>
-      <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}>
+      {/* <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}> */}
         <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
         <Stack.Navigator
           screenOptions={{headerShown: false, animation: 'fade_from_bottom'}}>
           <Stack.Screen
             name="BottomNav"
-            component={BottomNav}
+            component={(props)=>(
+              <CustomSafeAreaView excludeSafeArea={false}>
+              <BottomNav {...props} />
+            </CustomSafeAreaView>
+            )}
+            
             options={{
               headerShown: false,
             }}
@@ -78,10 +90,14 @@ const AppStack = ({route}) => {
           />
           <Stack.Screen
             name="BoxDetail"
-            component={BoxDetail}
+            component={(props) => (
+              <CustomSafeAreaView excludeSafeArea={true}>
+                <BoxDetail {...props} />
+              </CustomSafeAreaView>
+            )}
             options={{
               headerShown: false,
-            }}
+            }}    
           />
           <Stack.Screen
             name="BookingDetail"
@@ -119,7 +135,7 @@ const AppStack = ({route}) => {
             }}
           />
         </Stack.Navigator>
-      </SafeAreaView>
+     
     </>
   );
 };

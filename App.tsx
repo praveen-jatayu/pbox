@@ -4,6 +4,7 @@ import { AuthProvider } from './src/context/authContext';
 
 import { ToastMessage } from './src/components/toastMessage';
 import InternetCheck from './src/utils/internetCheck';
+import SafeAreaWrapper from './src/utils/safeAreaWrapper';
 
 
 const App = () => {
@@ -14,7 +15,9 @@ const App = () => {
     
   <AuthProvider>
   <InternetCheck>
+  
   <AppNav/>
+
   </InternetCheck>
   </AuthProvider>
   <ToastMessage />
