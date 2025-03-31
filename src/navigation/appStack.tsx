@@ -1,6 +1,6 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaView, Settings, StatusBar } from 'react-native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {SafeAreaView, Settings, StatusBar, View} from 'react-native';
 import BottomNav from './bottomNav';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
@@ -14,116 +14,175 @@ import SlotBooking from '../screens/bookings/slotBooking';
 import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
 import BookingDetail from '../screens/bookings/bookingDetail';
 import SelectLocation from '../screens/selectLocation/selectLocation';
-import { AppStackParamList } from './navigationTypes';
+import {AppStackParamList} from './navigationTypes';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
-const AppStack = ({route}) => {
-console.log('route',route)
+const AppStack = () => {
+  const CustomSafeAreaView = ({children, excludeSafeArea}) => {
+    return excludeSafeArea ? (
+      <View style={{flex: 1}}>{children}</View>
+    ) : (
+      <>
+        {/* Top SafeAreaView for status bar background color */}
+        <SafeAreaView style={{backgroundColor: '#ffffff'}} />
 
+        {/* Main content */}
+        <SafeAreaView style={{flex: 1}}>{children}</SafeAreaView>
+      </>
+    );
+  };
   return (
-  <>
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content"/>
-    
-      <Stack.Navigator screenOptions={{ headerShown: false ,animation:'fade_from_bottom'}}>
-        
+    <>
+      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+      <Stack.Navigator
+        screenOptions={{headerShown: false, animation: 'fade_from_bottom'}}>
         <Stack.Screen
           name="BottomNav"
-          component={BottomNav}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <BottomNav {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="SelectLocation"
-          component={SelectLocation}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <SelectLocation {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="ProfileScreen"
-          component={ProfileScreen}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <ProfileScreen {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="EditProfile"
-          component={EditProfile}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <EditProfile {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="Settings"
-          component={SettingsScreen}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <SettingsScreen {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="DeleteAccount"
-          component={DeleteAccount}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <DeleteAccount {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="NotificationScreen"
-          component={NotificationScreen}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <NotificationScreen {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="BoxDetail"
-          component={BoxDetail}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={true}>
+              <BoxDetail {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="BookingDetail"
-          component={BookingDetail}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <BookingDetail {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="SlotBooking"
-          component={SlotBooking}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <SlotBooking {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="BookingConfirmation"
-          component={BookingConfirmation}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <BookingConfirmation {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="ClientReview"
-          component={ClientReview}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <ClientReview {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="AddRatingAndReview"
-          component={AddRatingAndReview}
+          component={props => (
+            <CustomSafeAreaView excludeSafeArea={false}>
+              <AddRatingAndReview {...props} />
+            </CustomSafeAreaView>
+          )}
           options={{
             headerShown: false,
           }}
         />
-       
-       
-        
-        </Stack.Navigator>
-       
-      </>
+      </Stack.Navigator>
+     
+    </>
   );
 };
 

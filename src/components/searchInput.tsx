@@ -1,13 +1,20 @@
 import React, { useRef, useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, TextInputProps } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { COLORS } from '../constants/color';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { FONTS } from '../constants/font';
 
-const SearchInput = ({ value, onChangeText,onFocus,onBlur}) => {
+
+interface SearchInputProps extends TextInputProps {
+  value: string;
+  onChangeText: (text: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+}
+const SearchInput:React.FC<SearchInputProps> = ({ value, onChangeText,onFocus,onBlur}) => {
   const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<TextInput>(null);
 
   // Clear input text and re-focus the input (keeps keyboard open)
   const handleClear = () => {
@@ -16,7 +23,7 @@ const SearchInput = ({ value, onChangeText,onFocus,onBlur}) => {
       inputRef.current.clear();
       // Delay the focus call to ensure the keyboard stays open.
       setTimeout(() => {
-        inputRef.current.focus();
+        inputRef?.current?.focus();
       }, 100);
     }
   };
@@ -76,6 +83,7 @@ const styles = StyleSheet.create({
     color: COLORS.darkText,
     fontSize: moderateScale(15),
     fontFamily: FONTS.nunitoMedium,
+    minHeight: verticalScale(30),
   },
   iconContainer: {
     padding: 4,

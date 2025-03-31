@@ -15,9 +15,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-import { AppStackParamList, AppStackScreenProps, RootStackParamList } from '../../navigation/navigationTypes';
+import { AppStackScreenProps } from '../../navigation/navigationTypes';
 import profileStyles from '../../assets/styles/profileStyles';
 import { icons } from '../../constants/Icon';
 import {
@@ -171,7 +169,7 @@ try{
   }, []); 
 
 
-  const handleImageSelection = (imageUri) => {
+  const handleImageSelection = (imageUri:string):void => {
     setValue('profileImage', imageUri); // Set image in react-hook-form
     setProfileImage(imageUri); // Maintain local state for display
   };

@@ -2,23 +2,14 @@ import { View, Text, Image, Pressable, StyleSheet,BackHandler } from 'react-nati
 import React, { useContext, useEffect } from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-
 import { icons } from '../../constants/Icon';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/navigationTypes';
 import profileStyles from '../../assets/styles/profileStyles';
 import { useAuth } from '../../customHooks/useAuth';
+import { AppStackScreenProps } from '../../navigation/navigationTypes';
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ProfileScreen'>;
-type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ProfileScreen'>;
 
-type ProfileScreenProps = {
-  navigation: ProfileScreenNavigationProp;
-  route: ProfileScreenRouteProp;
-};
 
-const ProfileScreen = ({ navigation,route }: ProfileScreenProps) => {
+const ProfileScreen:React.FC<AppStackScreenProps<"ProfileScreen">> = ({ navigation,route }) => {
   
   const{logout,userInfo}=useAuth()
 

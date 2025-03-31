@@ -13,9 +13,11 @@ import bookingConfirmationStyles from '../../assets/styles/bookingConfirmationSt
 import { addBooking } from '../../services/bookingService';
 import Toast from 'react-native-toast-message';
 import { showToast } from '../../components/toastMessage';
+import { AppStackScreenProps } from '../../navigation/navigationTypes';
 
-const BookingConfirmation = ({navigation,route}) => {
+const BookingConfirmation:React.FC<AppStackScreenProps<"BookingConfirmation">> = ({navigation,route}) => {
   const {slotBookingData,boxData,totalAmountToBePaid}=route?.params
+  console.log('323232',slotBookingData)
   const [isTandCChecked, setIsTandCChecked] = useState(false);
   const [paymentOption, setPaymentOption] = useState('100%');
 
@@ -34,7 +36,9 @@ const BookingConfirmation = ({navigation,route}) => {
               text1: 'Success!!!',
               text2: message || 'Something went wrong!',
             });
-            navigation.replace('BottomNav', {screen: 'Booking'});
+            navigation.navigate('BottomNav', {screen: 'Booking'});
+
+            
           
     }
     else{

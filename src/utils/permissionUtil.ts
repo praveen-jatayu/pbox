@@ -1,5 +1,5 @@
 import { PermissionsAndroid, Platform } from 'react-native';
-
+import {PERMISSIONS, request, check, RESULTS} from 'react-native-permissions';
 export const requestCameraPermission = async () => {
   if (Platform.OS === 'android') {
     const granted = await PermissionsAndroid.request(
@@ -60,3 +60,4 @@ export const requestLocationPermission = async () => {
     return false;
   }
 };
+

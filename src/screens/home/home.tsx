@@ -1,4 +1,4 @@
-import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, Easing, RefreshControl, FlatList, BackHandler, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, Animated, StyleSheet, TouchableOpacity, Image, RefreshControl, BackHandler, Alert, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import mainStyles from '../../assets/styles/mainStyles'
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters'
@@ -17,7 +17,6 @@ import Geocoder from 'react-native-geocoding';
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { requestLocationPermission, requestNotificationPermission } from '../../utils/permissionUtil'
 import { COLORS } from '../../constants/color'
-import Modal from 'react-native-modal'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150); 
@@ -265,7 +264,7 @@ if (!hasPermission) {
     const { latitude, longitude } = locationData;
     Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
 
-    const geoData = await Geocoder.from(latitude, longitude);
+    const geoData = await Geocoder.from(23.0638066, 70.1340917);
     if (geoData.results.length > 0) {
       const addressComponents = geoData.results[0].address_components;
       const area = addressComponents.find(component => component.types.includes('sublocality'))?.long_name;
@@ -390,9 +389,8 @@ if (!hasPermission) {
       )}
       </Animated.View>
      
-
-
-{isFetchingLocation && (
+{/* error here */}
+{/* {isFetchingLocation && (
    
    <Modal transparent={true} animationType="fade" visible={isFetchingLocation} style={{ justifyContent: 'flex-end',
     margin: 0,}}
@@ -416,7 +414,7 @@ if (!hasPermission) {
      </View>
    </Modal>
    
- )}
+ )} */}
     </View>
   )
 }

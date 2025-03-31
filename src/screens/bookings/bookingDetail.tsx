@@ -22,8 +22,6 @@ import {
 import boxCardStyles from '../../assets/styles/boxCardStyles';
 import {images} from '../../constants/image';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {handleShowLocation} from '../../utils/showLocationUtil';
 import { formatTimeTo12Hour } from '../../utils/timeCoverterUtil';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
@@ -31,6 +29,7 @@ const sliderHeight = screenHeight / 3;
 
 const BookingDetail = ({navigation, route}) => {
   const {bookingDetail} = route.params;
+  console.log('bbberere73',bookingDetail)
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -309,7 +308,7 @@ const BookingDetail = ({navigation, route}) => {
           mainStyles.fontSize12,
           mainStyles.darkTextColor,
         ]}>
-        {formatTimeTo12Hour(bookedSlot?.get_selected_slot?.start_time)} - {formatTimeTo12Hour(bookedSlot?.get_selected_slot?.end_time)}
+        {bookedSlot?.get_selected_slot?.start_time} - {bookedSlot?.get_selected_slot?.end_time}
       </Text>
      
       
