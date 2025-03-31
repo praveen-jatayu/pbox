@@ -14,16 +14,10 @@ import mainStyles from '../../assets/styles/mainStyles';
 import SearchInput from '../../components/searchInput';
 import NoDataContainer from '../../components/noDataContainer';
 import bookingListStyles from '../../assets/styles/bookingListStyles';
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { scale, verticalScale } from 'react-native-size-matters';
-=======
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
 import MainHeader from '../../components/mainHeader';
 import {getBookingList} from '../../services/bookingService';
 import BookingCardSkeleton from './bookingCardSkeleton';
-<<<<<<< HEAD
 import { useIsFocused } from '@react-navigation/native';
 import { COLORS } from '../../constants/color';
 
@@ -31,40 +25,12 @@ const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
 const HEADER_HEIGHT = verticalScale(80); // height of the header   
 const SCROLL_THRESHOLD = verticalScale(60);
 
-const BookingCard = ({ item ,navigation}) => {
   
-=======
-import {useFocusEffect, useIsFocused} from '@react-navigation/native';
-import {COLORS} from '../../constants/color';
-
-const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
-
-const HEADER_HEIGHT = verticalScale(60); // height of the header
-const SCROLL_THRESHOLD = verticalScale(60);
-
-=======
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import MainHeader from '../../components/mainHeader';
-import {getBookingList} from '../../services/bookingService';
-import BookingCardSkeleton from './bookingCardSkeleton';
-import {useFocusEffect, useIsFocused} from '@react-navigation/native';
-import {COLORS} from '../../constants/color';
-
-const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
-
-const HEADER_HEIGHT = verticalScale(60); // height of the header
-const SCROLL_THRESHOLD = verticalScale(60);
-
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
 const BookingCard = ({item, navigation}) => {
   console.log(
     'boxddddddata',
     item.get_selected_box.get_selected_available_sport.get_single_sports,
   );
-<<<<<<< HEAD
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
-=======
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
   return (
     <TouchableOpacity
       style={[
@@ -237,25 +203,17 @@ const Bookings = ({navigation}) => {
     }
   };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   useEffect(()=>{
     fetchBookingList()
     setSearch('')
   },[isFocused,selecedBookingCategory])
   
   
-=======
-=======
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
   useEffect(() => {
     fetchBookingList();
     setSearch('');
   }, [isFocused, selecedBookingCategory]);
-<<<<<<< HEAD
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
-=======
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
+
 
   const handleSearchChange = text => {
     setSearch(text);
@@ -274,23 +232,13 @@ const Bookings = ({navigation}) => {
       <Animated.View
         style={[
           styles.animatedHeader,
-<<<<<<< HEAD
-<<<<<<< HEAD
+
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
        
     
     <MainHeader headerType="booking" isFetchingLocation={false} location={[]} />
-
-   
-=======
-=======
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
-          {transform: [{translateY: headerTranslateY}]},
-        ]}>
-        <MainHeader headerType="booking" />
->>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
       </Animated.View>
       <View style={bookingListStyles.innerContainer}>
         <Animated.View
@@ -413,8 +361,8 @@ const Bookings = ({navigation}) => {
   );
 };
 
-export default Bookings;
 
+export default Bookings;
 const styles = StyleSheet.create({
   animatedHeader: {
     position: 'absolute',
@@ -450,3 +398,4 @@ const styles = StyleSheet.create({
     zIndex: 44, // Ensure it appears above the list
   },
 });
+
