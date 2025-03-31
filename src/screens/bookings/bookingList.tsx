@@ -18,14 +18,14 @@ import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import MainHeader from '../../components/mainHeader';
 import {getBookingList} from '../../services/bookingService';
 import BookingCardSkeleton from './bookingCardSkeleton';
-import { useIsFocused } from '@react-navigation/native';
-import { COLORS } from '../../constants/color';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
+import {COLORS} from '../../constants/color';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
-const HEADER_HEIGHT = verticalScale(80); // height of the header   
+
+const HEADER_HEIGHT = verticalScale(60); // height of the header
 const SCROLL_THRESHOLD = verticalScale(60);
 
-  
 const BookingCard = ({item, navigation}) => {
   console.log(
     'boxddddddata',
@@ -209,12 +209,7 @@ const Bookings = ({navigation}) => {
   },[isFocused,selecedBookingCategory])
   
   
-  useEffect(() => {
-    fetchBookingList();
-    setSearch('');
-  }, [isFocused, selecedBookingCategory]);
-
-
+ 
   const handleSearchChange = text => {
     setSearch(text);
     if (text.trim() === '') {
