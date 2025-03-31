@@ -34,7 +34,6 @@ const AppStack = () => {
   };
   return (
     <>
-      {/* <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}> */}
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
       <Stack.Navigator
         screenOptions={{headerShown: false, animation: 'fade_from_bottom'}}>
@@ -118,7 +117,7 @@ const AppStack = () => {
         <Stack.Screen
           name="BoxDetail"
           component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
+            <CustomSafeAreaView excludeSafeArea={true}>
               <BoxDetail {...props} />
             </CustomSafeAreaView>
           )}
@@ -182,6 +181,7 @@ const AppStack = () => {
           }}
         />
       </Stack.Navigator>
+     
     </>
   );
 };

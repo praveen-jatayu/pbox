@@ -18,9 +18,6 @@ import {
 } from 'react-native-size-matters';
 import CustomCheckBox from '../../components/checkbox';
 import PrimaryButton from '../../components/primaryButton';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../../navigation/navigationTypes';
-import {RouteProp} from '@react-navigation/native';
 
 import {icons} from '../../constants/Icon';
 import {
@@ -33,18 +30,9 @@ import NoDataContainer from '../../components/noDataContainer';
 import SlotContainerSkeleton from './slotContainerSkeleton';
 import DateSlider from '../../utils/dateSelectorUtil';
 import slotBookingStyles from '../../assets/styles/slotBookingStyles';
-type SlotBookingNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'SlotBooking'
->;
-type SlotBookingRouteProp = RouteProp<RootStackParamList, 'SlotBooking'>;
 
-type SlotBookingProps = {
-  navigation: SlotBookingNavigationProp;
-  route: SlotBookingRouteProp;
-};
 
-const SlotBooking = ({navigation, route}: SlotBookingProps) => {
+const SlotBooking = ({navigation, route}) => {
   const {boxInfo} = route?.params;
 
   const [selectedDate, setSelectedDate] = useState(
@@ -335,8 +323,13 @@ const SlotBooking = ({navigation, route}: SlotBookingProps) => {
                         mainStyles.fontSize16,
                         mainStyles.darkTextColor,
                       ]}>
-                      {formatTimeTo12Hour(slot?.get_single_slot?.start_time)}-{' '}
-                      {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
+                  
+            {formatTimeTo12Hour(slot?.get_single_slot?.start_time)}
+  
+  {' '}-{' '}
+  
+       {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
+    
                     </Text>
                     <Image
                       source={

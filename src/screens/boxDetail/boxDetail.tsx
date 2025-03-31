@@ -23,9 +23,6 @@ import PrimaryButton from '../../components/primaryButton';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../../navigation/navigationTypes';
-import {RouteProp} from '@react-navigation/native';
 import {handleShowLocation} from '../../utils/showLocationUtil';
 import {LazyImage} from 'react-native-lazy-image-loader';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
@@ -36,18 +33,9 @@ import {showToast} from '../../components/toastMessage';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
-type BoxDetailNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'BoxDetail'
->;
-type BoxDetailRouteProps = RouteProp<RootStackParamList, 'BoxDetail'>;
 
-type BoxDetailProps = {
-  navigation: BoxDetailNavigationProp;
-  route: BoxDetailRouteProps;
-};
 
-const BoxDetail = ({navigation, route}: BoxDetailProps) => {
+const BoxDetail = ({navigation, route}) => {
   const {boxDetail, isBookmarked} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
@@ -556,7 +544,6 @@ const BoxDetail = ({navigation, route}: BoxDetailProps) => {
             {/* <View style={boxDetailStyles.mapWrapper}> */}
             <MapView
               ref={mapRef}
-              provider={PROVIDER_GOOGLE}
               style={boxDetailStyles.map}
               initialCamera={{
                 center: {

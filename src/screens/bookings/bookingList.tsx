@@ -9,67 +9,102 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-import React, { useRef, useState, useEffect } from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
 import SearchInput from '../../components/searchInput';
 import NoDataContainer from '../../components/noDataContainer';
 import bookingListStyles from '../../assets/styles/bookingListStyles';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+<<<<<<< HEAD
+<<<<<<< HEAD
+import { scale, verticalScale } from 'react-native-size-matters';
+=======
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
 import MainHeader from '../../components/mainHeader';
-import { getBookingList } from '../../services/bookingService';
+import {getBookingList} from '../../services/bookingService';
 import BookingCardSkeleton from './bookingCardSkeleton';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+<<<<<<< HEAD
+import { useIsFocused } from '@react-navigation/native';
 import { COLORS } from '../../constants/color';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
-
-
-
 const HEADER_HEIGHT = verticalScale(80); // height of the header   
 const SCROLL_THRESHOLD = verticalScale(60);
 
 const BookingCard = ({ item ,navigation}) => {
   
+=======
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
+import {COLORS} from '../../constants/color';
+
+const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
+
+const HEADER_HEIGHT = verticalScale(60); // height of the header
+const SCROLL_THRESHOLD = verticalScale(60);
+
+=======
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import MainHeader from '../../components/mainHeader';
+import {getBookingList} from '../../services/bookingService';
+import BookingCardSkeleton from './bookingCardSkeleton';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
+import {COLORS} from '../../constants/color';
+
+const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
+
+const HEADER_HEIGHT = verticalScale(60); // height of the header
+const SCROLL_THRESHOLD = verticalScale(60);
+
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
+const BookingCard = ({item, navigation}) => {
   console.log(
-    'boxddddddata',item.get_selected_box.get_selected_available_sport.get_single_sports
-  )
+    'boxddddddata',
+    item.get_selected_box.get_selected_available_sport.get_single_sports,
+  );
+<<<<<<< HEAD
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
+=======
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
   return (
     <TouchableOpacity
       style={[
         bookingListStyles.bookingCardContainer,
         mainStyles.secondaryBackgroundColor,
         mainStyles.dropShadowEffect,
-        { elevation: 4 },
+        {elevation: 4},
         mainStyles.widthFull,
         mainStyles.flexContainer,
       ]}
-  onPress={()=>navigation.navigate('BookingDetail',{bookingDetail:item})} activeOpacity={0.8} >
-     {item?.get_selected_box?.get_selected_box_images?.length > 0 && (
-  <Image 
-    source={{ uri: item.get_selected_box.get_selected_box_images[0].image }} 
-    style={bookingListStyles.courtImage} 
-  />
-)}
+      onPress={() =>
+        navigation.navigate('BookingDetail', {bookingDetail: item})
+      }
+      activeOpacity={0.8}>
+      {item?.get_selected_box?.get_selected_box_images?.length > 0 && (
+        <Image
+          source={{uri: item.get_selected_box.get_selected_box_images[0].image}}
+          style={bookingListStyles.courtImage}
+        />
+      )}
       <View style={bookingListStyles.bookingCardContent}>
         {/* Booking card category header */}
         <View
           style={[
             mainStyles.flexContainer,
-          {justifyContent:'flex-start',gap:scale(10)},
+            {justifyContent: 'flex-start', gap: scale(10)},
             bookingListStyles.categoryHeaderContainer,
-          ]}
-        >
-{/* available sports */}
-         
-            {item?.get_selected_box?.get_selected_available_sport?.map((sport,index)=>(
-              
+          ]}>
+          {/* available sports */}
+
+          {item?.get_selected_box?.get_selected_available_sport?.map(
+            (sport, index) => (
               <Image
-              key={sport?.id}
-              source={{ uri: sport?.get_single_sports?.image }}
-              style={bookingListStyles.sportsCategoryImage}
-            />
-            ))}
-  
+                key={sport?.id}
+                source={{uri: sport?.get_single_sports?.image}}
+                style={bookingListStyles.sportsCategoryImage}
+              />
+            ),
+          )}
+
           {/* <Text
             style={[
               mainStyles.successTextColor,
@@ -91,16 +126,14 @@ const BookingCard = ({ item ,navigation}) => {
                 mainStyles.fontInriaSansRegular,
                 mainStyles.fontSize16,
               ]}
-              numberOfLines={1}
-            >
+              numberOfLines={1}>
               {item?.get_selected_box?.title}
             </Text>
             <View
               style={[
                 mainStyles.flexContainer,
                 bookingListStyles.addressContainer,
-              ]}
-            >
+              ]}>
               <Text
                 style={[
                   mainStyles.lightTextColor,
@@ -108,22 +141,21 @@ const BookingCard = ({ item ,navigation}) => {
                   mainStyles.fontSize12,
                   bookingListStyles.addressText,
                 ]}
-                numberOfLines={2}
-              >
+                numberOfLines={2}>
                 {item?.get_selected_box?.address}
               </Text>
               <View
                 style={[
                   bookingListStyles.slotCountContainer,
                   mainStyles.successBackgroudColor,
-                ]}
-              >
-                <Text style={bookingListStyles.slotCountText}>+{item?.slot_count||'N/A'}</Text>
+                ]}>
+                <Text style={bookingListStyles.slotCountText}>
+                  +{item?.slot_count || 'N/A'}
+                </Text>
               </View>
             </View>
           </View>
         </View>
-       
       </View>
     </TouchableOpacity>
   );
@@ -131,16 +163,16 @@ const BookingCard = ({ item ,navigation}) => {
 
 const Bookings = ({navigation}) => {
   const [search, setSearch] = useState('');
-  const isFocused=useIsFocused()
-  const [selecedBookingCategory, setSelectedBookingCategory] = useState('Upcoming');
+  const isFocused = useIsFocused();
+  const [selecedBookingCategory, setSelectedBookingCategory] =
+    useState('Upcoming');
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
-  const[bookingData,setBookingData]=useState([])
-  const[filteredBookingData,setFilteredBookingData]=useState([])
-  const [isLoading,setIsLoading]=useState(false)
-  const [refreshing,setRefreshing]=useState(true)
-  
+  const [bookingData, setBookingData] = useState([]);
+  const [filteredBookingData, setFilteredBookingData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
 
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
@@ -150,7 +182,7 @@ const Bookings = ({navigation}) => {
 
   const searchTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
-    outputRange: [0, -HEADER_HEIGHT+verticalScale(15)],
+    outputRange: [0, -HEADER_HEIGHT + verticalScale(15)],
     extrapolate: 'clamp',
   });
 
@@ -158,18 +190,18 @@ const Bookings = ({navigation}) => {
   // For example, it can move up along with the search input.
   const filterTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
-    outputRange: [0, -HEADER_HEIGHT+verticalScale(15)],
+    outputRange: [0, -HEADER_HEIGHT + verticalScale(15)],
     extrapolate: 'clamp',
   });
 
   const handleScrollToTop = () => {
     flatListRef.current &&
-      flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+      flatListRef.current.scrollToOffset({offset: 0, animated: true});
   };
 
   // Listen for scrollY changes to show/hide the "Move to Top" button
   useEffect(() => {
-    const listenerId = scrollY.addListener(({ value }) => {
+    const listenerId = scrollY.addListener(({value}) => {
       if (value > SCROLL_THRESHOLD && !showScrollToTop) {
         setShowScrollToTop(true);
       } else if (value <= SCROLL_THRESHOLD && showScrollToTop) {
@@ -181,35 +213,49 @@ const Bookings = ({navigation}) => {
     };
   }, [scrollY, showScrollToTop]);
 
-  const renderBookingCard = ({ item }) => <BookingCard item={item} navigation={navigation}/>;
+  const renderBookingCard = ({item}) => (
+    <BookingCard item={item} navigation={navigation} />
+  );
 
   const fetchBookingList = async () => {
-setIsLoading(true)
-    let formData=new FormData()
-    formData.append('booking_status',selecedBookingCategory)
-      try {
-          const response = await getBookingList(formData);
-          if (response) {
-            
-              setBookingData(response);
-             setFilteredBookingData(response)
-          } else {
-              console.error('Error occurred:', response.error);
-          }
-      } catch (error) {
-          console.error('Failed to fetch booking list :', error);
-      } finally {
-          setRefreshing(false);
-          setIsLoading(false)
+    setIsLoading(true);
+    let formData = new FormData();
+    formData.append('booking_status', selecedBookingCategory);
+    try {
+      const response = await getBookingList(formData);
+      if (response) {
+        setBookingData(response);
+        setFilteredBookingData(response);
+      } else {
+        console.error('Error occurred:', response.error);
       }
+    } catch (error) {
+      console.error('Failed to fetch booking list :', error);
+    } finally {
+      setRefreshing(false);
+      setIsLoading(false);
+    }
   };
 
+<<<<<<< HEAD
+<<<<<<< HEAD
   useEffect(()=>{
     fetchBookingList()
     setSearch('')
   },[isFocused,selecedBookingCategory])
   
-
+  
+=======
+=======
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
+  useEffect(() => {
+    fetchBookingList();
+    setSearch('');
+  }, [isFocused, selecedBookingCategory]);
+<<<<<<< HEAD
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
+=======
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
 
   const handleSearchChange = text => {
     setSearch(text);
@@ -217,11 +263,10 @@ setIsLoading(true)
       setFilteredBookingData(bookingData); // Show all data if search input is empty
     } else {
       const filteredData = bookingData?.filter(box =>
-        box?.get_selected_box?.title.toLowerCase().includes(text.toLowerCase())
+        box?.get_selected_box?.title.toLowerCase().includes(text.toLowerCase()),
       );
       setFilteredBookingData(filteredData);
     }
-  
   };
 
   return (
@@ -229,30 +274,44 @@ setIsLoading(true)
       <Animated.View
         style={[
           styles.animatedHeader,
+<<<<<<< HEAD
+<<<<<<< HEAD
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
+       
+    
+    <MainHeader headerType="booking" isFetchingLocation={false} location={[]} />
+
+   
+=======
+=======
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
+          {transform: [{translateY: headerTranslateY}]},
+        ]}>
         <MainHeader headerType="booking" />
+>>>>>>> 0172c3dc5cd027589156bf01468dd15497dbdcff
       </Animated.View>
       <View style={bookingListStyles.innerContainer}>
         <Animated.View
           style={[
             styles.animatedSearch,
-            { transform: [{ translateY: searchTranslateY }] },
-          ]}
-        >
+            {transform: [{translateY: searchTranslateY}]},
+          ]}>
           <SearchInput
             value={search}
-            onChangeText={handleSearchChange} onFocus={undefined} onBlur={undefined}          />
+            onChangeText={handleSearchChange}
+            onFocus={undefined}
+            onBlur={undefined}
+          />
         </Animated.View>
         <Animated.View
           style={[
             styles.animatedFilter,
-            { transform: [{ translateY: filterTranslateY }] },
-          ]}
-        >
+            {transform: [{translateY: filterTranslateY}]},
+          ]}>
           <View style={bookingListStyles.filterContainer}>
-            {bookingCategories.map((cat) => (
+            {bookingCategories.map(cat => (
               <TouchableOpacity
                 key={cat}
                 style={[
@@ -270,80 +329,82 @@ setIsLoading(true)
                     mainStyles.fontSize14,
                     selecedBookingCategory === cat &&
                       bookingListStyles.filterTextActive,
-                  ]}
-                >
+                  ]}>
                   {cat}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
-         
         </Animated.View>
         {isLoading && bookingData.length === 0 ? (
-  // Show Skeleton Loader (initial data fetch)
-  <Animated.FlatList
-    data={[1, 1, 1, 1, 1]} // Dummy data for skeleton
-    ref={flatListRef}
-    showsVerticalScrollIndicator={false}
-    contentContainerStyle={{
-      paddingTop: verticalScale(50),
-      paddingBottom: verticalScale(100),
-    }}
-    renderItem={() => <BookingCardSkeleton />}
-    onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-      useNativeDriver: true,
-    })}
-    scrollEventThrottle={16}
-  />
-) : isLoading && bookingData.length !== 0 ? (
-  // Show Activity Indicator when switching categories and data exists
-  <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color={COLORS.primary} />
-  </View>
-) : (
-  // Show the list only when loading is false & data exists
-  <Animated.FlatList
-    ref={flatListRef}
-    data={filteredBookingData}
-    keyExtractor={(item) => item.id}
-    renderItem={renderBookingCard}
-    contentContainerStyle={{
-      paddingTop: verticalScale(50),
-      paddingHorizontal: verticalScale(5),
-      paddingBottom: verticalScale(100),
-      flexGrow: 1,
-    }}
-    ListEmptyComponent={
-      <NoDataContainer
-        style={bookingListStyles.noDataContainer}
-        noDataText={'No bookings yet!!'}
-      />
-    }
-    showsVerticalScrollIndicator={false}
-    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchBookingList} />}
-    onScroll={Animated.event(
-      [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-      { useNativeDriver: true }
-    )}
-    scrollEventThrottle={16}
-  />
-  
-
-)}
+          // Show Skeleton Loader (initial data fetch)
+          <Animated.FlatList
+            data={[1, 1, 1, 1, 1]} // Dummy data for skeleton
+            ref={flatListRef}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingTop: verticalScale(50),
+              paddingBottom: verticalScale(100),
+            }}
+            renderItem={() => <BookingCardSkeleton />}
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: scrollY}}}],
+              {
+                useNativeDriver: true,
+              },
+            )}
+            scrollEventThrottle={16}
+          />
+        ) : isLoading && bookingData.length !== 0 ? (
+          // Show Activity Indicator when switching categories and data exists
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          </View>
+        ) : (
+          // Show the list only when loading is false & data exists
+          <Animated.FlatList
+            ref={flatListRef}
+            data={filteredBookingData}
+            keyExtractor={item => item.id}
+            renderItem={renderBookingCard}
+            contentContainerStyle={{
+              paddingTop: verticalScale(50),
+              paddingHorizontal: verticalScale(5),
+              paddingBottom: verticalScale(100),
+              flexGrow: 1,
+            }}
+            ListEmptyComponent={
+              <NoDataContainer
+                style={bookingListStyles.noDataContainer}
+                noDataText={'No bookings yet!!'}
+              />
+            }
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={fetchBookingList}
+              />
+            }
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: scrollY}}}],
+              {useNativeDriver: true},
+            )}
+            scrollEventThrottle={16}
+          />
+        )}
       </View>
       {showScrollToTop && (
         <TouchableOpacity
           style={mainStyles.scrollToTopButton}
           activeOpacity={0.8}
-          onPress={handleScrollToTop}
-        >
+          onPress={handleScrollToTop}>
           <Text
             style={[
               mainStyles.darkTextColor,
               mainStyles.fontNunitoBold,
               mainStyles.fontSize12,
-            ]}
-          >
+            ]}>
             Move to Top
           </Text>
         </TouchableOpacity>
@@ -364,18 +425,18 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   animatedSearch: {
-    top: HEADER_HEIGHT-verticalScale(15),
+    top: HEADER_HEIGHT - verticalScale(15),
     left: 0,
     right: 0,
     paddingHorizontal: scale(5),
     zIndex: 12,
   },
   animatedFilter: {
-    top: HEADER_HEIGHT-verticalScale(15),
+    top: HEADER_HEIGHT - verticalScale(15),
     left: 0,
     right: 0,
     zIndex: 12,
-   paddingBottom:verticalScale(6)
+    paddingBottom: verticalScale(6),
   },
   loadingContainer: {
     // flex: 1,
@@ -385,8 +446,7 @@ const styles = StyleSheet.create({
     top: '80%',
     left: 0,
     right: 0,
-    transform: [{ translateY: 300 }],
+    transform: [{translateY: 300}],
     zIndex: 44, // Ensure it appears above the list
   },
- 
 });

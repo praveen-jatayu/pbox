@@ -134,6 +134,7 @@ export default function AnimTab1({route}) {
           component={Bookings}
           options={{
             tabBarShowLabel: false,
+            headerShown:false,
             tabBarButton: props => (
               <TabButton
                 {...props}
