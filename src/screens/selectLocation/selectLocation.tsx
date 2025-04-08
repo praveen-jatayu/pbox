@@ -12,7 +12,8 @@ import GetLocation from 'react-native-get-location';
 import Geocoder from 'react-native-geocoding';
 import { requestLocationPermission } from '../../utils/permissionUtil';
 import { AppStackScreenProps } from '../../navigation/navigationTypes';
-
+import MainHeader from '../../components/mainHeader';
+import { GOOGLE_API_KEY } from '@env';
 const SelectLocation:React.FC<AppStackScreenProps<"SelectLocation">> = ({ navigation }) => {
   const [location, setLocation] = useState([]);
   const inputRef = useRef(null);
@@ -62,7 +63,7 @@ const SelectLocation:React.FC<AppStackScreenProps<"SelectLocation">> = ({ naviga
       });
   
       const { latitude, longitude } = locationData;
-      Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
+      Geocoder.init(GOOGLE_API_KEY);
   
       const geoData = await Geocoder.from(latitude, longitude);
       if (geoData.results.length > 0) {
@@ -84,107 +85,9 @@ const SelectLocation:React.FC<AppStackScreenProps<"SelectLocation">> = ({ naviga
 
   return (
     <View style={mainStyles.container}>
-      <SubHeader title={'Select City'} onPress={() => navigation.goBack()} style={undefined} />
+      <MainHeader title={'Select City'} headerType='sub' onPressBack={()=>navigation.goBack()}/>
 
-      {/* Search Box */}
-      <View
-        style={{
-          backgroundColor: COLORS.secondary,
-          borderColor: COLORS.lightBorder,
-          borderWidth: 1,
-          borderRadius: moderateScale(10),
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: scale(10),
-          marginTop: verticalScale(20),
-          marginHorizontal: scale(16),
-        }}
-      >
-        {/* Google Places Input */}
-        <GooglePlacesAutocomplete
-          ref={inputRef}
-          placeholder="Search for area, city..."
-          minLength={2}
-          onPress={handleSelectLocation}
-          fetchDetails={true}
-          enablePoweredByContainer={false}
-          currentLocation={false} // Disable default current location
-          listLoaderComponent={<ActivityIndicator size="large" color={COLORS.primary} />}
-          query={{
-            key: 'AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA',
-            language: 'en',
-            types: '(cities)',
-            components: 'country:in',
-          }}
-          textInputProps={{
-            value: location,
-            onChangeText: text => setLocation(text),
-            placeholderTextColor: '#919191',
-          }}
-          listViewDisplayed="auto"
-          styles={{
-            textInput: {
-              flex: 1,
-              color: COLORS.darkText,
-              fontSize: scale(15),
-              fontFamily: FONTS.nunitoMedium,
-              paddingVertical: verticalScale(8),
-              marginLeft: scale(10),
-            },
-            listView: {
-              width: scale(300),
-              position: 'absolute',
-              top: verticalScale(40),
-              marginTop: verticalScale(20),
-              marginLeft: scale(20),
-              alignSelf: 'center',
-            },
-            row: {
-              padding: verticalScale(10),
-              borderBottomWidth: 0.6,
-              borderBottomColor: COLORS.lightBorder,
-            },
-            description: {
-              color: COLORS.darkText,
-              fontSize: moderateScale(18),
-              fontFamily: FONTS.inriaSansRegular,
-            },
-            separator: {
-              height: 1,
-              backgroundColor: '#E1E1E1',
-            },
-            poweredContainer: {
-              alignSelf: 'center',
-              opacity: 0.7,
-            },
-          }}
-          keyboardShouldPersistTaps="always"
-          debounce={300}
-          renderLeftButton={() => (
-            <View style={{ paddingTop: verticalScale(12), marginRight: scale(-5) }}>
-              <AntDesign name={'search1'} size={21} color={COLORS.borderColor} />
-            </View>
-          )}
-        />
-
-        {/* Clear Button */}
-        {location.length > 0 && (
-          <TouchableOpacity
-            onPress={() => {
-              setLocation('');
-              inputRef.current?.setAddressText('');
-            }}
-            style={{ marginLeft: scale(8) }}
-          >
-            <AntDesign name="closecircle" size={18} color={COLORS.borderColor} />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Use Current Location Button */}
-      {location.length==0 && (
-      <SecondaryButton title={'Use Current Location'} disabled={undefined} onPress={fetchCurrentLocation} style={undefined} />
-    )}
+    
       </View>
   );
 };

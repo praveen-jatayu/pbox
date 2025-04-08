@@ -5,6 +5,7 @@ import SubHeader from '../../components/subHeader';
 import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import NoDataContainer from '../../components/noDataContainer';
 import { AppStackScreenProps } from '../../navigation/navigationTypes';
+import MainHeader from '../../components/mainHeader';
 
 // Dummy data for notifications
 const notifications: string | ArrayLike<any> | null | undefined = [
@@ -41,7 +42,8 @@ const notifications: string | ArrayLike<any> | null | undefined = [
 const NotificationScreen:React.FC<AppStackScreenProps<"NotificationScreen">> = ({ navigation }) => {
   return (
     <View style={[mainStyles.container]}>
-      <SubHeader title="Notification" onPress={() => navigation.goBack()} style={undefined} />
+      {/* <SubHeader title="Notification" onPress={() => navigation.goBack()} style={undefined} /> */}
+      <MainHeader title={'Notification'} headerType='sub'/>
       
       <FlatList
         data={notifications}

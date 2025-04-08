@@ -32,6 +32,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../components/toastMessage';
 import { updateProfile } from '../../services/profileService';
 import { useAuth } from '../../customHooks/useAuth';
+import MainHeader from '../../components/mainHeader';
 
 
 // Define form values type
@@ -179,177 +180,12 @@ try{
     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     // keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
   >
-      <SubHeader
+      <MainHeader
         title={'Account'}
-        onPress={() => navigation.navigate('ProfileScreen')}
-        style={undefined}
+        onPressBack={() => navigation.navigate('ProfileScreen')}
+      headerType='sub'
       />
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer(keyboardVisible)}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View
-          style={[
-            profileStyles.menuContainer,
-            mainStyles.secondaryBorderColor,
-            mainStyles.secondaryBackgroundColor,
-            { paddingHorizontal: scale(0) },
-          ]}
-        >
-          
-
-<Controller
-  control={control}
-  name="profileImage"
-  render={({ field: { value, onChange } }) => (
-    <>
-      <Pressable
-        style={[
-          mainStyles.iconBackgroundColor,
-          mainStyles.contentCenter,
-          {
-            alignSelf: 'center',
-            width: moderateScale(70, 0.6),
-            height: moderateVerticalScale(70, 0.4),
-            borderRadius: moderateScale(50),
-          },
-        ]}
-        onPress={() => setIsImagePickerModalVisible(true)}
-      >
-        {value ? (
-          <Image
-            source={{ uri: value }}
-            style={{
-              width: moderateScale(65, 0.6),
-              height: moderateVerticalScale(65, 0.4),
-              borderRadius: moderateScale(50),
-              resizeMode: 'cover',
-            }}
-          />
-        ) : (
-          <Image
-            source={icons.userIcon}
-            style={{ width: scale(35), height: verticalScale(35) }}
-          />
-        )}
-      </Pressable>
-
-      {/* Image Picker Modal */}
-      <BottomModal
-        isModalVisible={isImagePickerModalVisible}
-        toggleModal={toggleImagePickerModalVisible}
-        type={'imageUpload'}
-        profileImage={profileImage}
-        setProfileImage={handleImageSelection} // Pass hook form's setter
-        serverProfileImage={serverProfileImage}
-        setDisplayProfileImage={setDisplayProfileImage}
-      />
-    </>
-  )}
-/>
-
-          {/* Edit Form */}
-          <View style={{ marginTop: verticalScale(12) }}>
-            {/* Name Field (Required) */}
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInputComponent
-                  value={value}
-                  label={'First Name'}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder="Enter your name"
-                  error={errors.name?.message}
-                  required={true}
-                />
-              
-              )}
-            />
-            {/* Phone Field (Optional) */}
-            <Controller
-              control={control}
-              name="mobileNo"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInputComponent
-                  value={value}
-                  label={'Phone'}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder="Enter your phone"
-                  error={errors.mobileNo?.message}
-                  required={false}
-                  style={mainStyles.iconBackgroundColor}
-                />
-              )}
-            />
-            {/* Email Field (Optional) */}
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInputComponent
-                  value={value}
-                  label={'Email'}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder="Enter your email"
-                  error={errors.email?.message}
-                  required={false}
-                />
-              )}
-            />
-             {/* DOB Field with Date Picker */}
-             <Controller
-  control={control}
-  name="dob"
-  render={({ field: { onChange, value } }) => (
-    <>
-      <Pressable onPress={toggleDatePicker}>
-        <TextInputComponent
-          label={'Date Of Birth'}
-          placeholder="Select your DOB"
-          value={dobDisplay}
-          editable={false} // Prevent keyboard input
-          required={false}
-        />
-      </Pressable>
-
-      {showDatePicker && (
-        <DateTimePicker
-          value={value ? new Date(value) : new Date()} // Convert to Date object
-          mode="date"
-          display={'default'}
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) {
-              const formattedDate = formatDate(selectedDate, 'server');
-              setDobDisplay(formatDate(selectedDate, 'display'));
-              setDobServer(formattedDate);
-              onChange(formattedDate); // Update react-hook-form
-            }
-          }}
-        />
-      )}
-    </>
-  )}
-/>
-          </View>
-        </View>
-        {/* Save Button */}
-       
-      </ScrollView>
-      <PrimaryButton
-          title={'SAVE'}
-          onPress={handleSubmit(onSubmit)}
-          disabled={isLoading}
-          style={styles.saveButton}
-        />
+    
         
     </KeyboardAvoidingView>
   );

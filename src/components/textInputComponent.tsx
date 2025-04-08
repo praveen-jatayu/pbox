@@ -9,8 +9,9 @@ interface TextInputComponentProps extends TextInputProps {
   label?: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
-  error?: string;
+  error?: boolean;
   required?: boolean;
+  errorLabel?:string
 }
 
 const TextInputComponent: React.FC<TextInputComponentProps> = ({

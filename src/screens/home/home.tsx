@@ -16,6 +16,7 @@ import GetLocation from 'react-native-get-location'
 import Geocoder from 'react-native-geocoding';
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { requestLocationPermission, requestNotificationPermission } from '../../utils/permissionUtil'
+import { GOOGLE_API_KEY } from '@env';
 import { COLORS } from '../../constants/color'
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
@@ -203,7 +204,7 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     }
   }, [isFetchingLocation]);
 
-
+             
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
       // Prevent default back action
@@ -239,182 +240,63 @@ const fetchBoxList = async (boxData = null, sportId = null) => {
     }
   }, [route.params?.location]);
 
-  useEffect(() => {
-    if (!route.params?.location) {
-      fetchCurrentLocation();
+  // useEffect(() => {
+  //   if (!route.params?.location) {
+  //     fetchCurrentLocation();
      
-    }
-  }, []);
+  //   }
+  // }, []);
 // fetching current Location
-async function fetchCurrentLocation() {
-  setIsFetchingLocation(true); // Start fetching
+// async function fetchCurrentLocation() {
+//   setIsFetchingLocation(true); // Start fetching
   
-  const hasPermission = await requestLocationPermission();
-if (!hasPermission) {
-      Alert.alert('Permission Denied', 'Location access is required!');
-      return;
-    }
-  try {
-    const locationData = await GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 30000,
-      maximumAge: 10000,
-    });
+//   const hasPermission = await requestLocationPermission();
+// if (!hasPermission) {
+//       Alert.alert('Permission Denied', 'Location access is required!');
+//       return;
+//     }
+//   try {
+//     const locationData = await GetLocation.getCurrentPosition({
+//       enableHighAccuracy: true,
+//       timeout: 30000,
+//       maximumAge: 10000,
+//     });
 
-    const { latitude, longitude } = locationData;
-    Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
+//     const { latitude, longitude } = locationData;
+//     Geocoder.init(GOOGLE_API_KEY);
 
-    const geoData = await Geocoder.from(23.0638066, 70.1340917);
-    if (geoData.results.length > 0) {
-      const addressComponents = geoData.results[0].address_components;
-      const area = addressComponents.find(component => component.types.includes('sublocality'))?.long_name;
-      const city = addressComponents.find(component => component.types.includes('locality'))?.long_name;
+//     const geoData = await Geocoder.from(23.0638066, 70.1340917);
+//     if (geoData.results.length > 0) {
+//       const addressComponents = geoData.results[0].address_components;
+//       const area = addressComponents.find(component => component.types.includes('sublocality'))?.long_name;
+//       const city = addressComponents.find(component => component.types.includes('locality'))?.long_name;
 
-      setLocation([area, city]); // Set area and city
-    }
-  } catch (error) {
-    console.error('Error fetching location:', error);
-  } finally {
-    setIsFetchingLocation(false); // Finished fetching
-  }
-}
+//       setLocation([area, city]); // Set area and city
+//     }
+//   } catch (error) {
+//     console.error('Error fetching location:', error);
+//   } finally {
+//     setIsFetchingLocation(false); // Finished fetching
+//   }
+// }
 
 
   return (
     <View style={mainStyles.container}>
-      <Animated.View
+      {/* <Animated.View
         style={[
           homeStyles.animatedHeader,
           { transform: [{ translateY: headerTranslateY }] },
         ]}
-      >
-        <MainHeader headerType="home" location={location} isFetchingLocation={isFetchingLocation} />
-      </Animated.View>
+      > */}
+        <MainHeader headerType="home" location={location} isFetchingLocation={isFetchingLocation}  />
+    
+      
 
-      <Animated.View
-        style={[
-          homeStyles.animatedSlider,
-          { transform: [{ scale: sliderScale }, { translateY: sliderTranslateY }] },
-          { opacity: sliderOpacity, }
-        ]}>
-        <ImageSlider onSlidePress={() => { }} />
-      </Animated.View>
 
-      <View style={{ paddingHorizontal: scale(14), marginTop: verticalScale(4) }}>
-        <Animated.View style={[
-          homeStyles.animatedFilter,
-          { transform: [{ translateY: filterTranslateY }] },
-        ]}>
-          <View style={[mainStyles.flexContainer]}>
-            <Text style={[mainStyles.darkTextColor, mainStyles.fontInriaSansRegular, mainStyles.fontSize18]}>Sports</Text>
-            <TouchableOpacity onPress={() => setShowAllSports(!showAllSports)}>
-              <Text style={[mainStyles.fontInriaSansRegular, mainStyles.fontSize14, mainStyles.primaryTextColor]}>
-                {showAllSports ? 'Show Less' : 'See All'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {isSportsLoading ? (
-      <View style={{ flexDirection: 'row', width:'90%' }}> 
-    {[1, 2, 3, 4].map((_, index) => (
-      <SportsCategorySkeleton key={index} />
-    ))}
-  </View>
-) : (
+      <Text onPress={()=>navigation.navigate('BoxDetail')} style={{marginTop:100}}>BoxDetails</Text>
 
-          <View style={homeStyles.sportsContainer}>
-            {sportsToShow.map(item => renderSportCategory(item))}
-            {showAllSports &&
-              sportData.length > sportsToShow.length &&
-              sportData.slice(sportsToShow.length).map(item => renderSportCategory(item))}
-          </View>
-  )}
-        </Animated.View>
-      </View>
-
-      <Animated.View style={[
-        homeStyles.animatedSearch,
-        { transform: [{ translateY: searchTranslateY }] },
-      ]}>
-        <SearchInput value={search} onChangeText={handleSearchChange}  onFocus={() => setIsSearchFocused(true)}
-    onBlur={() => setIsSearchFocused(false)} />
-      </Animated.View>
-
-      <Animated.View style={[{ transform: [{ translateY: instantTranslateY }] }]}>
-      {isLoading && boxData.length === 0 ? (
-          <Animated.FlatList
-          data={[1, 1,1,1]}
-          ref={flatListRef}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingBottom:verticalScale(200)}}
-          renderItem={() => <BoxCardSkeleton />}
-          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-            useNativeDriver: true,
-          })}
-          scrollEventThrottle={16}
-        
-        />
-      ): isLoading && boxData.length !== 0 ? (
-        // Show Activity Indicator when switching categories and data exists
-        <View style={homeStyles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        </View>
-      ) : (
-        <Animated.FlatList  
-          ref={flatListRef}
-          data={filteredBoxData}
-          renderItem={renderBoxCard}
-          keyExtractor={item => item.id}
-          contentContainerStyle={[homeStyles.flatListContainer,filteredBoxData.length<=2 && boxData.length<=2 &&{paddingBottom:verticalScale(300)}]}
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-            useNativeDriver: true,
-          })}
-          scrollEventThrottle={16}
-          ListEmptyComponent={
-            <NoDataContainer
-              style={undefined}
-              noDataText={'No boxes available!!'}
-            />
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => {
-                fetchBoxList();
-                getSportList();
-              }}
-            />
-          }
-        />
-      )}
-      </Animated.View>
      
-{/* error here */}
-{/* {isFetchingLocation && (
-   
-   <Modal transparent={true} animationType="fade" visible={isFetchingLocation} style={{ justifyContent: 'flex-end',
-    margin: 0,}}
-    statusBarTranslucent={true}>
-     <View style={{
-      flex:1,
-       justifyContent: 'center', 
-       alignItems: 'center', 
-       margin:0,
-       backgroundColor: 'rgba(0,0,0,0.5)' // Semi-transparent overlay
-     }}>
-       <View style={{
-          padding:16,
-         backgroundColor: 'white', 
-         borderRadius: 10,
-         alignItems: 'center'
-       }}>
-         <ActivityIndicator size="large" color={COLORS.primary} />
-         <Text style={{ marginTop: 10 }}>Fetching Location...</Text>
-       </View>
-     </View>
-   </Modal>
-   
- )} */}
     </View>
   )
 }

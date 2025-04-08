@@ -32,7 +32,7 @@ import { useAuth } from '../../customHooks/useAuth';
 const OTP = ({ route }) => {
   const {mobileNo,actualOtp}=route.params
   const navigation = useNavigation();
-  const [resendTimer, setResendTimer] = useState<number>(0);
+  const [resendTimer, setResendTimer] = useState<number>(120);
   const [otp, setOtp] = useState(['', '', '', '']);
  const {login}=useAuth()
   const [errorMessage, setErrorMessage] = useState<string>('');
