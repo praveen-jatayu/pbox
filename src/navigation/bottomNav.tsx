@@ -93,7 +93,7 @@ const TabButton = props => {
   );
 };
 export default function AnimTab1({route}) {
-  
+  console.log('route', route);
   return (
     <>
       {/* <StatusBar backgroundColor="#ffffff" barStyle="dark-content"/> */}
@@ -143,7 +143,6 @@ export default function AnimTab1({route}) {
                   label: 'Booking',
                   icon: 'newspaper-outline',
                 }}
-                
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',

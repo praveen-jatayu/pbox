@@ -15,6 +15,7 @@ import { apiPost } from '../../services/apiService/apiService';
 import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 import Toast from 'react-native-toast-message';
 import {  AuthStackScreenProps } from '../../navigation/navigationTypes';
+import ScreenWrapper from '../../components/screenWrapper';
 
 
 
@@ -94,6 +95,13 @@ const Login:React.FC<AuthStackScreenProps<"Login">> = ({navigation}) => {
     setMobileNo(formatted);
   };
   return (
+    <ScreenWrapper
+    safe={false}
+    scrollable={false}
+    padding={false}
+    backgroundColor="#fff"
+    statusBarStyle="light-content"
+    keyboardAvoiding={true}>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={[mainStyles.container]}>
       <View style={onBoardingStyles.topSection}>
@@ -191,6 +199,7 @@ const Login:React.FC<AuthStackScreenProps<"Login">> = ({navigation}) => {
       </View>
     </View>
     </TouchableWithoutFeedback>
+    </ScreenWrapper>
   );
 };
 

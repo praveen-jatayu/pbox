@@ -5,18 +5,19 @@ import PrimaryButton from '../../components/primaryButton';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import mainStyles from '../../assets/styles/mainStyles';
+import SubHeader from '../../components/subHeader';
 import { apiPost, saveAuthToken } from '../../services/apiService/apiService';
 import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../components/toastMessage';
 import { useAuth } from '../../customHooks/useAuth';
 import { AuthStackScreenProps } from '../../navigation/navigationTypes';
-import MainHeader from '../../components/mainHeader';
+import ScreenWrapper from '../../components/screenWrapper';
 
 
 const ProfileName:React.FC<AuthStackScreenProps<"ProfileName">> = ({ navigation ,route}) => {
-//  const {userDetail}=route.params
-//  const {setUserInfo,setUserToken}=useAuth()
+ const {userDetail}=route.params
+ const {setUserInfo,setUserToken}=useAuth()
  
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -62,10 +63,17 @@ const ProfileName:React.FC<AuthStackScreenProps<"ProfileName">> = ({ navigation 
   
 
   return (
-   
+    <ScreenWrapper
+    safe={false}
+    scrollable={false}
+    padding={false}
+    backgroundColor="#fff"
+    statusBarStyle="dark-content"
+    keyboardAvoiding={true}
+    withHeader={true}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={mainStyles.container}>
-
-        <MainHeader title={'Fill Out Your Profile'} onPressBack={() => navigation.goBack()} headerType='sub' />
+        <SubHeader title={'Fill Out Your Profile'} onPress={() => navigation.goBack()} style={{gap:scale(60),height:verticalScale(75),paddingTop:verticalScale(20)}} />
 
         <View style={{ paddingHorizontal: scale(16), marginTop: verticalScale(40) }}>
           {/* First Name Input */}
@@ -89,15 +97,16 @@ const ProfileName:React.FC<AuthStackScreenProps<"ProfileName">> = ({ navigation 
         </View>
 
         {/* NEXT Button */}
-          <View style={[onBoardingStyles.bottomSection]}>
-            <PrimaryButton 
-              title={'NEXT'}
-              onPress={handleNext}
-              disabled={!validateForm()} style={undefined}
-            />
-          </View>
+        <View style={[onBoardingStyles.bottomSection]}>
+          <PrimaryButton 
+            title={'NEXT'}
+            onPress={handleNext}
+            disabled={!validateForm()} style={undefined}
+          />
+        </View>
       </View>
-    
+    </TouchableWithoutFeedback>
+    </ScreenWrapper>
   );
 };
 

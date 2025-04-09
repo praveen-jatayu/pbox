@@ -235,8 +235,123 @@ const Bookings = ({navigation}) => {
     
     <MainHeader headerType="booking" isFetchingLocation={false} location={[]} />
       </Animated.View>
-     
-    
+      <View style={bookingListStyles.innerContainer}>
+        <Animated.View
+          style={[
+            styles.animatedSearch,
+            {transform: [{translateY: searchTranslateY}]},
+          ]}>
+          <SearchInput
+            value={search}
+            onChangeText={handleSearchChange}
+            onFocus={undefined}
+            onBlur={undefined}
+          />
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.animatedFilter,
+            {transform: [{translateY: filterTranslateY}]},
+          ]}>
+          <View style={bookingListStyles.filterContainer}>
+            {bookingCategories.map(cat => (
+              <TouchableOpacity
+                key={cat}
+                style={[
+                  bookingListStyles.filterButton,
+                  mainStyles.disabledBackgroundColor,
+                  selecedBookingCategory === cat &&
+                    mainStyles.primaryBackgroundColor,
+                ]}
+                onPress={() => setSelectedBookingCategory(cat)}
+                activeOpacity={0.8}>
+                <Text
+                  style={[
+                    mainStyles.lightTextColor,
+                    mainStyles.fontInriaSansRegular,
+                    mainStyles.fontSize14,
+                    selecedBookingCategory === cat &&
+                      bookingListStyles.filterTextActive,
+                  ]}>
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Animated.View>
+        {isLoading && bookingData.length === 0 ? (
+          // Show Skeleton Loader (initial data fetch)
+          <Animated.FlatList
+            data={[1, 1, 1, 1, 1]} // Dummy data for skeleton
+            ref={flatListRef}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingTop: verticalScale(50),
+              paddingBottom: verticalScale(100),
+            }}
+            renderItem={() => <BookingCardSkeleton />}
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: scrollY}}}],
+              {
+                useNativeDriver: true,
+              },
+            )}
+            scrollEventThrottle={16}
+          />
+        ) : isLoading && bookingData.length !== 0 ? (
+          // Show Activity Indicator when switching categories and data exists
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          </View>
+        ) : (
+          // Show the list only when loading is false & data exists
+          <Animated.FlatList
+            ref={flatListRef}
+            data={filteredBookingData}
+            keyExtractor={item => item.id}
+            renderItem={renderBookingCard}
+            contentContainerStyle={{
+              paddingTop: verticalScale(50),
+              paddingHorizontal: verticalScale(5),
+              paddingBottom: verticalScale(100),
+              flexGrow: 1,
+            }}
+            ListEmptyComponent={
+              <NoDataContainer
+                style={bookingListStyles.noDataContainer}
+                noDataText={'No bookings yet!!'}
+              />
+            }
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={fetchBookingList}
+              />
+            }
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: scrollY}}}],
+              {useNativeDriver: true},
+            )}
+            scrollEventThrottle={16}
+          />
+        )}
+      </View>
+      {showScrollToTop && (
+        <TouchableOpacity
+          style={mainStyles.scrollToTopButton}
+          activeOpacity={0.8}
+          onPress={handleScrollToTop}>
+          <Text
+            style={[
+              mainStyles.darkTextColor,
+              mainStyles.fontNunitoBold,
+              mainStyles.fontSize12,
+            ]}>
+            Move to Top
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

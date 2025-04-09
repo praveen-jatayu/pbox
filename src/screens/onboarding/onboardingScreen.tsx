@@ -16,6 +16,7 @@ import {images} from '../../constants/image';
 import mainStyles from '../../assets/styles/mainStyles';
 import {verticalScale} from 'react-native-size-matters';
 import {AuthStackScreenProps} from '../../navigation/navigationTypes';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
   navigation,
@@ -40,7 +41,13 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
   }, []);
 
   return (
-    <>
+    <ScreenWrapper
+    safe={false}
+    scrollable={false}
+    padding={false}
+    backgroundColor="#fff"
+    statusBarStyle="light-content"
+    >
       <View style={mainStyles.container}>
         <View style={onBoardingStyles.topSection}>
           <ImageBackground
@@ -116,7 +123,7 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
           />
         </Animated.View>
       </View>
-    </>
+    </ScreenWrapper>
   );
 };
 

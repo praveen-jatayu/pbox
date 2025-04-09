@@ -28,6 +28,7 @@ import { AuthContext } from '../../context/authContext';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../../constants/color';
 import { useAuth } from '../../customHooks/useAuth';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const OTP = ({ route }) => {
   const {mobileNo,actualOtp}=route.params
@@ -159,11 +160,19 @@ const translateY = useRef(new Animated.Value(80)).current;
   };
 
   return (
+    <ScreenWrapper
+    safe={false}
+    scrollable={false}
+    padding={false}
+    // backgroundColor="#fff"
+    statusBarStyle="dark-content"
+    keyboardAvoiding={true}
+    >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={mainStyles.container}>
       <View style={onBoardingStyles.topSection}>
         <ImageBackground source={images.mapBackground} style={onBoardingStyles.imageBackground} resizeMode="cover">
-          <StatusBar hidden={false} barStyle="dark-content" backgroundColor={'transparent'} translucent={true} />
+        
           <View style={onBoardingStyles.overlay} />
 
           <Image source={images.onBoardingImage} style={onBoardingStyles.foregroundImage} resizeMode="contain" />
@@ -204,6 +213,7 @@ const translateY = useRef(new Animated.Value(80)).current;
       </View>
     </View>
   </TouchableWithoutFeedback>
+  </ScreenWrapper>
   );
 };
 

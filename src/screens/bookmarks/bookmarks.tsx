@@ -119,7 +119,84 @@ const Bookmarks = () => {
         <MainHeader headerType="bookmark" />
       </Animated.View>
 
-     </View>
+      {/* Animated SearchInput */}
+      <Animated.View
+        style={[
+          styles.animatedSearch,
+          {transform: [{translateY: searchTranslateY}]},
+        ]}>
+        <SearchInput
+          value={search}
+          onChangeText={handleSearchChange}
+          onFocus={undefined}
+          onBlur={undefined}
+        />
+      </Animated.View>
+
+      {isLoading ? (
+        <Animated.FlatList
+          data={[1, 1, 1, 1]}
+          ref={flatListRef}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.listContainer,
+            {paddingHorizontal: scale(0)},
+          ]}
+          renderItem={() => <BoxCardSkeleton />}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {y: scrollY}}}],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          scrollEventThrottle={16}
+        />
+      ) : (
+        <Animated.FlatList
+          ref={flatListRef}
+          data={filteredBookmarkedData}
+          renderItem={renderBoxCard}
+          keyExtractor={item => item.id}
+          contentContainerStyle={[styles.listContainer, {flexGrow: 1}]}
+          showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {y: scrollY}}}],
+            {useNativeDriver: true},
+          )}
+          scrollEventThrottle={16}
+          ListEmptyComponent={
+            <NoDataContainer
+              style={undefined}
+              noDataText="No bookmarks available!!"
+            />
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                fetchBookMarkedBoxList();
+              }}
+            />
+          }
+        />
+      )}
+      {/* Move to Top Button */}
+      {showScrollToTop && (
+        <TouchableOpacity
+          style={mainStyles.scrollToTopButton}
+          activeOpacity={0.8}
+          onPress={handleScrollToTop}>
+          <Text
+            style={[
+              mainStyles.darkTextColor,
+              mainStyles.fontNunitoBold,
+              mainStyles.fontSize12,
+            ]}>
+            Move to Top
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 };
 

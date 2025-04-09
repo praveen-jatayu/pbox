@@ -15,7 +15,6 @@ import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
 import BookingDetail from '../screens/bookings/bookingDetail';
 import SelectLocation from '../screens/selectLocation/selectLocation';
 import {AppStackParamList} from './navigationTypes';
-import ProfileName from '../screens/profile/profileName';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -35,11 +34,9 @@ const AppStack = () => {
   };
   return (
     <>
-    
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
       <Stack.Navigator
         screenOptions={{headerShown: false, animation: 'fade_from_bottom'}}>
-
         <Stack.Screen
           name="BottomNav"
           component={props => (
