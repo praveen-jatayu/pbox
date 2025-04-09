@@ -8,32 +8,34 @@ import {
   Platform,
   ViewStyle,
 } from 'react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
   scrollable?: boolean;
   padding?: boolean | number;
-  safe?: boolean;
+  safeTop?: boolean;
+  safeBottom?: boolean;
   backgroundColor?: string;
   safeAreaTopColor?: string;
   safeAreaBottomColor?: string;
   statusBarStyle?: 'light-content' | 'dark-content';
   keyboardAvoiding?: boolean;
-  withHeader?: boolean; // NEW PROP
+  withHeader?: boolean;
 }
 
 const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   children,
   scrollable = false,
   padding = false,
-  safe = true,
+  safeTop = true,
+  safeBottom = true,
   backgroundColor = '#fff',
   safeAreaTopColor,
   safeAreaBottomColor,
   statusBarStyle = 'dark-content',
   keyboardAvoiding = false,
-  withHeader = false, // default is false (no header)
+  withHeader = false,
 }) => {
   const insets = useSafeAreaInsets();
 
@@ -55,7 +57,7 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   return (
     <>
       <StatusBar
-        translucent={!withHeader}  // ✅ only iOS
+        translucent={!withHeader}
         barStyle={statusBarStyle}
         backgroundColor={
           Platform.OS === 'android' && withHeader
@@ -64,40 +66,38 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
         }
       />
 
-      {safe ? (
-        <View style={{flex: 1, backgroundColor}}>
-          {/* Top Safe Area - SKIP if header is shown */}
-          {!withHeader && (
-            <View
-              style={{
-                height: insets.top,
-                backgroundColor: safeAreaTopColor ?? backgroundColor,
-              }}
-            />
-          )}
+      <View style={{flex: 1, backgroundColor}}>
+        {/* Top Safe Area (conditionally rendered) */}
+        {!withHeader && safeTop && (
+          <View
+            style={{
+              height: insets.top,
+              backgroundColor: safeAreaTopColor ?? backgroundColor,
+            }}
+          />
+        )}
 
-          {/* Content Area */}
-          {keyboardAvoiding ? (
-            <KeyboardAvoidingView
-              style={{flex: 1}}
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-              {content}
-            </KeyboardAvoidingView>
-          ) : (
-            content
-          )}
+        {/* Main Content */}
+        {keyboardAvoiding ? (
+          <KeyboardAvoidingView
+            style={{flex: 1}}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            {content}
+          </KeyboardAvoidingView>
+        ) : (
+          content
+        )}
 
-          {/* Bottom Safe Area */}
+        {/* Bottom Safe Area (conditionally rendered) */}
+        {safeBottom && (
           <View
             style={{
               height: insets.bottom,
               backgroundColor: safeAreaBottomColor ?? backgroundColor,
             }}
           />
-        </View>
-      ) : (
-        <View style={[styles.container, {backgroundColor}]}>{content}</View>
-      )}
+        )}
+      </View>
     </>
   );
 };

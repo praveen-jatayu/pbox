@@ -34,7 +34,6 @@ const AppStack = () => {
   };
   return (
     <>
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
       <Stack.Navigator
         screenOptions={{headerShown: false, animation: 'fade_from_bottom'}}>
         <Stack.Screen
@@ -181,7 +180,6 @@ const AppStack = () => {
           }}
         />
       </Stack.Navigator>
-     
     </>
   );
 };

@@ -14,8 +14,6 @@ const Stack = createNativeStackNavigator<AuthStackParamList>();
 const AuthStack = () => {
   return (
     <>
-      {/* <StatusBar backgroundColor={COLORS.secondary} barStyle="dark-content" /> */}
-
       <Stack.Navigator screenOptions={{headerShown: false, animation: 'none'}}>
         <Stack.Screen
           name="OnboardingScreen"
@@ -57,7 +55,13 @@ const AuthStack = () => {
           name="ProfileName"
           component={ProfileName}
           options={{
-            headerShown: false,
+            headerShown: true,
+            title: 'Fill Out Your Profile',
+            headerTintColor: '#000000',
+            headerBackTitle: 'Back',
+            headerStyle: {
+              backgroundColor: '#FFFFFF',
+            },
           }}
         />
       </Stack.Navigator>

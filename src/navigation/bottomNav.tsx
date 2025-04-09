@@ -96,7 +96,6 @@ export default function AnimTab1({route}) {
   console.log('route', route);
   return (
     <>
-      {/* <StatusBar backgroundColor="#ffffff" barStyle="dark-content"/> */}
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -134,7 +133,7 @@ export default function AnimTab1({route}) {
           component={Bookings}
           options={{
             tabBarShowLabel: false,
-            headerShown:false,
+            headerShown: false,
             tabBarButton: props => (
               <TabButton
                 {...props}

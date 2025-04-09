@@ -42,24 +42,20 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
 
   return (
     <ScreenWrapper
-    safe={false}
-    scrollable={false}
-    padding={false}
-    backgroundColor="#fff"
-    statusBarStyle="light-content"
-    >
+      safeTop={false}
+      safeBottom={false}
+      scrollable={false}
+      padding={false}
+      withHeader={false}
+      keyboardAvoiding={false}
+      backgroundColor="#fff"
+      statusBarStyle="light-content">
       <View style={mainStyles.container}>
         <View style={onBoardingStyles.topSection}>
           <ImageBackground
             source={images.mapBackground}
             style={onBoardingStyles.imageBackground}
             resizeMode="cover">
-            <StatusBar
-              hidden={false}
-              barStyle="dark-content"
-              backgroundColor={'transparent'}
-              translucent={true}
-            />
             <View style={onBoardingStyles.overlay} />
             <Image
               source={images.onBoardingImage}

@@ -31,7 +31,6 @@ import SlotContainerSkeleton from './slotContainerSkeleton';
 import DateSlider from '../../utils/dateSelectorUtil';
 import slotBookingStyles from '../../assets/styles/slotBookingStyles';
 
-
 const SlotBooking = ({navigation, route}) => {
   const {boxInfo} = route?.params;
 
@@ -201,11 +200,7 @@ const SlotBooking = ({navigation, route}) => {
           boxInfo.title.length >= 20 && {gap: scale(60)},
         ]}
       />
-      <StatusBar
-        // translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-      />
+
       <View>
         {/* Date picker  */}
         <View style={slotBookingStyles.datePickerContainer}>
@@ -323,13 +318,8 @@ const SlotBooking = ({navigation, route}) => {
                         mainStyles.fontSize16,
                         mainStyles.darkTextColor,
                       ]}>
-                  
-            {formatTimeTo12Hour(slot?.get_single_slot?.start_time)}
-  
-  {' '}-{' '}
-  
-       {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
-    
+                      {formatTimeTo12Hour(slot?.get_single_slot?.start_time)} -{' '}
+                      {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
                     </Text>
                     <Image
                       source={
@@ -490,4 +480,3 @@ const SlotBooking = ({navigation, route}) => {
 };
 
 export default SlotBooking;
-
