@@ -53,11 +53,11 @@ const homeStyles = StyleSheet.create({
   },
 
   animatedHeader: {
-    position: 'absolute',
+    //position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: HEADER_HEIGHT,
+    //height: HEADER_HEIGHT,
     zIndex: 10,
   },
   animatedFilter: {

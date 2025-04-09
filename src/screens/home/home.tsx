@@ -299,22 +299,16 @@ const Home = () => {
       safeBottom={false}
       scrollable={false}
       padding={false}
+      withHeader={false}
+      keyboardAvoiding={false}
       backgroundColor="#fff"
-      statusBarStyle="dark-content"
-      keyboardAvoiding={true}
-      withHeader={false}>
+      statusBarStyle="light-content">
       <View style={mainStyles.container}>
-        <Animated.View
-          style={[
-            homeStyles.animatedHeader,
-            {transform: [{translateY: headerTranslateY}]},
-          ]}>
-          <MainHeader
-            headerType="home"
-            location={location}
-            isFetchingLocation={isFetchingLocation}
-          />
-        </Animated.View>
+        <MainHeader
+          headerType="home"
+          location={location}
+          isFetchingLocation={isFetchingLocation}
+        />
 
         <Animated.View
           style={[
