@@ -20,6 +20,7 @@ import {getBookingList} from '../../services/bookingService';
 import BookingCardSkeleton from './bookingCardSkeleton';
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import {COLORS} from '../../constants/color';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
 
@@ -203,13 +204,11 @@ const Bookings = ({navigation}) => {
     }
   };
 
-  useEffect(()=>{
-    fetchBookingList()
-    setSearch('')
-  },[isFocused,selecedBookingCategory])
-  
-  
- 
+  useEffect(() => {
+    fetchBookingList();
+    setSearch('');
+  }, [isFocused, selecedBookingCategory]);
+
   const handleSearchChange = text => {
     setSearch(text);
     if (text.trim() === '') {
@@ -223,17 +222,23 @@ const Bookings = ({navigation}) => {
   };
 
   return (
-    <View style={mainStyles.container}>
+    <ScreenWrapper
+      safeTop={true}
+      safeBottom={true}
+      scrollable={true}
+      padding={false}
+      withHeader={false}>
       <Animated.View
         style={[
           styles.animatedHeader,
 
-          { transform: [{ translateY: headerTranslateY }] },
-        ]}
-      >
-       
-    
-    <MainHeader headerType="booking" isFetchingLocation={false} location={[]} />
+          {transform: [{translateY: headerTranslateY}]},
+        ]}>
+        <MainHeader
+          headerType="booking"
+          isFetchingLocation={false}
+          location={[]}
+        />
       </Animated.View>
       <View style={bookingListStyles.innerContainer}>
         <Animated.View
@@ -352,10 +357,9 @@ const Bookings = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       )}
-    </View>
+    </ScreenWrapper>
   );
 };
-
 
 export default Bookings;
 const styles = StyleSheet.create({
@@ -393,4 +397,3 @@ const styles = StyleSheet.create({
     zIndex: 44, // Ensure it appears above the list
   },
 });
-

@@ -43,7 +43,7 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
   return (
     <ScreenWrapper
       safeTop={false}
-      safeBottom={false}
+      safeBottom={true}
       scrollable={false}
       padding={false}
       withHeader={false}

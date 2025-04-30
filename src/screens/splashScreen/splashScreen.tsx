@@ -14,7 +14,7 @@ const SplashScreen = () => {
       statusBarBackgroundColor="transparent"
       statusBarTranslucent={true}
       safeTop={false}
-      safeBottom={false}>
+      safeBottom={true}>
       <ImageBackground
         source={images.splashBackground}
         style={styles.backgroundImage}>

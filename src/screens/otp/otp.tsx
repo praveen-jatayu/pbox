@@ -159,7 +159,7 @@ const OTP = ({route}) => {
   return (
     <ScreenWrapper
       safeTop={false}
-      safeBottom={false}
+      safeBottom={true}
       scrollable={false}
       padding={false}
       withHeader={false}

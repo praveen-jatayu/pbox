@@ -69,8 +69,8 @@ const ProfileName: React.FC<AuthStackScreenProps<'ProfileName'>> = ({
 
   return (
     <ScreenWrapper
-      safeTop={false}
-      safeBottom={false}
+      safeTop={true}
+      safeBottom={true}
       scrollable={false}
       padding={false}
       withHeader={true}

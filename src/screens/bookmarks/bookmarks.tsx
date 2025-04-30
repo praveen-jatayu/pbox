@@ -109,8 +109,8 @@ const Bookmarks = () => {
   }, [isFocused]);
   return (
     <ScreenWrapper
-      safeTop={false}
-      safeBottom={false}
+      safeTop={true}
+      safeBottom={true}
       scrollable={false}
       padding={false}
       keyboardAvoiding={true}

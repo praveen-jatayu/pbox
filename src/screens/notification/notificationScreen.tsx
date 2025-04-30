@@ -49,8 +49,8 @@ const NotificationScreen: React.FC<
 > = ({navigation}) => {
   return (
     <ScreenWrapper
-      safeTop={false}
-      safeBottom={false}
+      safeTop={true}
+      safeBottom={true}
       scrollable={false}
       padding={false}
       withHeader={true}>

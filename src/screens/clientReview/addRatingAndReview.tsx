@@ -16,12 +16,14 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import TextInputComponent from '../../components/textInputComponent';
 import StarRating from 'react-native-star-rating-widget';
 import {COLORS} from '../../constants/color';
-import Toast from 'react-native-toast-message';
 import {updateReviewAndRating} from '../../services/ratingAndReviewService';
 import {showToast} from '../../components/toastMessage';
 import ScreenWrapper from '../../components/screenWrapper';
+import {AppStackScreenProps} from '../../navigation/navigationTypes';
 
-const AddRatingAndReview = ({navigation, route}) => {
+const AddRatingAndReview: React.FC<
+  AppStackScreenProps<'AddRatingAndReview'>
+> = ({navigation, route}) => {
   const {boxData} = route.params;
   const [review, setReview] = useState('');
   const [rating, setRating] = useState(0); // State to store user rating
@@ -39,14 +41,16 @@ const AddRatingAndReview = ({navigation, route}) => {
         showToast('error', message);
       }
     } catch (error) {
-      console.log('Error adding booking :', error.message);
-      showToast('error', error.message);
+      if (error instanceof Error) {
+        console.log('Error adding booking :', error.message);
+        showToast('error', error.message);
+      }
     }
   };
   return (
     <ScreenWrapper
-      safeTop={false}
-      safeBottom={false}
+      safeTop={true}
+      safeBottom={true}
       scrollable={false}
       padding={false}
       withHeader={true}>

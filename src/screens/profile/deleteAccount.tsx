@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
-import SubHeader from '../../components/subHeader';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {images} from '../../constants/image';
 import {icons} from '../../constants/Icon';
@@ -19,6 +18,7 @@ import PrimaryButton from '../../components/primaryButton';
 import CustomCheckBox from '../../components/checkbox';
 import BottomModal from '../../components/bottomModal';
 import {AppStackScreenProps} from '../../navigation/navigationTypes';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const DeleteAccount: React.FC<AppStackScreenProps<'DeleteAccount'>> = ({
   navigation,
@@ -64,7 +64,12 @@ const DeleteAccount: React.FC<AppStackScreenProps<'DeleteAccount'>> = ({
     };
   }, []);
   return (
-    <View style={[mainStyles.container]}>
+    <ScreenWrapper
+      safeTop={true}
+      safeBottom={true}
+      scrollable={false}
+      padding={false}
+      withHeader={true}>
       {/* top confirmation container */}
       <View
         style={{
@@ -278,7 +283,7 @@ const DeleteAccount: React.FC<AppStackScreenProps<'DeleteAccount'>> = ({
         toggleModal={toggleConfirmationModal}
         type={'deleteAccount'}
       />
-    </View>
+    </ScreenWrapper>
   );
 };
 

@@ -103,7 +103,7 @@ const Login: React.FC<AuthStackScreenProps<'Login'>> = ({navigation}) => {
   return (
     <ScreenWrapper
       safeTop={false}
-      safeBottom={false}
+      safeBottom={true}
       scrollable={false}
       padding={false}
       withHeader={false}
