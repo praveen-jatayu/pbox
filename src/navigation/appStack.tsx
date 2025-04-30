@@ -1,6 +1,9 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {SafeAreaView, Settings, StatusBar, View} from 'react-native';
+import {TouchableOpacity} from 'react-native';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {useNavigation} from '@react-navigation/native';
+
 import BottomNav from './bottomNav';
 import ProfileScreen from '../screens/profile/profileScreen';
 import NotificationScreen from '../screens/notification/notificationScreen';
@@ -15,174 +18,89 @@ import AddRatingAndReview from '../screens/clientReview/addRatingAndReview';
 import BookingDetail from '../screens/bookings/bookingDetail';
 import SelectLocation from '../screens/selectLocation/selectLocation';
 import {AppStackParamList} from './navigationTypes';
+import {FONTS} from '../constants/font';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
-const AppStack = () => {
-  const CustomSafeAreaView = ({children, excludeSafeArea}) => {
-    return excludeSafeArea ? (
-      <View style={{flex: 1}}>{children}</View>
-    ) : (
-      <>
-        {/* Top SafeAreaView for status bar background color */}
-        <SafeAreaView style={{backgroundColor: '#ffffff'}} />
+// ✅ Generalized header options defined inside same file
+const getHeaderOptions = (title: string, navigation: {goBack: () => void}) => ({
+  headerShown: true,
+  title,
+  headerTitleAlign: 'center' as const,
+  headerTitleStyle: {
+    fontFamily: FONTS.inriaSansRegular,
+    fontSize: 21,
+  },
+  headerLeft: () => (
+    <TouchableOpacity
+      onPress={() => navigation.goBack()}
+      style={{paddingRight: 20}}>
+      <Entypo name="chevron-thin-left" size={20} color="#000" />
+    </TouchableOpacity>
+  ),
+  headerBackTitle: 'Back',
+  headerStyle: {
+    backgroundColor: '#FFFFFF',
+  },
+});
 
-        {/* Main content */}
-        <SafeAreaView style={{flex: 1}}>{children}</SafeAreaView>
-      </>
-    );
-  };
+const AppStack = () => {
+  const navigation = useNavigation();
+
   return (
-    <>
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
-      <Stack.Navigator
-        screenOptions={{headerShown: false, animation: 'fade_from_bottom'}}>
-        <Stack.Screen
-          name="BottomNav"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <BottomNav {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SelectLocation"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <SelectLocation {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="ProfileScreen"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <ProfileScreen {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="EditProfile"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <EditProfile {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Settings"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <SettingsScreen {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="DeleteAccount"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <DeleteAccount {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="NotificationScreen"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <NotificationScreen {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="BoxDetail"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={true}>
-              <BoxDetail {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="BookingDetail"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <BookingDetail {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SlotBooking"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <SlotBooking {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="BookingConfirmation"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <BookingConfirmation {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="ClientReview"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <ClientReview {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="AddRatingAndReview"
-          component={props => (
-            <CustomSafeAreaView excludeSafeArea={false}>
-              <AddRatingAndReview {...props} />
-            </CustomSafeAreaView>
-          )}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-     
-    </>
+    <Stack.Navigator
+      screenOptions={{headerShown: false, animation: 'fade_from_bottom'}}>
+      <Stack.Screen name="BottomNav" component={BottomNav} />
+
+      <Stack.Screen
+        name="SelectLocation"
+        component={SelectLocation}
+        options={getHeaderOptions('Select Location', navigation)}
+      />
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={getHeaderOptions('Account', navigation)}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={getHeaderOptions('Account', navigation)}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={getHeaderOptions('Settings', navigation)}
+      />
+      <Stack.Screen
+        name="DeleteAccount"
+        component={DeleteAccount}
+        options={getHeaderOptions('Delete Account', navigation)}
+      />
+      <Stack.Screen
+        name="NotificationScreen"
+        component={NotificationScreen}
+        options={getHeaderOptions('Notification', navigation)}
+      />
+      <Stack.Screen name="BoxDetail" component={BoxDetail} />
+      <Stack.Screen name="BookingDetail" component={BookingDetail} />
+      <Stack.Screen
+        name="SlotBooking"
+        component={SlotBooking}
+        options={getHeaderOptions('Slot Booking', navigation)}
+      />
+      <Stack.Screen
+        name="BookingConfirmation"
+        component={BookingConfirmation}
+        options={getHeaderOptions('Confirmation', navigation)}
+      />
+      <Stack.Screen
+        name="ClientReview"
+        component={ClientReview}
+        options={getHeaderOptions('What Client Says', navigation)}
+      />
+      <Stack.Screen name="AddRatingAndReview" component={AddRatingAndReview} />
+    </Stack.Navigator>
   );
 };
 

@@ -1,34 +1,32 @@
-import { View, Text, ImageBackground, Dimensions, StatusBar, StyleSheet } from 'react-native';
 import React from 'react';
-import { COLORS } from '../../constants/color';
-import { images } from '../../constants/image';
-import { FONTS } from '../../constants/font';
-import { scale } from 'react-native-size-matters';
+import {View, Text, ImageBackground, StyleSheet} from 'react-native';
+import {COLORS} from '../../constants/color';
+import {images} from '../../constants/image';
+import {FONTS} from '../../constants/font';
+import {scale} from 'react-native-size-matters';
+import ScreenWrapper from '../../components/screenWrapper';
 
-const SplashScreen = () => {        
-
+const SplashScreen = () => {
   return (
-    <View style={styles.container}>
-     
-      <ImageBackground 
-        source={images.splashBackground} 
-        style={styles.backgroundImage} 
-        // resizeMode="cover"  // Cover the entire screen
-      >
-        <StatusBar hidden={false} barStyle='light-content' backgroundColor={'transparent'} translucent={true} />
+    <ScreenWrapper
+      backgroundColor={COLORS.primary}
+      statusBarStyle="light-content"
+      statusBarBackgroundColor="transparent"
+      statusBarTranslucent={true}
+      safeTop={false}
+      safeBottom={true}>
+      <ImageBackground
+        source={images.splashBackground}
+        style={styles.backgroundImage}>
         <Text style={styles.logoText}>LOGO</Text>
       </ImageBackground>
-    </View>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.primary,
-  },
   backgroundImage: {
-    flex: 1,  
+    flex: 1,
     width: '100%',
     height: '100%',
     justifyContent: 'center',
@@ -40,4 +38,5 @@ const styles = StyleSheet.create({
     fontSize: scale(60),
   },
 });
+
 export default SplashScreen;

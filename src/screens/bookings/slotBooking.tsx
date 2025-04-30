@@ -30,7 +30,7 @@ import NoDataContainer from '../../components/noDataContainer';
 import SlotContainerSkeleton from './slotContainerSkeleton';
 import DateSlider from '../../utils/dateSelectorUtil';
 import slotBookingStyles from '../../assets/styles/slotBookingStyles';
-
+import ScreenWrapper from '../../components/screenWrapper';
 
 const SlotBooking = ({navigation, route}) => {
   const {boxInfo} = route?.params;
@@ -191,21 +191,12 @@ const SlotBooking = ({navigation, route}) => {
   }, [selectedSlot]);
 
   return (
-    <View style={[mainStyles.container]}>
-      <SubHeader
-        title={boxInfo.title}
-        onPress={() => navigation.goBack()}
-        style={[
-          slotBookingStyles.customHeaderStyles,
-          boxInfo.title.length > 10 && {gap: scale(90)},
-          boxInfo.title.length >= 20 && {gap: scale(60)},
-        ]}
-      />
-      <StatusBar
-        // translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-      />
+    <ScreenWrapper
+      safeTop={true}
+      safeBottom={true}
+      scrollable={false}
+      padding={false}
+      withHeader={true}>
       <View>
         {/* Date picker  */}
         <View style={slotBookingStyles.datePickerContainer}>
@@ -302,7 +293,10 @@ const SlotBooking = ({navigation, route}) => {
         {/* booking container */}
         <ScrollView
           style={{maxHeight: verticalScale(300)}}
-          contentContainerStyle={{paddingBottom: verticalScale(100)}}
+          contentContainerStyle={{
+            paddingBottom: verticalScale(100),
+            flexGrow: 1,
+          }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
           {loading ? (
@@ -323,13 +317,8 @@ const SlotBooking = ({navigation, route}) => {
                         mainStyles.fontSize16,
                         mainStyles.darkTextColor,
                       ]}>
-                  
-            {formatTimeTo12Hour(slot?.get_single_slot?.start_time)}
-  
-  {' '}-{' '}
-  
-       {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
-    
+                      {formatTimeTo12Hour(slot?.get_single_slot?.start_time)} -{' '}
+                      {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
                     </Text>
                     <Image
                       source={
@@ -349,7 +338,10 @@ const SlotBooking = ({navigation, route}) => {
                       slotBookingStyles.slotButton,
                       !bookedSlots.includes(slot.id)
                         ? isSlotSelected(slot.id)
-                          ? {backgroundColor: '#FDEBE9', borderColor: '#FF4F0A'} // Selected slot
+                          ? {
+                              backgroundColor: '#FDEBE9',
+                              borderColor: '#FF4F0A',
+                            } // Selected slot
                           : [
                               mainStyles.secondaryInfoBackgroundColor,
                               mainStyles.infoBorderColor,
@@ -359,16 +351,18 @@ const SlotBooking = ({navigation, route}) => {
                             mainStyles.primaryBorderColor,
                           ], // Booked slot
                     ]}>
-                    <Text
-                      style={[
-                        mainStyles.infoTextColor,
-                        mainStyles.fontInriaSansBold,
-                        mainStyles.fontSize16,
-                        bookedSlots.includes(slot.id) &&
-                          mainStyles.lightTextColor,
-                      ]}>
-                      {slot?.discount || 'N/A'}% Discount
-                    </Text>
+                    {slot?.discount ? (
+                      <Text
+                        style={[
+                          mainStyles.infoTextColor,
+                          mainStyles.fontInriaSansBold,
+                          mainStyles.fontSize16,
+                          bookedSlots.includes(slot.id) &&
+                            mainStyles.lightTextColor,
+                        ]}>
+                        {slot.discount}% Discount
+                      </Text>
+                    ) : null}
                     <Text
                       style={[
                         mainStyles.lightTextColor,
@@ -457,7 +451,8 @@ const SlotBooking = ({navigation, route}) => {
                 mainStyles.fontInriaSansRegular,
                 mainStyles.fontSize16,
                 mainStyles.primaryTextColor,
-              ]}>
+              ]}
+              numberOfLines={2}>
               No Slots Selected!!
             </Text>
           ) : (
@@ -485,9 +480,8 @@ const SlotBooking = ({navigation, route}) => {
           />
         </View>
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
 
 export default SlotBooking;
-

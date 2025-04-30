@@ -14,8 +14,8 @@ import {AppStackParamList} from '../navigation/navigationTypes';
 
 interface MainHeaderProps {
   headerType?: 'home' | 'booking' | 'bookmark';
-  isFetchingLocation: boolean;
-  location: string[]; // Ensure location is an array of strings
+  isFetchingLocation?: boolean;
+  location?: string[]; // Ensure location is an array of strings
 }
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
@@ -127,10 +127,10 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: moderateVerticalScale(50, 0.8),
     justifyContent: 'space-between',
     paddingHorizontal: scale(10),
     paddingBottom: verticalScale(10),
+    height: moderateVerticalScale(50),
   },
   locationContainer: {
     flexDirection: 'row',

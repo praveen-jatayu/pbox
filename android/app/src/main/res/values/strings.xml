@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">boxBooking</string>
+    <string name="google_api_key">${GOOGLE_API_KEY}</string>
+
 </resources>

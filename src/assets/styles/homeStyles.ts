@@ -7,8 +7,7 @@ import {
   verticalScale,
 } from 'react-native-size-matters';
 
-const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
-const MIN_HEADER_HEIGHT = moderateVerticalScale(150); // height of the header
+const HEADER_HEIGHT = moderateVerticalScale(60); // height of the header
 const homeStyles = StyleSheet.create({
   sportsContainer: {
     marginTop: verticalScale(10),
@@ -52,23 +51,15 @@ const homeStyles = StyleSheet.create({
     paddingBottom: verticalScale(300),
   },
 
-  animatedHeader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: HEADER_HEIGHT,
-    zIndex: 10,
-  },
   animatedFilter: {
-    top: HEADER_HEIGHT - moderateVerticalScale(90),
+    top: HEADER_HEIGHT - moderateVerticalScale(110),
     left: 0,
     right: 0,
     paddingHorizontal: scale(5),
     zIndex: 12,
   },
   animatedSlider: {
-    top: HEADER_HEIGHT - moderateVerticalScale(90),
+    top: HEADER_HEIGHT - moderateVerticalScale(120),
     left: 0,
     right: 0,
     paddingHorizontal: scale(5),
@@ -76,12 +67,13 @@ const homeStyles = StyleSheet.create({
     zIndex: 12,
   },
   animatedSearch: {
-    top: HEADER_HEIGHT - moderateVerticalScale(80),
+    top: HEADER_HEIGHT - moderateVerticalScale(60),
     left: 0,
     right: 0,
     paddingHorizontal: scale(5),
     marginHorizontal: scale(10),
-    zIndex: 12,
+    marginTop: verticalScale(-30),
+    zIndex: 15,
   },
   loadingContainer: {
     flex: 1,

@@ -30,10 +30,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import boxDetailStyles from '../../assets/styles/boxDetailStyles';
 import {getBookingRatingReview} from '../../services/ratingAndReviewService';
 import {showToast} from '../../components/toastMessage';
+import ScreenWrapper from '../../components/screenWrapper';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
-
-
 
 const BoxDetail = ({navigation, route}) => {
   const {boxDetail, isBookmarked} = route.params;
@@ -135,6 +135,8 @@ const BoxDetail = ({navigation, route}) => {
   );
 
   const AnimatedHeader = ({scrollY, boxDetail}) => {
+    const insets = useSafeAreaInsets();
+    console.log(insets);
     const headerTranslateY = scrollY.interpolate({
       inputRange: [0, sliderHeight],
       outputRange: [-150, 0],
@@ -155,11 +157,11 @@ const BoxDetail = ({navigation, route}) => {
             top: 0,
             left: 0,
             right: 0,
-            height: verticalScale(90),
+            height: verticalScale(60) + insets.top,
             flexDirection: 'row',
             alignItems: 'center',
             paddingHorizontal: scale(4),
-            paddingTop: verticalScale(17),
+            paddingTop: insets.top,
             transform: [{translateY: headerTranslateY}],
             opacity: headerOpacity,
             elevation: 5,
@@ -168,11 +170,6 @@ const BoxDetail = ({navigation, route}) => {
           },
           mainStyles.primaryBackgroundColor,
         ]}>
-        <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="light-content"
-        />
         <EvilIcons
           name="chevron-left"
           size={38}
@@ -225,13 +222,16 @@ const BoxDetail = ({navigation, route}) => {
   }, []);
 
   return (
-    <View style={mainStyles.container}>
-      {/* Make StatusBar transparent */}
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
-      />
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={true}
+      scrollable={false}
+      padding={false}
+      withHeader={false}
+      keyboardAvoiding={false}
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
+      statusBarStyle="light-content">
       <AnimatedHeader scrollY={scrollY} boxDetail={boxDetail} />
       <Animated.ScrollView
         contentContainerStyle={{
@@ -591,7 +591,7 @@ const BoxDetail = ({navigation, route}) => {
           width: '90%',
         }}
       />
-    </View>
+    </ScreenWrapper>
   );
 };
 

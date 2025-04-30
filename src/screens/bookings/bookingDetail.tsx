@@ -4,12 +4,9 @@ import {
   Text,
   Dimensions,
   Image,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Animated,
-  FlatList,
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -23,13 +20,12 @@ import boxCardStyles from '../../assets/styles/boxCardStyles';
 import {images} from '../../constants/image';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {handleShowLocation} from '../../utils/showLocationUtil';
-import { formatTimeTo12Hour } from '../../utils/timeCoverterUtil';
+import ScreenWrapper from '../../components/screenWrapper';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
 const BookingDetail = ({navigation, route}) => {
   const {bookingDetail} = route.params;
-  console.log('bbberere73',bookingDetail)
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -48,11 +44,6 @@ const BookingDetail = ({navigation, route}) => {
       </View>
     );
   };
-
- 
-
- 
- 
 
   // top Animated Header
   const AnimatedHeader = ({scrollY, boxDetail, navigation}) => {
@@ -89,11 +80,6 @@ const BookingDetail = ({navigation, route}) => {
           },
           mainStyles.primaryBackgroundColor,
         ]}>
-        <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="light-content"
-        />
         <EvilIcons
           name="chevron-left"
           size={38}
@@ -123,14 +109,21 @@ const BookingDetail = ({navigation, route}) => {
   };
 
   return (
-    <View style={mainStyles.container}>
-      {/* Make StatusBar transparent */}
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={true}
+      scrollable={false}
+      padding={false}
+      withHeader={false}
+      keyboardAvoiding={false}
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
+      statusBarStyle="light-content">
+      <AnimatedHeader
+        scrollY={scrollY}
+        boxDetail={bookingDetail}
+        navigation={navigation}
       />
-      <AnimatedHeader scrollY={scrollY} boxDetail={bookingDetail} navigation={navigation}/>
       <Animated.ScrollView
         contentContainerStyle={{flexGrow: 1, paddingBottom: verticalScale(100)}}
         showsVerticalScrollIndicator={false}
@@ -171,7 +164,6 @@ const BookingDetail = ({navigation, route}) => {
               activeOpacity={0.8}>
               <EvilIcons name="chevron-left" size={moderateScale(28)} />
             </TouchableOpacity>
-           
           </View>
         </Animated.View>
 
@@ -228,60 +220,55 @@ const BookingDetail = ({navigation, route}) => {
             {/* Booking Details Section */}
 
             <Text
-    style={[
-      mainStyles.fontInriaSansBold,
-      mainStyles.darkTextColor,
-      mainStyles.fontSize18,
-    ]}>
-    Booking Details:
-  </Text>
+              style={[
+                mainStyles.fontInriaSansBold,
+                mainStyles.darkTextColor,
+                mainStyles.fontSize18,
+              ]}>
+              Booking Details:
+            </Text>
 
-{bookingDetail?.get_bookings_details?.map((booking,index)=>(
-  <React.Fragment key={index}>
-  <View style={styles.detailsContainer} >
- 
-  <Text
-    style={[
-      mainStyles.fontSize14,
-      mainStyles.lightTextColor,
-      mainStyles.fontNunitoBold,
-      mainStyles.marginTop10,
-    ]}>
-    <Text
-      style={[
-        mainStyles.fontSize14,
-        mainStyles.darkTextColor,
-        mainStyles.fontNunitoRegular,
-      ]}>
-      Booking Date :
-    </Text>{' '}
-    {booking?.booking_date || 'N/A'}
-  </Text>
-  <Text
-    style={[
-      mainStyles.fontSize14,
-      mainStyles.lightTextColor,
-      mainStyles.fontNunitoBold,
-      mainStyles.marginTop10,
-    ]}>
-    <Text
-      style={[
-        mainStyles.fontSize14,
-        mainStyles.darkTextColor,
-        mainStyles.fontNunitoRegular,
-      ]}>
-      Court :
-    </Text>{' '}
-    {booking?.get_selected_box_court?.name || 'N/A'}
-  </Text>
+            {bookingDetail?.get_bookings_details?.map((booking, index) => (
+              <React.Fragment key={index}>
+                <View style={styles.detailsContainer}>
+                  <Text
+                    style={[
+                      mainStyles.fontSize14,
+                      mainStyles.lightTextColor,
+                      mainStyles.fontNunitoBold,
+                      mainStyles.marginTop10,
+                    ]}>
+                    <Text
+                      style={[
+                        mainStyles.fontSize14,
+                        mainStyles.darkTextColor,
+                        mainStyles.fontNunitoRegular,
+                      ]}>
+                      Booking Date :
+                    </Text>{' '}
+                    {booking?.booking_date || 'N/A'}
+                  </Text>
+                  <Text
+                    style={[
+                      mainStyles.fontSize14,
+                      mainStyles.lightTextColor,
+                      mainStyles.fontNunitoBold,
+                      mainStyles.marginTop10,
+                    ]}>
+                    <Text
+                      style={[
+                        mainStyles.fontSize14,
+                        mainStyles.darkTextColor,
+                        mainStyles.fontNunitoRegular,
+                      ]}>
+                      Court :
+                    </Text>{' '}
+                    {booking?.get_selected_box_court?.name || 'N/A'}
+                  </Text>
 
+                  {/* Slot Details Section */}
 
-
-            {/* Slot Details Section */}
-            
-           
-           
-              {/* <Text
+                  {/* <Text
                 style={[
                   mainStyles.fontInriaSansBold,
                   mainStyles.darkTextColor,
@@ -289,36 +276,34 @@ const BookingDetail = ({navigation, route}) => {
                 ]}>
                 Slot Details:
               </Text> */}
-              <View style={styles.tableHeader}>
-                <Text
-                  style={[
-                    mainStyles.darkTextColor,
-                    mainStyles.fontNunitoBold,
-                    mainStyles.fontSize14,
-                  ]}>
-                  Time Slot :
-                </Text>
-              
-              </View>
-              {booking?.get_selected_booking_slot_details.map((bookedSlot,index)=>(
-              <View style={styles.slotRow} key={index}>
-      <Text
-        style={[
-          mainStyles.fontInriaSansRegular,
-          mainStyles.fontSize12,
-          mainStyles.darkTextColor,
-        ]}>
-        {bookedSlot?.get_selected_slot?.start_time} - {bookedSlot?.get_selected_slot?.end_time}
-      </Text>
-     
-      
-  
-              </View>
-      ))} 
-
-</View>
-            </React.Fragment>
-))}
+                  <View style={styles.tableHeader}>
+                    <Text
+                      style={[
+                        mainStyles.darkTextColor,
+                        mainStyles.fontNunitoBold,
+                        mainStyles.fontSize14,
+                      ]}>
+                      Time Slot :
+                    </Text>
+                  </View>
+                  {booking?.get_selected_booking_slot_details.map(
+                    (bookedSlot, index) => (
+                      <View style={styles.slotRow} key={index}>
+                        <Text
+                          style={[
+                            mainStyles.fontInriaSansRegular,
+                            mainStyles.fontSize12,
+                            mainStyles.darkTextColor,
+                          ]}>
+                          {bookedSlot?.get_selected_slot?.start_time} -{' '}
+                          {bookedSlot?.get_selected_slot?.end_time}
+                        </Text>
+                      </View>
+                    ),
+                  )}
+                </View>
+              </React.Fragment>
+            ))}
             {/* Total Amount Section */}
             <View style={styles.totalAmountContainer}>
               <Text
@@ -327,13 +312,13 @@ const BookingDetail = ({navigation, route}) => {
                   mainStyles.fontSize20,
                   {color: '#2a9d8f'},
                 ]}>
-                Total Amount: ₹{ bookingDetail?.total_amount ||'N/A'}
+                Total Amount: ₹{bookingDetail?.total_amount || 'N/A'}
               </Text>
             </View>
           </View>
         </View>
       </Animated.ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 };
 
@@ -425,20 +410,18 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(10),
     padding: scale(16),
     marginVertical: verticalScale(10),
-   
-   
   },
   detailsContainer: {
     marginTop: verticalScale(15),
-    
-  borderBottomColor:'#ddd',
-  borderBottomWidth:1
+
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
   },
 
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    
+
     paddingVertical: verticalScale(5),
   },
 

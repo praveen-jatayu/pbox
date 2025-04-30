@@ -1,16 +1,17 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
-import { COLORS } from '../constants/color';
-import { FONTS } from '../constants/font';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import {View, Text, TextInput, StyleSheet, TextInputProps} from 'react-native';
+import {COLORS} from '../constants/color';
+import {FONTS} from '../constants/font';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 
 interface TextInputComponentProps extends TextInputProps {
   value: string;
   label?: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
-  error?: string;
+  error?: boolean;
   required?: boolean;
+  errorLabel?: string;
 }
 
 const TextInputComponent: React.FC<TextInputComponentProps> = ({

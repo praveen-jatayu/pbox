@@ -16,6 +16,7 @@ import {images} from '../../constants/image';
 import mainStyles from '../../assets/styles/mainStyles';
 import {verticalScale} from 'react-native-size-matters';
 import {AuthStackScreenProps} from '../../navigation/navigationTypes';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
   navigation,
@@ -40,19 +41,23 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
   }, []);
 
   return (
-    <>
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={true}
+      scrollable={false}
+      padding={false}
+      withHeader={false}
+      keyboardAvoiding={false}
+      backgroundColor="#fff"
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
+      statusBarStyle="light-content">
       <View style={mainStyles.container}>
         <View style={onBoardingStyles.topSection}>
           <ImageBackground
             source={images.mapBackground}
             style={onBoardingStyles.imageBackground}
             resizeMode="cover">
-            <StatusBar
-              hidden={false}
-              barStyle="dark-content"
-              backgroundColor={'transparent'}
-              translucent={true}
-            />
             <View style={onBoardingStyles.overlay} />
             <Image
               source={images.onBoardingImage}
@@ -111,12 +116,10 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
           <PrimaryButton
             title={'GO'}
             onPress={() => navigation.navigate('Login')}
-            disabled={undefined}
-            style={undefined}
           />
         </Animated.View>
       </View>
-    </>
+    </ScreenWrapper>
   );
 };
 
