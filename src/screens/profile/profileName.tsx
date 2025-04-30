@@ -18,7 +18,7 @@ const ProfileName: React.FC<AuthStackScreenProps<'ProfileName'>> = ({
   navigation,
   route,
 }) => {
-  const {userDetail} = route.params;
+  // const {userDetail} = route.params;
   const {setUserInfo, setUserToken} = useAuth();
 
   const [firstName, setFirstName] = useState('');
@@ -40,7 +40,7 @@ const ProfileName: React.FC<AuthStackScreenProps<'ProfileName'>> = ({
 
   const handleNext = async () => {
     let formData = new FormData();
-    formData.append('user_id', userDetail.id);
+    // formData.append('user_id', userDetail.id);
     formData.append('first_name', firstName);
     formData.append('last_name', lastName);
 
@@ -73,10 +73,9 @@ const ProfileName: React.FC<AuthStackScreenProps<'ProfileName'>> = ({
       safeBottom={false}
       scrollable={false}
       padding={false}
-      withHeader={false}
+      withHeader={true}
       keyboardAvoiding={true}
-      backgroundColor="#fff"
-      statusBarStyle="light-content">
+      backgroundColor="#fff">
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={mainStyles.container}>
           <View

@@ -20,6 +20,8 @@ interface ScreenWrapperProps {
   safeAreaTopColor?: string;
   safeAreaBottomColor?: string;
   statusBarStyle?: 'light-content' | 'dark-content';
+  statusBarBackgroundColor?: string;
+  statusBarTranslucent?: boolean;
   keyboardAvoiding?: boolean;
   withHeader?: boolean;
 }
@@ -33,6 +35,8 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   backgroundColor = '#fff',
   safeAreaTopColor,
   safeAreaBottomColor,
+  statusBarTranslucent = false,
+  statusBarBackgroundColor = '#fff',
   statusBarStyle = 'dark-content',
   keyboardAvoiding = false,
   withHeader = false,
@@ -57,12 +61,17 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   return (
     <>
       <StatusBar
-        translucent={!withHeader}
+        translucent={
+          typeof statusBarTranslucent === 'boolean'
+            ? statusBarTranslucent
+            : !withHeader
+        }
         barStyle={statusBarStyle}
         backgroundColor={
-          Platform.OS === 'android' && withHeader
+          statusBarBackgroundColor ??
+          (Platform.OS === 'android' && withHeader
             ? safeAreaTopColor ?? backgroundColor
-            : 'transparent'
+            : 'transparent')
         }
       />
 

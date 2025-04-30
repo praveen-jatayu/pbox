@@ -49,6 +49,8 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
       withHeader={false}
       keyboardAvoiding={false}
       backgroundColor="#fff"
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
       statusBarStyle="light-content">
       <View style={mainStyles.container}>
         <View style={onBoardingStyles.topSection}>
@@ -114,8 +116,6 @@ const OnboardingScreen: React.FC<AuthStackScreenProps<'OnboardingScreen'>> = ({
           <PrimaryButton
             title={'GO'}
             onPress={() => navigation.navigate('Login')}
-            disabled={undefined}
-            style={undefined}
           />
         </Animated.View>
       </View>

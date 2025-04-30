@@ -196,297 +196,282 @@ const SlotBooking = ({navigation, route}) => {
       safeBottom={false}
       scrollable={false}
       padding={false}
-      withHeader={false}
-      keyboardAvoiding={false}
-      backgroundColor="#fff"
-      statusBarStyle="light-content">
-      <View style={[mainStyles.container]}>
-        {/* <SubHeader
-          title={boxInfo.title}
-          onPress={() => navigation.goBack()}
-          style={[
-            slotBookingStyles.customHeaderStyles,
-            boxInfo.title.length > 10 && {gap: scale(90)},
-            boxInfo.title.length >= 20 && {gap: scale(60)},
-          ]}
-        /> */}
-
-        <View>
-          {/* Date picker  */}
-          <View style={slotBookingStyles.datePickerContainer}>
-            <Text
-              style={[
-                mainStyles.fontInriaSansRegular,
-                mainStyles.darkTextColor,
-                mainStyles.fontSize20,
-              ]}>
-              Date
-            </Text>
-            <DateSlider
-              onDateSelected={handleDateSelection}
-              countLabel={slotCount}
-            />
-          </View>
-          {/* Court slection container */}
-
-          <View style={slotBookingStyles.courtSelectionContainer}>
-            <Text
-              style={[
-                mainStyles.darkTextColor,
-                mainStyles.fontInriaSansRegular,
-                mainStyles.fontSize20,
-              ]}>
-              Court
-            </Text>
-
-            <View style={slotBookingStyles.rowWithGap}>
-              {loading ? (
-                // Skeleton Loader for Court Selection
-                Array.from({length: 4}).map((_, index) => (
-                  <View
-                    key={index}
-                    style={slotBookingStyles.courtSelectionContainerSkeleton}
-                  />
-                ))
-              ) : availableCourts.length > 0 ? (
-                availableCourts.map(court => (
-                  <TouchableOpacity
-                    key={court.id}
-                    onPress={() => handleCourtSelection(court)}
-                    style={[
-                      mainStyles.secondaryBorderColor,
-                      mainStyles.borderWidth1,
-                      selectedCourt === court.id &&
-                        mainStyles.primaryBackgroundColor,
-                      slotBookingStyles.courtSelectionButton,
-                    ]}>
-                    <View>
-                      {hasSlotsInCourt(court.id) && (
-                        <View
-                          style={[
-                            slotBookingStyles.courtHasSlotsIndicator,
-                            mainStyles.primaryBackgroundColor,
-                            selectedCourt === court.id &&
-                              mainStyles.secondaryBackgroundColor,
-                          ]}
-                        />
-                      )}
-                      <Text
-                        style={[
-                          mainStyles.primaryTextColor,
-                          mainStyles.fontSize14,
-                          mainStyles.fontNunitoMedium,
-                          selectedCourt === court.id && {color: '#FFFFFF'},
-                        ]}>
-                        {court?.name}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))
-              ) : (
-                <Text>No courts available</Text>
-              )}
-            </View>
-          </View>
-          {/* banner container */}
-          <View
+      withHeader={true}>
+      <View>
+        {/* Date picker  */}
+        <View style={slotBookingStyles.datePickerContainer}>
+          <Text
             style={[
-              mainStyles.infoBackgroundColor,
-              mainStyles.widthFull,
-              slotBookingStyles.bannerContainer,
+              mainStyles.fontInriaSansRegular,
+              mainStyles.darkTextColor,
+              mainStyles.fontSize20,
             ]}>
-            <Text
-              style={[
-                mainStyles.secondaryTextColor,
-                mainStyles.fontNunitoSemibold,
-                {fontSize: moderateScale(15, 0.8)},
-              ]}>
-              Be The First! Reserve This Court Before Anyone
-            </Text>
-          </View>
-          {/* booking container */}
-          <ScrollView
-            style={{maxHeight: verticalScale(300)}}
-            contentContainerStyle={{paddingBottom: verticalScale(100)}}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled">
+            Date
+          </Text>
+          <DateSlider
+            onDateSelected={handleDateSelection}
+            countLabel={slotCount}
+          />
+        </View>
+        {/* Court slection container */}
+
+        <View style={slotBookingStyles.courtSelectionContainer}>
+          <Text
+            style={[
+              mainStyles.darkTextColor,
+              mainStyles.fontInriaSansRegular,
+              mainStyles.fontSize20,
+            ]}>
+            Court
+          </Text>
+
+          <View style={slotBookingStyles.rowWithGap}>
             {loading ? (
               // Skeleton Loader for Court Selection
               Array.from({length: 4}).map((_, index) => (
-                <SlotContainerSkeleton key={index} />
-              ))
-            ) : selectedDate && selectedCourt && slotDetail.length > 0 ? (
-              slotDetail.map((slot, index) => (
                 <View
                   key={index}
-                  style={slotBookingStyles.slotSelectionContainer}>
-                  <View style={[mainStyles.flexContainer]}>
-                    <View>
-                      <Text
+                  style={slotBookingStyles.courtSelectionContainerSkeleton}
+                />
+              ))
+            ) : availableCourts.length > 0 ? (
+              availableCourts.map(court => (
+                <TouchableOpacity
+                  key={court.id}
+                  onPress={() => handleCourtSelection(court)}
+                  style={[
+                    mainStyles.secondaryBorderColor,
+                    mainStyles.borderWidth1,
+                    selectedCourt === court.id &&
+                      mainStyles.primaryBackgroundColor,
+                    slotBookingStyles.courtSelectionButton,
+                  ]}>
+                  <View>
+                    {hasSlotsInCourt(court.id) && (
+                      <View
                         style={[
-                          mainStyles.fontInriaSansRegular,
-                          mainStyles.fontSize16,
-                          mainStyles.darkTextColor,
-                        ]}>
-                        {formatTimeTo12Hour(slot?.get_single_slot?.start_time)}{' '}
-                        - {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
-                      </Text>
-                      <Image
-                        source={
-                          slot?.get_single_slot?.start_time >= '19:00:00'
-                            ? icons.moonIcon
-                            : icons.sunIcon
-                        }
-                        style={slotBookingStyles.dayNightIconContainer}
+                          slotBookingStyles.courtHasSlotsIndicator,
+                          mainStyles.primaryBackgroundColor,
+                          selectedCourt === court.id &&
+                            mainStyles.secondaryBackgroundColor,
+                        ]}
                       />
-                    </View>
-
-                    <TouchableOpacity
-                      onPress={() => handleSlotSelection(slot?.id, slot?.rate)}
-                      disabled={bookedSlots.includes(slot?.id)}
+                    )}
+                    <Text
                       style={[
-                        mainStyles.borderWidth1,
-                        slotBookingStyles.slotButton,
-                        !bookedSlots.includes(slot.id)
-                          ? isSlotSelected(slot.id)
-                            ? {
-                                backgroundColor: '#FDEBE9',
-                                borderColor: '#FF4F0A',
-                              } // Selected slot
-                            : [
-                                mainStyles.secondaryInfoBackgroundColor,
-                                mainStyles.infoBorderColor,
-                              ] // Available slot
-                          : [
-                              {backgroundColor: '#D3D3D3'},
-                              mainStyles.primaryBorderColor,
-                            ], // Booked slot
+                        mainStyles.primaryTextColor,
+                        mainStyles.fontSize14,
+                        mainStyles.fontNunitoMedium,
+                        selectedCourt === court.id && {color: '#FFFFFF'},
                       ]}>
-                      <Text
-                        style={[
-                          mainStyles.infoTextColor,
-                          mainStyles.fontInriaSansBold,
-                          mainStyles.fontSize16,
-                          bookedSlots.includes(slot.id) &&
-                            mainStyles.lightTextColor,
-                        ]}>
-                        {slot?.discount || 'N/A'}% Discount
-                      </Text>
-                      <Text
-                        style={[
-                          mainStyles.lightTextColor,
-                          mainStyles.fontNunitoRegular,
-                          mainStyles.fontSize14,
-                        ]}>
-                        {!bookedSlots.includes(slot.id)
-                          ? ` ₹ ${slot?.rate || '---'}`
-                          : ''}
-                      </Text>
-                    </TouchableOpacity>
+                      {court?.name}
+                    </Text>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))
             ) : (
-              <NoDataContainer
-                style={{marginTop: verticalScale(50)}}
-                noDataText={'No slots available'}
-              />
+              <Text>No courts available</Text>
             )}
-          </ScrollView>
+          </View>
         </View>
-        {/* Bottom info container */}
+        {/* banner container */}
         <View
           style={[
-            mainStyles.secondaryBackgroundColor,
-            mainStyles.dropShadowEffect,
-            slotBookingStyles.bottomInfoContainer,
+            mainStyles.infoBackgroundColor,
+            mainStyles.widthFull,
+            slotBookingStyles.bannerContainer,
           ]}>
-          <View style={slotBookingStyles.rowContainer}>
-            <View style={slotBookingStyles.rowWithGap}>
-              <CustomCheckBox
-                style={slotBookingStyles.bookedCheckBox}
-                disabled={true}
-              />
-              <Text
-                style={[
-                  mainStyles.fontNunitoSemibold,
-                  mainStyles.fontSize14,
-                  mainStyles.darkTextColor,
-                ]}>
-                Booked
-              </Text>
-            </View>
-            <View style={slotBookingStyles.rowWithGap}>
-              <CustomCheckBox
-                style={[
-                  mainStyles.borderWidth1,
-                  mainStyles.secondaryInfoBackgroundColor,
-                  mainStyles.infoBorderColor,
-                ]}
-              />
-              <Text
-                style={[
-                  mainStyles.fontNunitoSemibold,
-                  mainStyles.fontSize14,
-                  mainStyles.darkTextColor,
-                ]}>
-                Available
-              </Text>
-            </View>
-            <View style={slotBookingStyles.rowWithGap}>
-              <CustomCheckBox
-                style={[
-                  mainStyles.borderWidth1,
-                  slotBookingStyles.selectedCheckBox,
-                ]}
-                disabled={true}
-              />
-              <Text
-                style={[
-                  mainStyles.fontNunitoSemibold,
-                  mainStyles.fontSize14,
-                  mainStyles.darkTextColor,
-                ]}>
-                Selected
-              </Text>
-            </View>
-          </View>
+          <Text
+            style={[
+              mainStyles.secondaryTextColor,
+              mainStyles.fontNunitoSemibold,
+              {fontSize: moderateScale(15, 0.8)},
+            ]}>
+            Be The First! Reserve This Court Before Anyone
+          </Text>
+        </View>
+        {/* booking container */}
+        <ScrollView
+          style={{maxHeight: verticalScale(300)}}
+          contentContainerStyle={{paddingBottom: verticalScale(100)}}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          {loading ? (
+            // Skeleton Loader for Court Selection
+            Array.from({length: 4}).map((_, index) => (
+              <SlotContainerSkeleton key={index} />
+            ))
+          ) : selectedDate && selectedCourt && slotDetail.length > 0 ? (
+            slotDetail.map((slot, index) => (
+              <View
+                key={index}
+                style={slotBookingStyles.slotSelectionContainer}>
+                <View style={[mainStyles.flexContainer]}>
+                  <View>
+                    <Text
+                      style={[
+                        mainStyles.fontInriaSansRegular,
+                        mainStyles.fontSize16,
+                        mainStyles.darkTextColor,
+                      ]}>
+                      {formatTimeTo12Hour(slot?.get_single_slot?.start_time)} -{' '}
+                      {formatTimeTo12Hour(slot?.get_single_slot?.end_time)}
+                    </Text>
+                    <Image
+                      source={
+                        slot?.get_single_slot?.start_time >= '19:00:00'
+                          ? icons.moonIcon
+                          : icons.sunIcon
+                      }
+                      style={slotBookingStyles.dayNightIconContainer}
+                    />
+                  </View>
 
-          <View
-            style={[mainStyles.flexContainer, {marginTop: verticalScale(16)}]}>
-            {totalBookingAmount === 0 ? (
-              <Text
-                style={[
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.fontSize16,
-                  mainStyles.primaryTextColor,
-                ]}>
-                No Slots Selected!!
-              </Text>
-            ) : (
-              <Text
-                style={[
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.fontSize20,
-                  mainStyles.primaryTextColor,
-                ]}>
-                TOTAL : ₹ {totalBookingAmount}
-              </Text>
-            )}
-
-            <PrimaryButton
-              title={'CONTINUE'}
-              style={slotBookingStyles.continueButton}
-              disabled={Object.keys(selectedSlot).length === 0}
-              onPress={() =>
-                navigation.navigate('BookingConfirmation', {
-                  slotBookingData: selectedSlot,
-                  boxData: boxInfo,
-                  totalAmountToBePaid: totalBookingAmount,
-                })
-              }
+                  <TouchableOpacity
+                    onPress={() => handleSlotSelection(slot?.id, slot?.rate)}
+                    disabled={bookedSlots.includes(slot?.id)}
+                    style={[
+                      mainStyles.borderWidth1,
+                      slotBookingStyles.slotButton,
+                      !bookedSlots.includes(slot.id)
+                        ? isSlotSelected(slot.id)
+                          ? {
+                              backgroundColor: '#FDEBE9',
+                              borderColor: '#FF4F0A',
+                            } // Selected slot
+                          : [
+                              mainStyles.secondaryInfoBackgroundColor,
+                              mainStyles.infoBorderColor,
+                            ] // Available slot
+                        : [
+                            {backgroundColor: '#D3D3D3'},
+                            mainStyles.primaryBorderColor,
+                          ], // Booked slot
+                    ]}>
+                    <Text
+                      style={[
+                        mainStyles.infoTextColor,
+                        mainStyles.fontInriaSansBold,
+                        mainStyles.fontSize16,
+                        bookedSlots.includes(slot.id) &&
+                          mainStyles.lightTextColor,
+                      ]}>
+                      {slot?.discount || 'N/A'}% Discount
+                    </Text>
+                    <Text
+                      style={[
+                        mainStyles.lightTextColor,
+                        mainStyles.fontNunitoRegular,
+                        mainStyles.fontSize14,
+                      ]}>
+                      {!bookedSlots.includes(slot.id)
+                        ? ` ₹ ${slot?.rate || '---'}`
+                        : ''}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          ) : (
+            <NoDataContainer
+              style={{marginTop: verticalScale(50)}}
+              noDataText={'No slots available'}
             />
+          )}
+        </ScrollView>
+      </View>
+      {/* Bottom info container */}
+      <View
+        style={[
+          mainStyles.secondaryBackgroundColor,
+          mainStyles.dropShadowEffect,
+          slotBookingStyles.bottomInfoContainer,
+        ]}>
+        <View style={slotBookingStyles.rowContainer}>
+          <View style={slotBookingStyles.rowWithGap}>
+            <CustomCheckBox
+              style={slotBookingStyles.bookedCheckBox}
+              disabled={true}
+            />
+            <Text
+              style={[
+                mainStyles.fontNunitoSemibold,
+                mainStyles.fontSize14,
+                mainStyles.darkTextColor,
+              ]}>
+              Booked
+            </Text>
           </View>
+          <View style={slotBookingStyles.rowWithGap}>
+            <CustomCheckBox
+              style={[
+                mainStyles.borderWidth1,
+                mainStyles.secondaryInfoBackgroundColor,
+                mainStyles.infoBorderColor,
+              ]}
+            />
+            <Text
+              style={[
+                mainStyles.fontNunitoSemibold,
+                mainStyles.fontSize14,
+                mainStyles.darkTextColor,
+              ]}>
+              Available
+            </Text>
+          </View>
+          <View style={slotBookingStyles.rowWithGap}>
+            <CustomCheckBox
+              style={[
+                mainStyles.borderWidth1,
+                slotBookingStyles.selectedCheckBox,
+              ]}
+              disabled={true}
+            />
+            <Text
+              style={[
+                mainStyles.fontNunitoSemibold,
+                mainStyles.fontSize14,
+                mainStyles.darkTextColor,
+              ]}>
+              Selected
+            </Text>
+          </View>
+        </View>
+
+        <View
+          style={[mainStyles.flexContainer, {marginTop: verticalScale(16)}]}>
+          {totalBookingAmount === 0 ? (
+            <Text
+              style={[
+                mainStyles.fontInriaSansRegular,
+                mainStyles.fontSize16,
+                mainStyles.primaryTextColor,
+              ]}>
+              No Slots Selected!!
+            </Text>
+          ) : (
+            <Text
+              style={[
+                mainStyles.fontInriaSansRegular,
+                mainStyles.fontSize20,
+                mainStyles.primaryTextColor,
+              ]}>
+              TOTAL : ₹ {totalBookingAmount}
+            </Text>
+          )}
+
+          <PrimaryButton
+            title={'CONTINUE'}
+            style={slotBookingStyles.continueButton}
+            disabled={Object.keys(selectedSlot).length === 0}
+            onPress={() =>
+              navigation.navigate('BookingConfirmation', {
+                slotBookingData: selectedSlot,
+                boxData: boxInfo,
+                totalAmountToBePaid: totalBookingAmount,
+              })
+            }
+          />
         </View>
       </View>
     </ScreenWrapper>

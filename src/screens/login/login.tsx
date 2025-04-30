@@ -108,7 +108,8 @@ const Login: React.FC<AuthStackScreenProps<'Login'>> = ({navigation}) => {
       padding={false}
       withHeader={false}
       keyboardAvoiding={true}
-      backgroundColor="#fff"
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
       statusBarStyle="light-content">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={[mainStyles.container]}>

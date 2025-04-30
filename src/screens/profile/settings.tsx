@@ -1,40 +1,39 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { COLORS } from '../../constants/color';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {COLORS} from '../../constants/color';
 import ToggleSwitch from 'toggle-switch-react-native';
-import { AppStackScreenProps } from '../../navigation/navigationTypes';
+import {AppStackScreenProps} from '../../navigation/navigationTypes';
+import ScreenWrapper from '../../components/screenWrapper';
 
-
-
-const SettingsScreen:React.FC<AppStackScreenProps<"Settings">> = ({ navigation }) => {
+const SettingsScreen: React.FC<AppStackScreenProps<'Settings'>> = ({
+  navigation,
+}) => {
   const [pushEnabled, setPushEnabled] = useState(false);
   const [smsEnabled, setSmsEnabled] = useState(false);
 
   return (
-    <View style={[mainStyles.container]}>
-      <SubHeader
-        title={'Settings'}
-        onPress={() => navigation.goBack()}
-        style={undefined}
-      />
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={false}
+      scrollable={false}
+      padding={false}
+      withHeader={true}>
       <View
         style={[
           mainStyles.secondaryBorderColor,
           styles.settingsContainer,
           mainStyles.secondaryBackgroundColor,
-        ]}
-      >
+        ]}>
         <View style={[mainStyles.flexContainer, styles.optionContainer]}>
           <Text
             style={[
               mainStyles.fontInriaSansLight,
               mainStyles.darkTextColor,
               mainStyles.fontSize18,
-            ]}
-          >
+            ]}>
             Push Notifications
           </Text>
           <ToggleSwitch
@@ -44,14 +43,18 @@ const SettingsScreen:React.FC<AppStackScreenProps<"Settings">> = ({ navigation }
             onToggle={isOn => setPushEnabled(isOn)}
           />
         </View>
-        <View style={[mainStyles.flexContainer, styles.optionContainer, { borderBottomWidth: 0 }]}>
+        <View
+          style={[
+            mainStyles.flexContainer,
+            styles.optionContainer,
+            {borderBottomWidth: 0},
+          ]}>
           <Text
             style={[
               mainStyles.fontInriaSansLight,
               mainStyles.darkTextColor,
               mainStyles.fontSize18,
-            ]}
-          >
+            ]}>
             SMS Notifications
           </Text>
           <ToggleSwitch
@@ -62,7 +65,7 @@ const SettingsScreen:React.FC<AppStackScreenProps<"Settings">> = ({ navigation }
           />
         </View>
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
 

@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet} from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
 import SubHeader from '../../components/subHeader';
-import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
+import {
+  moderateScale,
+  moderateVerticalScale,
+  scale,
+  verticalScale,
+} from 'react-native-size-matters';
 import NoDataContainer from '../../components/noDataContainer';
-import { AppStackScreenProps } from '../../navigation/navigationTypes';
+import {AppStackScreenProps} from '../../navigation/navigationTypes';
+import ScreenWrapper from '../../components/screenWrapper';
 
 // Dummy data for notifications
 const notifications: string | ArrayLike<any> | null | undefined = [
@@ -38,33 +44,67 @@ const notifications: string | ArrayLike<any> | null | undefined = [
   // },
 ];
 
-const NotificationScreen:React.FC<AppStackScreenProps<"NotificationScreen">> = ({ navigation }) => {
+const NotificationScreen: React.FC<
+  AppStackScreenProps<'NotificationScreen'>
+> = ({navigation}) => {
   return (
-    <View style={[mainStyles.container]}>
-      <SubHeader title="Notification" onPress={() => navigation.goBack()} style={undefined} />
-      
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={false}
+      scrollable={false}
+      padding={false}
+      withHeader={true}>
       <FlatList
         data={notifications}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
           <View style={styles.notificationItem}>
-            <Image source={{ uri: item.profilePic }} style={styles.profilePic} />
+            <Image source={{uri: item.profilePic}} style={styles.profilePic} />
             <View style={styles.textContainer}>
-              <Text style={[mainStyles.fontNunitoSemibold,mainStyles.darkTextColor,mainStyles.fontSize16]}>{item.title}</Text>
+              <Text
+                style={[
+                  mainStyles.fontNunitoSemibold,
+                  mainStyles.darkTextColor,
+                  mainStyles.fontSize16,
+                ]}>
+                {item.title}
+              </Text>
               <View style={[mainStyles.flexContainer]}>
-              <Text style={[mainStyles.fontInriaSansRegular,mainStyles.lightTextColor,mainStyles.fontSize14,{width:'60%'}]} numberOfLines={2}>{item.subtitle}</Text>
-              <Text style={[mainStyles.fontInriaSansRegular,mainStyles.darkTextColor,mainStyles.fontSize14]}>{item.date}</Text>
+                <Text
+                  style={[
+                    mainStyles.fontInriaSansRegular,
+                    mainStyles.lightTextColor,
+                    mainStyles.fontSize14,
+                    {width: '60%'},
+                  ]}
+                  numberOfLines={2}>
+                  {item.subtitle}
+                </Text>
+                <Text
+                  style={[
+                    mainStyles.fontInriaSansRegular,
+                    mainStyles.darkTextColor,
+                    mainStyles.fontSize14,
+                  ]}>
+                  {item.date}
+                </Text>
               </View>
             </View>
           </View>
         )}
-        contentContainerStyle={notifications.length === 0 ? styles.emptyContainer : styles.flatListContent}
-  ListEmptyComponent={
-    <NoDataContainer style={undefined} noDataText={"No Notification received yet"} />
-  }
-/>
-    
-    </View>
+        contentContainerStyle={
+          notifications.length === 0
+            ? styles.emptyContainer
+            : styles.flatListContent
+        }
+        ListEmptyComponent={
+          <NoDataContainer
+            style={undefined}
+            noDataText={'No Notification received yet'}
+          />
+        }
+      />
+    </ScreenWrapper>
   );
 };
 
@@ -75,7 +115,7 @@ const styles = StyleSheet.create({
     padding: moderateScale(10),
   },
   emptyContainer: {
-flex:1,
+    flex: 1,
     justifyContent: 'center', // Centers vertically
     alignItems: 'center', // Centers horizontally
   },
@@ -97,5 +137,4 @@ flex:1,
   textContainer: {
     flex: 1,
   },
-  
 });

@@ -6,7 +6,6 @@ import AppStack from './appStack';
 import SplashScreen from '../screens/splashScreen/splashScreen';
 import {COLORS} from '../constants/color';
 import {useAuth} from '../customHooks/useAuth';
-import SafeAreaWrapper from '../utils/safeAreaWrapper';
 
 function AppNav() {
   const [isSplashVisible, setIsSplashVisible] = useState(true); // Show splash initially
@@ -30,15 +29,13 @@ function AppNav() {
 
   return (
     <NavigationContainer>
-        
       {isSplashVisible ? (
         <SplashScreen />
       ) : userToken !== null ? (
-        <AppStack route={undefined} />
+        <AppStack />
       ) : (
         <AuthStack />
       )}
-    
     </NavigationContainer>
   );
 }

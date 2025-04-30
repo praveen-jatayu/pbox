@@ -26,6 +26,7 @@ import {addBooking} from '../../services/bookingService';
 import Toast from 'react-native-toast-message';
 import {showToast} from '../../components/toastMessage';
 import {AppStackScreenProps} from '../../navigation/navigationTypes';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const BookingConfirmation: React.FC<
   AppStackScreenProps<'BookingConfirmation'>
@@ -55,72 +56,68 @@ const BookingConfirmation: React.FC<
     }
   };
   return (
-    <View style={mainStyles.container}>
-      <SubHeader
-        title={'Confirmation'}
-        onPress={() => navigation.goBack()}
-        style={bookingConfirmationStyles.subHeader}
-      />
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={false}
+      scrollable={true}
+      padding={false}
+      withHeader={true}>
+      {/* box and booking detail card */}
 
-      <ScrollView
-        contentContainerStyle={bookingConfirmationStyles.scrollViewContent}
-        showsVerticalScrollIndicator={false}>
-        {/* box and booking detail card */}
+      <View
+        style={[
+          bookingListStyles.bookingCardContainer,
+          mainStyles.secondaryBackgroundColor,
+          mainStyles.secondaryBorderColor,
+          mainStyles.widthFull,
+          mainStyles.flexContainer,
+          mainStyles.borderWidth1,
+          bookingConfirmationStyles.bookingCardContainer,
+        ]}>
+        <Image
+          source={{uri: boxData?.get_selected_box_images[0]?.image}}
+          style={bookingConfirmationStyles.bookingImage}
+        />
+        <View style={bookingConfirmationStyles.bookingDetailsContainer}>
+          {/* Box title, address */}
 
-        <View
-          style={[
-            bookingListStyles.bookingCardContainer,
-            mainStyles.secondaryBackgroundColor,
-            mainStyles.secondaryBorderColor,
-            mainStyles.widthFull,
-            mainStyles.flexContainer,
-            mainStyles.borderWidth1,
-            bookingConfirmationStyles.bookingCardContainer,
-          ]}>
-          <Image
-            source={{uri: boxData?.get_selected_box_images[0]?.image}}
-            style={bookingConfirmationStyles.bookingImage}
-          />
-          <View style={bookingConfirmationStyles.bookingDetailsContainer}>
-            {/* Box title, address */}
+          <View style={bookingConfirmationStyles.bookingTitleContainer}>
+            <Text
+              style={[
+                mainStyles.darkTextColor,
+                mainStyles.fontInriaSansRegular,
+                mainStyles.fontSize18,
+              ]}
+              numberOfLines={1}>
+              {/* {item.title} */}
 
-            <View style={bookingConfirmationStyles.bookingTitleContainer}>
+              {boxData?.title || 'N/A'}
+            </Text>
+            <View
+              style={[
+                mainStyles.flexContainer,
+                bookingConfirmationStyles.addressContainer,
+              ]}>
+              <Image
+                source={icons.locationIcon}
+                style={bookingConfirmationStyles.locationIcon}
+              />
               <Text
                 style={[
-                  mainStyles.darkTextColor,
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.fontSize18,
+                  mainStyles.lightTextColor,
+                  mainStyles.fontNunitoMedium,
+                  mainStyles.fontSize14,
+                  bookingListStyles.addressText,
                 ]}
-                numberOfLines={1}>
-                {/* {item.title} */}
-
-                {boxData?.title || 'N/A'}
+                numberOfLines={3}>
+                {/* {item.address} */}
+                {boxData.address}
               </Text>
-              <View
-                style={[
-                  mainStyles.flexContainer,
-                  bookingConfirmationStyles.addressContainer,
-                ]}>
-                <Image
-                  source={icons.locationIcon}
-                  style={bookingConfirmationStyles.locationIcon}
-                />
-                <Text
-                  style={[
-                    mainStyles.lightTextColor,
-                    mainStyles.fontNunitoMedium,
-                    mainStyles.fontSize14,
-                    bookingListStyles.addressText,
-                  ]}
-                  numberOfLines={3}>
-                  {/* {item.address} */}
-                  {boxData.address}
-                </Text>
-              </View>
             </View>
+          </View>
 
-            {/* Date and slot time container */}
-            {/* <View
+          {/* Date and slot time container */}
+          {/* <View
           style={bookingConfirmationStyles.dateSlotContainer}
         >
           <Text
@@ -143,199 +140,198 @@ const BookingConfirmation: React.FC<
             Time:- 4:00 PM to 6:00 PM
           </Text>
         </View> */}
-          </View>
         </View>
-        {/* apply for offers container */}
+      </View>
+      {/* apply for offers container */}
 
-        <View
+      <View
+        style={[
+          mainStyles.flexContainer,
+          mainStyles.secondaryBorderColor,
+          bookingConfirmationStyles.offersContainer,
+        ]}>
+        <Text
           style={[
-            mainStyles.flexContainer,
-            mainStyles.secondaryBorderColor,
-            bookingConfirmationStyles.offersContainer,
+            mainStyles.primaryTextColor,
+            mainStyles.fontInriaSansRegular,
+            mainStyles.fontSize18,
           ]}>
+          APPLY OFFERS
+        </Text>
+        <EvilIcons
+          name="chevron-right"
+          size={42}
+          color={COLORS.primary}
+          onPress={undefined}
+        />
+      </View>
+      {/* payment  details container */}
+      <View style={{marginTop: verticalScale(10)}}>
+        <View style={[mainStyles.flexContainer]}>
           <Text
             style={[
-              mainStyles.primaryTextColor,
               mainStyles.fontInriaSansRegular,
               mainStyles.fontSize18,
+              mainStyles.darkTextColor,
             ]}>
-            APPLY OFFERS
+            Payment
           </Text>
-          <EvilIcons
-            name="chevron-right"
-            size={42}
-            color={COLORS.primary}
-            onPress={undefined}
-          />
+          {/* advance payment percentage */}
+          <View style={bookingConfirmationStyles.paymentOptionContainer}>
+            {['20%', '100%'].map(option => (
+              <TouchableOpacity
+                key={option}
+                style={[
+                  bookingConfirmationStyles.paymentOptionButton,
+                  paymentOption !== option && [
+                    mainStyles.secondaryBorderColor,
+                    {borderWidth: 1},
+                  ],
+                  paymentOption === option && mainStyles.itemBackgroundColor,
+                ]}
+                onPress={() => setPaymentOption(option)}>
+                <Text
+                  style={[
+                    mainStyles.primaryTextColor,
+                    mainStyles.fontSize12,
+                    mainStyles.fontNunitoMedium,
+                  ]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-        {/* payment  details container */}
-        <View style={{marginTop: verticalScale(10)}}>
-          <View style={[mainStyles.flexContainer]}>
+        <View
+          style={[
+            mainStyles.primaryBorderColor,
+            bookingConfirmationStyles.paymentDetailsContainer,
+          ]}>
+          <View style={mainStyles.flexContainer}>
             <Text
               style={[
                 mainStyles.fontInriaSansRegular,
-                mainStyles.fontSize18,
+                mainStyles.fontSize16,
                 mainStyles.darkTextColor,
               ]}>
-              Payment
+              COURT FEE
             </Text>
-            {/* advance payment percentage */}
-            <View style={bookingConfirmationStyles.paymentOptionContainer}>
-              {['20%', '100%'].map(option => (
-                <TouchableOpacity
-                  key={option}
-                  style={[
-                    bookingConfirmationStyles.paymentOptionButton,
-                    paymentOption !== option && [
-                      mainStyles.secondaryBorderColor,
-                      {borderWidth: 1},
-                    ],
-                    paymentOption === option && mainStyles.itemBackgroundColor,
-                  ]}
-                  onPress={() => setPaymentOption(option)}>
-                  <Text
-                    style={[
-                      mainStyles.primaryTextColor,
-                      mainStyles.fontSize12,
-                      mainStyles.fontNunitoMedium,
-                    ]}>
-                    {option}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Text
+              style={[
+                mainStyles.fontInriaSansRegular,
+                mainStyles.fontSize16,
+                mainStyles.darkTextColor,
+              ]}>
+              ₹ {totalAmountToBePaid}
+            </Text>
           </View>
-          <View
-            style={[
-              mainStyles.primaryBorderColor,
-              bookingConfirmationStyles.paymentDetailsContainer,
-            ]}>
-            <View style={mainStyles.flexContainer}>
-              <Text
-                style={[
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.fontSize16,
-                  mainStyles.darkTextColor,
-                ]}>
-                COURT FEE
-              </Text>
-              <Text
-                style={[
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.fontSize16,
-                  mainStyles.darkTextColor,
-                ]}>
-                ₹ {totalAmountToBePaid}
-              </Text>
-            </View>
-            <View style={[mainStyles.flexContainer]}>
-              <Text
-                style={[
-                  mainStyles.fontSize16,
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.darkTextColor,
-                ]}>
-                CONVENIENCE FEE
-              </Text>
-              <Text
-                style={[
-                  mainStyles.fontSize16,
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.darkTextColor,
-                ]}>
-                ₹ 0.00
-              </Text>
-            </View>
-            <View style={mainStyles.flexContainer}>
-              <Text
-                style={[
-                  mainStyles.fontSize18,
-                  mainStyles.fontInriaSansBold,
-                  mainStyles.lightTextColor,
-                ]}>
-                TOTAL
-              </Text>
-              <Text
-                style={[
-                  mainStyles.fontSize18,
-                  mainStyles.fontInriaSansBold,
-                  mainStyles.lightTextColor,
-                ]}>
-                ₹ {totalAmountToBePaid}
-              </Text>
-            </View>
+          <View style={[mainStyles.flexContainer]}>
+            <Text
+              style={[
+                mainStyles.fontSize16,
+                mainStyles.fontInriaSansRegular,
+                mainStyles.darkTextColor,
+              ]}>
+              CONVENIENCE FEE
+            </Text>
+            <Text
+              style={[
+                mainStyles.fontSize16,
+                mainStyles.fontInriaSansRegular,
+                mainStyles.darkTextColor,
+              ]}>
+              ₹ 0.00
+            </Text>
+          </View>
+          <View style={mainStyles.flexContainer}>
+            <Text
+              style={[
+                mainStyles.fontSize18,
+                mainStyles.fontInriaSansBold,
+                mainStyles.lightTextColor,
+              ]}>
+              TOTAL
+            </Text>
+            <Text
+              style={[
+                mainStyles.fontSize18,
+                mainStyles.fontInriaSansBold,
+                mainStyles.lightTextColor,
+              ]}>
+              ₹ {totalAmountToBePaid}
+            </Text>
           </View>
         </View>
-        {/* T and C container */}
-        <View style={bookingConfirmationStyles.tncContainer}>
-          <CustomCheckBox
-            value={isTandCChecked}
-            onValueChange={setIsTandCChecked}
-            style={{marginBottom: verticalScale(15)}}
-          />
-          <View>
+      </View>
+      {/* T and C container */}
+      <View style={bookingConfirmationStyles.tncContainer}>
+        <CustomCheckBox
+          value={isTandCChecked}
+          onValueChange={setIsTandCChecked}
+          style={{marginBottom: verticalScale(15)}}
+        />
+        <View>
+          <Text
+            style={[
+              mainStyles.fontSize14,
+              mainStyles.fontNunitoSemibold,
+              mainStyles.lightTextColor,
+              {textAlign: 'center'},
+            ]}>
+            I agree to the{' '}
+            <Text
+              style={[
+                mainStyles.fontSize14,
+                mainStyles.fontNunitoMedium,
+                mainStyles.linkTextColor,
+                {textDecorationLine: 'underline', fontStyle: 'italic'},
+              ]}
+              onPress={() => navigation.navigate('TermsAndConditions')}>
+              Terms and Conditions
+            </Text>{' '}
+            &{' '}
             <Text
               style={[
                 mainStyles.fontSize14,
                 mainStyles.fontNunitoSemibold,
-                mainStyles.lightTextColor,
-                {textAlign: 'center'},
-              ]}>
-              I agree to the{' '}
-              <Text
-                style={[
-                  mainStyles.fontSize14,
-                  mainStyles.fontNunitoMedium,
-                  mainStyles.linkTextColor,
-                  {textDecorationLine: 'underline', fontStyle: 'italic'},
-                ]}
-                onPress={() => navigation.navigate('TermsAndConditions')}>
-                Terms and Conditions
-              </Text>{' '}
-              &{' '}
-              <Text
-                style={[
-                  mainStyles.fontSize14,
-                  mainStyles.fontNunitoSemibold,
-                  mainStyles.linkTextColor,
-                  {textDecorationLine: 'underline', fontStyle: 'italic'},
-                ]}
-                onPress={() => navigation.navigate('PrivacyPolicy')}>
-                Privacy Policy
-              </Text>
+                mainStyles.linkTextColor,
+                {textDecorationLine: 'underline', fontStyle: 'italic'},
+              ]}
+              onPress={() => navigation.navigate('PrivacyPolicy')}>
+              Privacy Policy
             </Text>
-          </View>
-        </View>
-        {/* Cancelation Policy Container */}
-
-        <View style={bookingConfirmationStyles.cancellationContainer}>
-          <Text
-            style={[
-              mainStyles.darkTextColor,
-              mainStyles.fontInriaSansRegular,
-              mainStyles.fontSize18,
-            ]}>
-            Cancellation Policy
           </Text>
-          <View
-            style={[
-              mainStyles.marginTop10,
-              bookingConfirmationStyles.cancellationItem,
-            ]}>
-            {(boxData?.get_box_cancellation_policy || []).map(item => (
-              <Text
-                key={item.id}
-                style={[
-                  mainStyles.lightTextColor,
-                  mainStyles.fontNunitoSemibold,
-                  mainStyles.fontSize14,
-                ]}>
-                <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text> {item.text}
-              </Text>
-            ))}
-          </View>
         </View>
-      </ScrollView>
+      </View>
+      {/* Cancelation Policy Container */}
+
+      <View style={bookingConfirmationStyles.cancellationContainer}>
+        <Text
+          style={[
+            mainStyles.darkTextColor,
+            mainStyles.fontInriaSansRegular,
+            mainStyles.fontSize18,
+          ]}>
+          Cancellation Policy
+        </Text>
+        <View
+          style={[
+            mainStyles.marginTop10,
+            bookingConfirmationStyles.cancellationItem,
+          ]}>
+          {(boxData?.get_box_cancellation_policy || []).map(item => (
+            <Text
+              key={item.id}
+              style={[
+                mainStyles.lightTextColor,
+                mainStyles.fontNunitoSemibold,
+                mainStyles.fontSize14,
+              ]}>
+              <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text> {item.text}
+            </Text>
+          ))}
+        </View>
+      </View>
       {/* Button to open payment gateway */}
       <PrimaryButton
         title={`Pay ₹ ${totalAmountToBePaid} SECURELY`}
@@ -343,7 +339,7 @@ const BookingConfirmation: React.FC<
         style={bookingConfirmationStyles.primaryButton}
         disabled={!isTandCChecked}
       />
-    </View>
+    </ScreenWrapper>
   );
 };
 

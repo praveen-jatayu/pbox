@@ -164,7 +164,8 @@ const OTP = ({route}) => {
       padding={false}
       withHeader={false}
       keyboardAvoiding={true}
-      backgroundColor="#fff"
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
       statusBarStyle="light-content">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={mainStyles.container}>

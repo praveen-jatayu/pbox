@@ -229,374 +229,368 @@ const BoxDetail = ({navigation, route}) => {
       padding={false}
       withHeader={false}
       keyboardAvoiding={false}
-      backgroundColor="#fff"
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
       statusBarStyle="light-content">
-      <View style={mainStyles.container}>
-        {/* Make StatusBar transparent */}
-
-        <AnimatedHeader scrollY={scrollY} boxDetail={boxDetail} />
-        <Animated.ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: verticalScale(100),
-            minHeight: verticalScale(300),
-          }}
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {y: scrollY}}}],
-            {useNativeDriver: false},
-          )}
-          scrollEventThrottle={16}>
-          {/* Top slider  */}
-          <Animated.View
-            style={[boxDetailStyles.sliderContainer, {opacity: sliderOpacity}]}>
-            <Carousel
-              ref={carouselRef}
-              data={boxDetail?.get_selected_box_images}
-              renderItem={renderImageItem}
-              sliderWidth={screenWidth}
-              itemWidth={screenWidth}
-              onSnapToItem={index => setActiveSlide(index)}
-              inactiveSlideScale={1} // Keep inactive slides full size
-              inactiveSlideOpacity={1}
-            />
-            <Pagination
-              dotsLength={boxDetail?.get_selected_box_images?.length}
-              activeDotIndex={activeSlide}
-              containerStyle={boxDetailStyles.paginationContainer}
-              dotStyle={[
-                boxDetailStyles.paginationDot,
-                mainStyles.primaryBackgroundColor,
+      <AnimatedHeader scrollY={scrollY} boxDetail={boxDetail} />
+      <Animated.ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: verticalScale(100),
+          minHeight: verticalScale(300),
+        }}
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {useNativeDriver: false},
+        )}
+        scrollEventThrottle={16}>
+        {/* Top slider  */}
+        <Animated.View
+          style={[boxDetailStyles.sliderContainer, {opacity: sliderOpacity}]}>
+          <Carousel
+            ref={carouselRef}
+            data={boxDetail?.get_selected_box_images}
+            renderItem={renderImageItem}
+            sliderWidth={screenWidth}
+            itemWidth={screenWidth}
+            onSnapToItem={index => setActiveSlide(index)}
+            inactiveSlideScale={1} // Keep inactive slides full size
+            inactiveSlideOpacity={1}
+          />
+          <Pagination
+            dotsLength={boxDetail?.get_selected_box_images?.length}
+            activeDotIndex={activeSlide}
+            containerStyle={boxDetailStyles.paginationContainer}
+            dotStyle={[
+              boxDetailStyles.paginationDot,
+              mainStyles.primaryBackgroundColor,
+            ]}
+            inactiveDotStyle={mainStyles.secondaryBackgroundColor}
+            inactiveDotOpacity={1}
+            inactiveDotScale={1}
+          />
+          {/* top navigating icons container */}
+          <View style={boxDetailStyles.topIconsContainer}>
+            <TouchableOpacity
+              style={[
+                boxDetailStyles.iconButton,
+                mainStyles.secondaryBackgroundColor,
               ]}
-              inactiveDotStyle={mainStyles.secondaryBackgroundColor}
-              inactiveDotOpacity={1}
-              inactiveDotScale={1}
-            />
-            {/* top navigating icons container */}
-            <View style={boxDetailStyles.topIconsContainer}>
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.8}>
+              <EvilIcons name="chevron-left" size={moderateScale(28)} />
+            </TouchableOpacity>
+            <View style={boxDetailStyles.rightIconsContainer}>
               <TouchableOpacity
                 style={[
                   boxDetailStyles.iconButton,
                   mainStyles.secondaryBackgroundColor,
                 ]}
-                onPress={() => navigation.goBack()}
+                onPress={undefined}
                 activeOpacity={0.8}>
-                <EvilIcons name="chevron-left" size={moderateScale(28)} />
-              </TouchableOpacity>
-              <View style={boxDetailStyles.rightIconsContainer}>
-                <TouchableOpacity
-                  style={[
-                    boxDetailStyles.iconButton,
-                    mainStyles.secondaryBackgroundColor,
-                  ]}
-                  onPress={undefined}
-                  activeOpacity={0.8}>
-                  {isBookmarked ? (
-                    <Ionicons
-                      name="heart"
-                      size={moderateScale(18)}
-                      color={'red'}
-                    />
-                  ) : (
-                    <EvilIcons name="heart" size={moderateScale(20)} />
-                  )}
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    boxDetailStyles.iconButton,
-                    mainStyles.secondaryBackgroundColor,
-                  ]}
-                  onPress={undefined}
-                  activeOpacity={0.8}>
-                  <MaterialCommunityIcons name="share-outline" size={20} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Animated.View>
-
-          {/* You can add more content below the slider */}
-          <View style={boxDetailStyles.content}>
-            <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
-              <View style={boxCardStyles.titleContainer}>
-                <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
-                  {boxDetail?.title || '---'}
-                </Text>
-                <Text style={boxCardStyles.address} numberOfLines={2}>
-                  {boxDetail?.address || '----'}
-                </Text>
-              </View>
-              <Text style={boxCardStyles.rating}>
-                ⭐ {boxDetail?.avg_rating || 'N/A'}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              style={[
-                boxDetailStyles.locationButton,
-                mainStyles.primaryBorderColor,
-              ]}
-              onPress={() =>
-                handleShowLocation(boxDetail?.latitude, boxDetail?.longitude)
-              }>
-              <Image
-                source={images.googleMapsPin}
-                style={{
-                  width: moderateScale(16, 0.8),
-                  height: moderateVerticalScale(22),
-                }}
-              />
-              <Text
-                style={[
-                  mainStyles.fontNunitoRegular,
-                  mainStyles.fontSize14,
-                  mainStyles.darkTextColor,
-                ]}>
-                Show in Map
-              </Text>
-            </TouchableOpacity>
-
-            {/* box offer container */}
-
-            <View style={boxDetailStyles.offerContainer}>
-              <Image
-                source={icons.offerIcon}
-                style={{width: scale(30), height: verticalScale(30)}}
-              />
-              <View>
-                <Text
-                  style={[
-                    mainStyles.fontSize14,
-                    mainStyles.darkTextColor,
-                    mainStyles.fontNunitoSemibold,
-                  ]}>
-                  Upto 30% Off
-                </Text>
-                <Text
-                  style={[
-                    mainStyles.fontSize12,
-                    mainStyles.lightTextColor,
-                    mainStyles.fontNunitoSemibold,
-                  ]}>
-                  Get 30% Off Upto ₹2000 On All Sports
-                </Text>
-              </View>
-            </View>
-
-            {/*  Available Sports Container */}
-            <View style={[mainStyles.marginTop10]}>
-              <Text
-                style={[
-                  mainStyles.fontSize18,
-                  mainStyles.fontInriaSansRegular,
-                  mainStyles.darkTextColor,
-                ]}>
-                Available Sports
-              </Text>
-              <View style={boxDetailStyles.sportsContainer}>
-                {(boxDetail?.get_selected_available_sport || []).map(item =>
-                  renderSportCategory({
-                    id: item.get_single_sports.id,
-                    name: item.get_single_sports.name,
-                    logo: {uri: item.get_single_sports.image}, // Ensure correct image format
-                  }),
+                {isBookmarked ? (
+                  <Ionicons
+                    name="heart"
+                    size={moderateScale(18)}
+                    color={'red'}
+                  />
+                ) : (
+                  <EvilIcons name="heart" size={moderateScale(20)} />
                 )}
-              </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  boxDetailStyles.iconButton,
+                  mainStyles.secondaryBackgroundColor,
+                ]}
+                onPress={undefined}
+                activeOpacity={0.8}>
+                <MaterialCommunityIcons name="share-outline" size={20} />
+              </TouchableOpacity>
             </View>
-            {/* Amenities Container */}
-            <View style={[mainStyles.marginTop10]}>
-              <View style={[mainStyles.flexContainer]}>
-                <Text
-                  style={[
-                    mainStyles.fontInriaSansRegular,
-                    mainStyles.darkTextColor,
-                    mainStyles.fontSize18,
-                  ]}>
-                  Amenities
-                </Text>
+          </View>
+        </Animated.View>
 
-                <TouchableOpacity
-                  onPress={() => setShowAllAmenities(!showAllAmenities)}>
-                  <Text
-                    style={[
-                      mainStyles.fontInriaSansRegular,
-                      mainStyles.primaryTextColor,
-                      mainStyles.fontSize16,
-                    ]}>
-                    {showAllAmenities ? 'Show Less' : 'See All'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={boxDetailStyles.sportsContainer}>
-                {amenitiesToShow.map(item => renderAmenitiesList(item))}
-              </View>
+        {/* You can add more content below the slider */}
+        <View style={boxDetailStyles.content}>
+          <View style={[boxCardStyles.firstRow, {borderBottomWidth: 0}]}>
+            <View style={boxCardStyles.titleContainer}>
+              <Text style={boxCardStyles.boxTitle} numberOfLines={2}>
+                {boxDetail?.title || '---'}
+              </Text>
+              <Text style={boxCardStyles.address} numberOfLines={2}>
+                {boxDetail?.address || '----'}
+              </Text>
             </View>
-            {/* Cancelation Policy Container */}
+            <Text style={boxCardStyles.rating}>
+              ⭐ {boxDetail?.avg_rating || 'N/A'}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={[
+              boxDetailStyles.locationButton,
+              mainStyles.primaryBorderColor,
+            ]}
+            onPress={() =>
+              handleShowLocation(boxDetail?.latitude, boxDetail?.longitude)
+            }>
+            <Image
+              source={images.googleMapsPin}
+              style={{
+                width: moderateScale(16, 0.8),
+                height: moderateVerticalScale(22),
+              }}
+            />
+            <Text
+              style={[
+                mainStyles.fontNunitoRegular,
+                mainStyles.fontSize14,
+                mainStyles.darkTextColor,
+              ]}>
+              Show in Map
+            </Text>
+          </TouchableOpacity>
+
+          {/* box offer container */}
+
+          <View style={boxDetailStyles.offerContainer}>
+            <Image
+              source={icons.offerIcon}
+              style={{width: scale(30), height: verticalScale(30)}}
+            />
             <View>
               <Text
                 style={[
+                  mainStyles.fontSize14,
                   mainStyles.darkTextColor,
+                  mainStyles.fontNunitoSemibold,
+                ]}>
+                Upto 30% Off
+              </Text>
+              <Text
+                style={[
+                  mainStyles.fontSize12,
+                  mainStyles.lightTextColor,
+                  mainStyles.fontNunitoSemibold,
+                ]}>
+                Get 30% Off Upto ₹2000 On All Sports
+              </Text>
+            </View>
+          </View>
+
+          {/*  Available Sports Container */}
+          <View style={[mainStyles.marginTop10]}>
+            <Text
+              style={[
+                mainStyles.fontSize18,
+                mainStyles.fontInriaSansRegular,
+                mainStyles.darkTextColor,
+              ]}>
+              Available Sports
+            </Text>
+            <View style={boxDetailStyles.sportsContainer}>
+              {(boxDetail?.get_selected_available_sport || []).map(item =>
+                renderSportCategory({
+                  id: item.get_single_sports.id,
+                  name: item.get_single_sports.name,
+                  logo: {uri: item.get_single_sports.image}, // Ensure correct image format
+                }),
+              )}
+            </View>
+          </View>
+          {/* Amenities Container */}
+          <View style={[mainStyles.marginTop10]}>
+            <View style={[mainStyles.flexContainer]}>
+              <Text
+                style={[
                   mainStyles.fontInriaSansRegular,
+                  mainStyles.darkTextColor,
                   mainStyles.fontSize18,
                 ]}>
-                Cancellation Policy
+                Amenities
               </Text>
 
-              <View style={[mainStyles.marginTop10, {marginLeft: scale(10)}]}>
-                {(boxDetail?.get_box_cancellation_policy || []).map(item => (
-                  <Text
-                    key={item.id}
-                    style={[
-                      mainStyles.lightTextColor,
-                      mainStyles.fontNunitoSemibold,
-                      mainStyles.fontSize14,
-                    ]}>
-                    <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>{' '}
-                    {item.text}
-                  </Text>
-                ))}
-              </View>
-            </View>
-
-            {/* Client review and comments container */}
-            <View style={[mainStyles.marginTop20]}>
-              <View style={[mainStyles.flexContainer]}>
+              <TouchableOpacity
+                onPress={() => setShowAllAmenities(!showAllAmenities)}>
                 <Text
                   style={[
                     mainStyles.fontInriaSansRegular,
-                    mainStyles.darkTextColor,
-                    mainStyles.fontSize18,
+                    mainStyles.primaryTextColor,
+                    mainStyles.fontSize16,
                   ]}>
-                  What Client Says
+                  {showAllAmenities ? 'Show Less' : 'See All'}
                 </Text>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('ClientReview', {boxDetail: boxDetail})
-                  }>
-                  <Text
-                    style={[
-                      mainStyles.fontInriaSansRegular,
-                      mainStyles.primaryTextColor,
-                      mainStyles.fontSize16,
-                    ]}>
-                    {' '}
-                    {'See All'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {reviewData.slice(0, 2).map((review, index) => (
-                <View
-                  key={review?.id}
+              </TouchableOpacity>
+            </View>
+
+            <View style={boxDetailStyles.sportsContainer}>
+              {amenitiesToShow.map(item => renderAmenitiesList(item))}
+            </View>
+          </View>
+          {/* Cancelation Policy Container */}
+          <View>
+            <Text
+              style={[
+                mainStyles.darkTextColor,
+                mainStyles.fontInriaSansRegular,
+                mainStyles.fontSize18,
+              ]}>
+              Cancellation Policy
+            </Text>
+
+            <View style={[mainStyles.marginTop10, {marginLeft: scale(10)}]}>
+              {(boxDetail?.get_box_cancellation_policy || []).map(item => (
+                <Text
+                  key={item.id}
                   style={[
-                    boxDetailStyles.reviewContainer,
-                    mainStyles.secondaryBackgroundColor,
-                    mainStyles.dropShadowEffect,
-                    {elevation: 1.5},
+                    mainStyles.lightTextColor,
+                    mainStyles.fontNunitoSemibold,
+                    mainStyles.fontSize14,
                   ]}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: scale(20),
-                    }}>
-                    <Image
-                      source={
-                        review?.get_selected_user?.profile_pic
-                          ? {uri: review.get_selected_user.profile_pic}
-                          : images.profile // Local fallback image
-                      }
-                      style={boxDetailStyles.profilePic}
-                    />
-                    <View style={{width: '59%'}}>
+                  <Text style={{fontSize: scale(9)}}>{'\u2B24'}</Text>{' '}
+                  {item.text}
+                </Text>
+              ))}
+            </View>
+          </View>
+
+          {/* Client review and comments container */}
+          <View style={[mainStyles.marginTop20]}>
+            <View style={[mainStyles.flexContainer]}>
+              <Text
+                style={[
+                  mainStyles.fontInriaSansRegular,
+                  mainStyles.darkTextColor,
+                  mainStyles.fontSize18,
+                ]}>
+                What Client Says
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ClientReview', {boxDetail: boxDetail})
+                }>
+                <Text
+                  style={[
+                    mainStyles.fontInriaSansRegular,
+                    mainStyles.primaryTextColor,
+                    mainStyles.fontSize16,
+                  ]}>
+                  {' '}
+                  {'See All'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {reviewData.slice(0, 2).map((review, index) => (
+              <View
+                key={review?.id}
+                style={[
+                  boxDetailStyles.reviewContainer,
+                  mainStyles.secondaryBackgroundColor,
+                  mainStyles.dropShadowEffect,
+                  {elevation: 1.5},
+                ]}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: scale(20),
+                  }}>
+                  <Image
+                    source={
+                      review?.get_selected_user?.profile_pic
+                        ? {uri: review.get_selected_user.profile_pic}
+                        : images.profile // Local fallback image
+                    }
+                    style={boxDetailStyles.profilePic}
+                  />
+                  <View style={{width: '59%'}}>
+                    <Text
+                      style={[
+                        mainStyles.fontNunitoMedium,
+                        mainStyles.darkTextColor,
+                        mainStyles.fontSize16,
+                      ]}>
+                      {review?.get_selected_user?.name}
+                    </Text>
+                    <View style={[mainStyles.flexContainer, {gap: scale(12)}]}>
                       <Text
                         style={[
                           mainStyles.fontNunitoMedium,
-                          mainStyles.darkTextColor,
-                          mainStyles.fontSize16,
-                        ]}>
-                        {review?.get_selected_user?.name}
+                          mainStyles.fontSize14,
+                          mainStyles.lightTextColor,
+                        ]}
+                        numberOfLines={2}>
+                        {review?.review}
                       </Text>
-                      <View
-                        style={[mainStyles.flexContainer, {gap: scale(12)}]}>
-                        <Text
-                          style={[
-                            mainStyles.fontNunitoMedium,
-                            mainStyles.fontSize14,
-                            mainStyles.lightTextColor,
-                          ]}
-                          numberOfLines={2}>
-                          {review?.review}
-                        </Text>
-                        <Text
-                          style={[
-                            mainStyles.fontNunitoMedium,
-                            mainStyles.fontSize12,
-                            mainStyles.lightTextColor,
-                          ]}>
-                          {review?.booking_date}
-                        </Text>
-                      </View>
+                      <Text
+                        style={[
+                          mainStyles.fontNunitoMedium,
+                          mainStyles.fontSize12,
+                          mainStyles.lightTextColor,
+                        ]}>
+                        {review?.booking_date}
+                      </Text>
                     </View>
                   </View>
                 </View>
-              ))}
-            </View>
-
-            {/* box roating location map view */}
-            <View style={boxDetailStyles.mapViewContainer}>
-              {/* <View style={boxDetailStyles.mapWrapper}> */}
-              <MapView
-                ref={mapRef}
-                style={boxDetailStyles.map}
-                initialCamera={{
-                  center: {
-                    latitude: Number(boxDetail?.latitude),
-                    longitude: Number(boxDetail?.longitude),
-                  }, // San Francisco
-                  pitch: 60, // Adjust 3D tilt
-                  heading: 45, // Rotate the map
-                  altitude: 500, // Zoom level
-                  zoom: 15,
-                }}
-                mapType="terrain"
-                showsBuildings={true} // Enables 3D buildings
-                showsCompass={true} // Shows compass to rotate map
-                scrollEnabled={false} // Disables scrolling/panning
-                zoomEnabled={false} // Disables zooming
-                pitchEnabled={false} // Disables tilt/3D angle change
-                rotateEnabled={false}
-                onRegionChangeComplete={region => {
-                  console.log('Map Region:', region);
-                }}>
-                {/* Fixed Marker */}
-                <Marker
-                  coordinate={{
-                    latitude: Number(boxDetail?.latitude),
-                    longitude: Number(boxDetail?.longitude),
-                  }}
-                />
-              </MapView>
-              {/* </View> */}
-              <LinearGradient
-                colors={['rgba(255,255,255,0.8)', 'rgba(255,255,255,0)']} // Fade from white to transparent
-                style={boxDetailStyles.gradientOverlay}
-              />
-            </View>
+              </View>
+            ))}
           </View>
-        </Animated.ScrollView>
-        <PrimaryButton
-          title={'BOOK NOW'}
-          onPress={() =>
-            navigation.navigate('SlotBooking', {boxInfo: boxDetail})
-          }
-          disabled={undefined}
-          style={{
-            position: 'absolute',
-            bottom: moderateVerticalScale(10),
-            width: '90%',
-          }}
-        />
-      </View>
+
+          {/* box roating location map view */}
+          <View style={boxDetailStyles.mapViewContainer}>
+            {/* <View style={boxDetailStyles.mapWrapper}> */}
+            <MapView
+              ref={mapRef}
+              style={boxDetailStyles.map}
+              initialCamera={{
+                center: {
+                  latitude: Number(boxDetail?.latitude),
+                  longitude: Number(boxDetail?.longitude),
+                }, // San Francisco
+                pitch: 60, // Adjust 3D tilt
+                heading: 45, // Rotate the map
+                altitude: 500, // Zoom level
+                zoom: 15,
+              }}
+              mapType="terrain"
+              showsBuildings={true} // Enables 3D buildings
+              showsCompass={true} // Shows compass to rotate map
+              scrollEnabled={false} // Disables scrolling/panning
+              zoomEnabled={false} // Disables zooming
+              pitchEnabled={false} // Disables tilt/3D angle change
+              rotateEnabled={false}
+              onRegionChangeComplete={region => {
+                console.log('Map Region:', region);
+              }}>
+              {/* Fixed Marker */}
+              <Marker
+                coordinate={{
+                  latitude: Number(boxDetail?.latitude),
+                  longitude: Number(boxDetail?.longitude),
+                }}
+              />
+            </MapView>
+            {/* </View> */}
+            <LinearGradient
+              colors={['rgba(255,255,255,0.8)', 'rgba(255,255,255,0)']} // Fade from white to transparent
+              style={boxDetailStyles.gradientOverlay}
+            />
+          </View>
+        </View>
+      </Animated.ScrollView>
+      <PrimaryButton
+        title={'BOOK NOW'}
+        onPress={() => navigation.navigate('SlotBooking', {boxInfo: boxDetail})}
+        disabled={undefined}
+        style={{
+          position: 'absolute',
+          bottom: moderateVerticalScale(10),
+          width: '90%',
+        }}
+      />
     </ScreenWrapper>
   );
 };

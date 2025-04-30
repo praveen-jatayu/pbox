@@ -4,12 +4,9 @@ import {
   Text,
   Dimensions,
   Image,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Animated,
-  FlatList,
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -23,13 +20,12 @@ import boxCardStyles from '../../assets/styles/boxCardStyles';
 import {images} from '../../constants/image';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {handleShowLocation} from '../../utils/showLocationUtil';
-import {formatTimeTo12Hour} from '../../utils/timeCoverterUtil';
+import ScreenWrapper from '../../components/screenWrapper';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
 const BookingDetail = ({navigation, route}) => {
   const {bookingDetail} = route.params;
-  console.log('bbberere73', bookingDetail);
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -113,9 +109,16 @@ const BookingDetail = ({navigation, route}) => {
   };
 
   return (
-    <View style={mainStyles.container}>
-      {/* Make StatusBar transparent */}
-
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={true}
+      scrollable={false}
+      padding={false}
+      withHeader={false}
+      keyboardAvoiding={false}
+      statusBarTranslucent
+      statusBarBackgroundColor="transparent"
+      statusBarStyle="light-content">
       <AnimatedHeader
         scrollY={scrollY}
         boxDetail={bookingDetail}
@@ -315,7 +318,7 @@ const BookingDetail = ({navigation, route}) => {
           </View>
         </View>
       </Animated.ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 };
 

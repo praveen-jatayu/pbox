@@ -16,6 +16,7 @@ import {images} from '../../constants/image';
 import {showToast} from '../../components/toastMessage';
 import {getBookingRatingReview} from '../../services/ratingAndReviewService';
 import {COLORS} from '../../constants/color';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const ClientReview = ({navigation, route}) => {
   const {boxDetail} = route.params; // ✅ Fix: Destructure `boxDetail` properly
@@ -128,18 +129,13 @@ const ClientReview = ({navigation, route}) => {
   );
 
   return (
-    <View style={mainStyles.container}>
-      <SubHeader
-        title={'What Client Says'}
-        onPress={() => navigation.goBack()}
-        style={{
-          paddingTop: verticalScale(40),
-          height: verticalScale(80),
-          gap: scale(70),
-        }}
-      />
-
-      <View style={{paddingHorizontal: scale(10)}}>
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={false}
+      scrollable={false}
+      padding={false}
+      withHeader={true}>
+      <View style={{paddingHorizontal: scale(10), flex: 1}}>
         {isLoading ? (
           <ActivityIndicator
             size="large"
@@ -165,7 +161,7 @@ const ClientReview = ({navigation, route}) => {
           />
         )}
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
 

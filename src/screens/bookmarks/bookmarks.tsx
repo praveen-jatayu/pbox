@@ -1,7 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
-  View,
-  FlatList,
   Animated,
   StyleSheet,
   TouchableOpacity,
@@ -17,6 +15,7 @@ import {getBoxDetail} from '../../services/boxService';
 import BoxCardSkeleton from '../../components/boxCardSkeleton';
 import NoDataContainer from '../../components/noDataContainer';
 import {useIsFocused} from '@react-navigation/native';
+import ScreenWrapper from '../../components/screenWrapper';
 
 const HEADER_HEIGHT = verticalScale(60); // height of the header
 const SCROLL_THRESHOLD = verticalScale(150);
@@ -109,7 +108,13 @@ const Bookmarks = () => {
     setSearch('');
   }, [isFocused]);
   return (
-    <View style={mainStyles.container}>
+    <ScreenWrapper
+      safeTop={false}
+      safeBottom={false}
+      scrollable={false}
+      padding={false}
+      keyboardAvoiding={true}
+      withHeader={false}>
       {/* Animated Header */}
       <Animated.View
         style={[
@@ -196,7 +201,7 @@ const Bookmarks = () => {
           </Text>
         </TouchableOpacity>
       )}
-    </View>
+    </ScreenWrapper>
   );
 };
 

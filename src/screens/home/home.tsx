@@ -31,15 +31,12 @@ import SportsCategorySkeleton from './sportsCategorySkeleton';
 import GetLocation from 'react-native-get-location';
 import Geocoder from 'react-native-geocoding';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {
-  requestLocationPermission,
-  requestNotificationPermission,
-} from '../../utils/permissionUtil';
+import {requestLocationPermission} from '../../utils/permissionUtil';
 import {COLORS} from '../../constants/color';
 import ScreenWrapper from '../../components/screenWrapper';
 
 const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
-const MIN_HEADER_HEIGHT = moderateVerticalScale(150);
+const MIN_HEADER_HEIGHT = moderateVerticalScale(200);
 
 const Home = () => {
   const route = useRoute();
@@ -63,14 +60,6 @@ const Home = () => {
   const renderBoxCard = ({item}) => (
     <BoxCard boxData={item} onAction={fetchBoxList} />
   );
-
-  const headerTranslateY = isSearchFocused
-    ? -MIN_HEADER_HEIGHT * 1.2
-    : scrollY.interpolate({
-        inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-        outputRange: [0, -MIN_HEADER_HEIGHT * 1.3],
-        extrapolate: 'clamp',
-      });
 
   const sliderTranslateY = isSearchFocused
     ? -MIN_HEADER_HEIGHT * 1.5
@@ -106,7 +95,7 @@ const Home = () => {
     ? -MIN_HEADER_HEIGHT * 1.5
     : scrollY.interpolate({
         inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-        outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+        outputRange: [0, -MIN_HEADER_HEIGHT * 1.2],
         extrapolate: 'clamp',
       });
 
@@ -297,149 +286,143 @@ const Home = () => {
     <ScreenWrapper
       safeTop={false}
       safeBottom={false}
-      scrollable={false}
+      scrollable={true}
       padding={false}
-      withHeader={false}
-      keyboardAvoiding={false}
-      backgroundColor="#fff"
-      statusBarStyle="light-content">
-      <View style={mainStyles.container}>
-        <MainHeader
-          headerType="home"
-          location={location}
-          isFetchingLocation={isFetchingLocation}
-        />
+      withHeader={false}>
+      <MainHeader
+        headerType="home"
+        location={location}
+        isFetchingLocation={isFetchingLocation}
+      />
 
+      <Animated.View
+        style={[
+          homeStyles.animatedSlider,
+          {transform: [{scale: sliderScale}, {translateY: sliderTranslateY}]},
+          {opacity: sliderOpacity},
+        ]}>
+        <ImageSlider onSlidePress={() => {}} />
+      </Animated.View>
+
+      <View style={{paddingHorizontal: scale(14), marginTop: verticalScale(4)}}>
         <Animated.View
           style={[
-            homeStyles.animatedSlider,
-            {transform: [{scale: sliderScale}, {translateY: sliderTranslateY}]},
-            {opacity: sliderOpacity},
+            homeStyles.animatedFilter,
+            {transform: [{translateY: filterTranslateY}]},
           ]}>
-          <ImageSlider onSlidePress={() => {}} />
-        </Animated.View>
-
-        <View
-          style={{paddingHorizontal: scale(14), marginTop: verticalScale(4)}}>
-          <Animated.View
-            style={[
-              homeStyles.animatedFilter,
-              {transform: [{translateY: filterTranslateY}]},
-            ]}>
-            <View style={[mainStyles.flexContainer]}>
+          <View style={[mainStyles.flexContainer]}>
+            <Text
+              style={[
+                mainStyles.darkTextColor,
+                mainStyles.fontInriaSansRegular,
+                mainStyles.fontSize18,
+              ]}>
+              Sports
+            </Text>
+            <TouchableOpacity onPress={() => setShowAllSports(!showAllSports)}>
               <Text
                 style={[
-                  mainStyles.darkTextColor,
                   mainStyles.fontInriaSansRegular,
-                  mainStyles.fontSize18,
+                  mainStyles.fontSize14,
+                  mainStyles.primaryTextColor,
                 ]}>
-                Sports
+                {showAllSports ? 'Show Less' : 'See All'}
               </Text>
-              <TouchableOpacity
-                onPress={() => setShowAllSports(!showAllSports)}>
-                <Text
-                  style={[
-                    mainStyles.fontInriaSansRegular,
-                    mainStyles.fontSize14,
-                    mainStyles.primaryTextColor,
-                  ]}>
-                  {showAllSports ? 'Show Less' : 'See All'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {isSportsLoading ? (
-              <View style={{flexDirection: 'row', width: '90%'}}>
-                {[1, 2, 3, 4].map((_, index) => (
-                  <SportsCategorySkeleton key={index} />
-                ))}
-              </View>
-            ) : (
-              <View style={homeStyles.sportsContainer}>
-                {sportsToShow.map(item => renderSportCategory(item))}
-                {showAllSports &&
-                  sportData.length > sportsToShow.length &&
-                  sportData
-                    .slice(sportsToShow.length)
-                    .map(item => renderSportCategory(item))}
-              </View>
-            )}
-          </Animated.View>
-        </View>
-
-        <Animated.View
-          style={[
-            homeStyles.animatedSearch,
-            {transform: [{translateY: searchTranslateY}]},
-          ]}>
-          <SearchInput
-            value={search}
-            onChangeText={handleSearchChange}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-          />
-        </Animated.View>
-
-        <Animated.View style={[{transform: [{translateY: instantTranslateY}]}]}>
-          {isLoading && boxData.length === 0 ? (
-            <Animated.FlatList
-              data={[1, 1, 1, 1]}
-              ref={flatListRef}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{paddingBottom: verticalScale(200)}}
-              renderItem={() => <BoxCardSkeleton />}
-              onScroll={Animated.event(
-                [{nativeEvent: {contentOffset: {y: scrollY}}}],
-                {
-                  useNativeDriver: true,
-                },
-              )}
-              scrollEventThrottle={16}
-            />
-          ) : isLoading && boxData.length !== 0 ? (
-            // Show Activity Indicator when switching categories and data exists
-            <View style={homeStyles.loadingContainer}>
-              <ActivityIndicator size="large" color={COLORS.primary} />
+            </TouchableOpacity>
+          </View>
+          {isSportsLoading ? (
+            <View style={{flexDirection: 'row', width: '90%'}}>
+              {[1, 2, 3, 4].map((_, index) => (
+                <SportsCategorySkeleton key={index} />
+              ))}
             </View>
           ) : (
-            <Animated.FlatList
-              ref={flatListRef}
-              data={filteredBoxData}
-              renderItem={renderBoxCard}
-              keyExtractor={item => item.id}
-              contentContainerStyle={[
-                homeStyles.flatListContainer,
-                filteredBoxData.length <= 2 &&
-                  boxData.length <= 2 && {paddingBottom: verticalScale(300)},
-              ]}
-              showsVerticalScrollIndicator={false}
-              onScroll={Animated.event(
-                [{nativeEvent: {contentOffset: {y: scrollY}}}],
-                {
-                  useNativeDriver: true,
-                },
-              )}
-              scrollEventThrottle={16}
-              ListEmptyComponent={
-                <NoDataContainer
-                  style={undefined}
-                  noDataText={'No boxes available!!'}
-                />
-              }
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    fetchBoxList();
-                    getSportList();
-                  }}
-                />
-              }
-            />
+            <View style={homeStyles.sportsContainer}>
+              {sportsToShow.map(item => renderSportCategory(item))}
+              {showAllSports &&
+                sportData.length > sportsToShow.length &&
+                sportData
+                  .slice(sportsToShow.length)
+                  .map(item => renderSportCategory(item))}
+            </View>
           )}
         </Animated.View>
+      </View>
 
-        {/* error here */}
-        {/* {isFetchingLocation && (
+      <Animated.View
+        style={[
+          homeStyles.animatedSearch,
+          {transform: [{translateY: searchTranslateY}]},
+        ]}>
+        <SearchInput
+          value={search}
+          onChangeText={handleSearchChange}
+          onFocus={() => setIsSearchFocused(true)}
+          onBlur={() => setIsSearchFocused(false)}
+        />
+      </Animated.View>
+
+      <Animated.View style={[{transform: [{translateY: instantTranslateY}]}]}>
+        {isLoading && boxData.length === 0 ? (
+          <Animated.FlatList
+            data={[1, 1, 1, 1]}
+            ref={flatListRef}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: verticalScale(200)}}
+            renderItem={() => <BoxCardSkeleton />}
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: scrollY}}}],
+              {
+                useNativeDriver: true,
+              },
+            )}
+            scrollEventThrottle={16}
+          />
+        ) : isLoading && boxData.length !== 0 ? (
+          // Show Activity Indicator when switching categories and data exists
+          <View style={homeStyles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          </View>
+        ) : (
+          <Animated.FlatList
+            ref={flatListRef}
+            data={filteredBoxData}
+            renderItem={renderBoxCard}
+            keyExtractor={item => item.id}
+            contentContainerStyle={[
+              homeStyles.flatListContainer,
+              filteredBoxData.length <= 2 &&
+                boxData.length <= 2 && {paddingBottom: verticalScale(300)},
+            ]}
+            showsVerticalScrollIndicator={false}
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: scrollY}}}],
+              {
+                useNativeDriver: true,
+              },
+            )}
+            scrollEventThrottle={16}
+            ListEmptyComponent={
+              <NoDataContainer
+                style={undefined}
+                noDataText={'No boxes available!!'}
+              />
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => {
+                  fetchBoxList();
+                  getSportList();
+                }}
+              />
+            }
+          />
+        )}
+      </Animated.View>
+
+      {/* error here */}
+      {/* {isFetchingLocation && (
    
    <Modal transparent={true} animationType="fade" visible={isFetchingLocation} style={{ justifyContent: 'flex-end',
     margin: 0,}}
@@ -464,7 +447,6 @@ const Home = () => {
    </Modal>
    
  )} */}
-      </View>
     </ScreenWrapper>
   );
 };
