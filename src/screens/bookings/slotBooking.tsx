@@ -293,7 +293,10 @@ const SlotBooking = ({navigation, route}) => {
         {/* booking container */}
         <ScrollView
           style={{maxHeight: verticalScale(300)}}
-          contentContainerStyle={{paddingBottom: verticalScale(100)}}
+          contentContainerStyle={{
+            paddingBottom: verticalScale(100),
+            flexGrow: 1,
+          }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
           {loading ? (
@@ -348,16 +351,18 @@ const SlotBooking = ({navigation, route}) => {
                             mainStyles.primaryBorderColor,
                           ], // Booked slot
                     ]}>
-                    <Text
-                      style={[
-                        mainStyles.infoTextColor,
-                        mainStyles.fontInriaSansBold,
-                        mainStyles.fontSize16,
-                        bookedSlots.includes(slot.id) &&
-                          mainStyles.lightTextColor,
-                      ]}>
-                      {slot?.discount || 'N/A'}% Discount
-                    </Text>
+                    {slot?.discount ? (
+                      <Text
+                        style={[
+                          mainStyles.infoTextColor,
+                          mainStyles.fontInriaSansBold,
+                          mainStyles.fontSize16,
+                          bookedSlots.includes(slot.id) &&
+                            mainStyles.lightTextColor,
+                        ]}>
+                        {slot.discount}% Discount
+                      </Text>
+                    ) : null}
                     <Text
                       style={[
                         mainStyles.lightTextColor,
@@ -446,7 +451,8 @@ const SlotBooking = ({navigation, route}) => {
                 mainStyles.fontInriaSansRegular,
                 mainStyles.fontSize16,
                 mainStyles.primaryTextColor,
-              ]}>
+              ]}
+              numberOfLines={2}>
               No Slots Selected!!
             </Text>
           ) : (

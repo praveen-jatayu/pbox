@@ -1,5 +1,10 @@
-import { StyleSheet } from 'react-native';
-import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
+import {StyleSheet} from 'react-native';
+import {
+  moderateScale,
+  moderateVerticalScale,
+  scale,
+  verticalScale,
+} from 'react-native-size-matters';
 
 const bookingConfirmationStyles = StyleSheet.create({
   subHeader: {
@@ -87,7 +92,7 @@ const bookingConfirmationStyles = StyleSheet.create({
   primaryButton: {
     position: 'absolute',
     bottom: verticalScale(10),
-    width: '90%',
+    width: '95%',
   },
 });
 

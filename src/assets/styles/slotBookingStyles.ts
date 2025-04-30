@@ -37,7 +37,7 @@ const bookingListStyles = StyleSheet.create({
   slotButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: verticalScale(15),
+    paddingVertical: verticalScale(25),
     paddingHorizontal: scale(6),
     borderRadius: moderateScale(5),
     width: '50%',
