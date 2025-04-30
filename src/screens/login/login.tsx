@@ -208,11 +208,7 @@ const Login: React.FC<AuthStackScreenProps<'Login'>> = ({navigation}) => {
                     style={{marginTop: verticalScale(12)}}
                   />
                 )}
-                <Animated.View
-                  style={[
-                    loginStyles.buttonContainer,
-                    {transform: [{translateY}]},
-                  ]}>
+                <Animated.View style={[{transform: [{translateY}]}]}>
                   <PrimaryButton
                     title={'SEND OTP'}
                     onPress={handleSendOtp}
