@@ -111,9 +111,8 @@ const Bookmarks = () => {
     <ScreenWrapper
       safeTop={true}
       safeBottom={true}
-      scrollable={false}
+      scrollable={true}
       padding={false}
-      keyboardAvoiding={true}
       withHeader={false}>
       {/* Animated Header */}
       <Animated.View

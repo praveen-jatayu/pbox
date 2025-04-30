@@ -7,7 +7,12 @@ import {
   ViewStyle,
 } from 'react-native';
 import {COLORS} from '../constants/color';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {
+  moderateScale,
+  moderateVerticalScale,
+  scale,
+  verticalScale,
+} from 'react-native-size-matters';
 import mainStyles from '../assets/styles/mainStyles';
 
 interface PrimaryButtonProps {
@@ -47,7 +52,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: verticalScale(13),
+    paddingVertical: moderateVerticalScale(13),
     width: '95%',
     paddingHorizontal: scale(20),
     borderRadius: moderateScale(8),
