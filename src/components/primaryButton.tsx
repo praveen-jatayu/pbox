@@ -52,7 +52,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: moderateVerticalScale(13),
+    paddingVertical: moderateVerticalScale(13, 0.8),
     width: '95%',
     paddingHorizontal: scale(20),
     borderRadius: moderateScale(8),

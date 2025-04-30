@@ -66,11 +66,12 @@ const Login: React.FC<AuthStackScreenProps<'Login'>> = ({navigation}) => {
           });
         }
       } catch (error) {
-        Toast.show({
-          type: 'error',
-          text1: 'Login Failed',
-          text2: error || 'Something went wrong!',
-        });
+        if (error instanceof Error)
+          Toast.show({
+            type: 'error',
+            text1: 'Login Failed',
+            text2: error.message || 'Something went wrong!',
+          });
       } finally {
         setLoading(false);
       }
