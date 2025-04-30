@@ -284,8 +284,8 @@ const Home = () => {
 
   return (
     <ScreenWrapper
-      safeTop={false}
-      safeBottom={false}
+      safeTop={true}
+      safeBottom={true}
       scrollable={true}
       padding={false}
       withHeader={false}>
