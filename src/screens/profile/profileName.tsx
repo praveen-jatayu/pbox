@@ -5,7 +5,6 @@ import PrimaryButton from '../../components/primaryButton';
 import onBoardingStyles from '../../assets/styles/onBoardingStyles';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import mainStyles from '../../assets/styles/mainStyles';
-import SubHeader from '../../components/subHeader';
 import {apiPost, saveAuthToken} from '../../services/apiService/apiService';
 import {API_ENDPOINTS} from '../../constants/apiEndPoinst';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,7 +17,7 @@ const ProfileName: React.FC<AuthStackScreenProps<'ProfileName'>> = ({
   navigation,
   route,
 }) => {
-  // const {userDetail} = route.params;
+  const {userDetail} = route.params;
   const {setUserInfo, setUserToken} = useAuth();
 
   const [firstName, setFirstName] = useState('');
@@ -40,7 +39,7 @@ const ProfileName: React.FC<AuthStackScreenProps<'ProfileName'>> = ({
 
   const handleNext = async () => {
     let formData = new FormData();
-    // formData.append('user_id', userDetail.id);
+    formData.append('user_id', userDetail.id);
     formData.append('first_name', firstName);
     formData.append('last_name', lastName);
 
@@ -50,6 +49,7 @@ const ProfileName: React.FC<AuthStackScreenProps<'ProfileName'>> = ({
         formData,
       );
       if (response.success) {
+        console.log('ceheeck', response);
         setUserInfo(response.data);
         setUserToken(response.data.api_token);
         await saveAuthToken(response.data.api_token);
