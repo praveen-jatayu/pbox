@@ -35,8 +35,8 @@ import {requestLocationPermission} from '../../utils/permissionUtil';
 import {COLORS} from '../../constants/color';
 import ScreenWrapper from '../../components/screenWrapper';
 
-const HEADER_HEIGHT = moderateVerticalScale(80); // height of the header
-const MIN_HEADER_HEIGHT = moderateVerticalScale(200);
+const HEADER_HEIGHT = moderateVerticalScale(60); // height of the header
+const MIN_HEADER_HEIGHT = moderateVerticalScale(150);
 
 const Home = () => {
   const route = useRoute();
@@ -78,21 +78,21 @@ const Home = () => {
       });
 
   const sliderScale = scrollY.interpolate({
-    inputRange: [0, MIN_HEADER_HEIGHT * 4],
+    inputRange: [0, MIN_HEADER_HEIGHT * 2],
     outputRange: [1, 0],
     extrapolate: 'clamp',
   });
 
   const instantTranslateY = isSearchFocused
-    ? -MIN_HEADER_HEIGHT * 1.5
+    ? -MIN_HEADER_HEIGHT * 1.1
     : scrollY.interpolate({
-        inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-        outputRange: [0, -MIN_HEADER_HEIGHT * 1.4],
+        inputRange: [0, MIN_HEADER_HEIGHT * 2.3],
+        outputRange: [0, -MIN_HEADER_HEIGHT * 1.1],
         extrapolate: 'clamp',
       });
 
   const filterTranslateY = isSearchFocused
-    ? -MIN_HEADER_HEIGHT * 1.5
+    ? -MIN_HEADER_HEIGHT * 1.2
     : scrollY.interpolate({
         inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
         outputRange: [0, -MIN_HEADER_HEIGHT * 1.2],
@@ -100,10 +100,10 @@ const Home = () => {
       });
 
   const searchTranslateY = isSearchFocused
-    ? -MIN_HEADER_HEIGHT * 1.5
+    ? -MIN_HEADER_HEIGHT * 1.2
     : scrollY.interpolate({
         inputRange: [0, MIN_HEADER_HEIGHT * 2.2],
-        outputRange: [0, -MIN_HEADER_HEIGHT * 1.5],
+        outputRange: [0, -MIN_HEADER_HEIGHT * 1.2],
         extrapolate: 'clamp',
       });
 
@@ -368,7 +368,9 @@ const Home = () => {
             data={[1, 1, 1, 1]}
             ref={flatListRef}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{paddingBottom: verticalScale(200)}}
+            contentContainerStyle={{
+              paddingBottom: verticalScale(200),
+            }}
             renderItem={() => <BoxCardSkeleton />}
             onScroll={Animated.event(
               [{nativeEvent: {contentOffset: {y: scrollY}}}],
@@ -413,7 +415,7 @@ const Home = () => {
                 refreshing={refreshing}
                 onRefresh={() => {
                   fetchBoxList();
-                  getSportList();
+                  // getSportList();
                 }}
               />
             }
