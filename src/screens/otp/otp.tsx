@@ -24,26 +24,34 @@ import {icons} from '../../constants/Icon';
 import otpStyles from '../../assets/styles/otpStyles';
 import mainStyles from '../../assets/styles/mainStyles';
 import {verticalScale} from 'react-native-size-matters';
-import {AuthContext} from '../../context/authContext';
-import {useNavigation} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {COLORS} from '../../constants/color';
 import {useAuth} from '../../customHooks/useAuth';
 import ScreenWrapper from '../../components/screenWrapper';
+import {
+  AuthStackParamList,
+  AuthStackScreenProps,
+} from '../../navigation/navigationTypes';
+import {UserInfo} from '../../context/authContext';
 
-const OTP = ({route}) => {
+const OTP: React.FC<AuthStackScreenProps<'OTP'>> = ({route}) => {
   const {mobileNo, actualOtp} = route.params;
-  const navigation = useNavigation();
   const [resendTimer, setResendTimer] = useState<number>(120);
   const [otp, setOtp] = useState(['', '', '', '']);
   const {login} = useAuth();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isVerifiedPressed, setIsVerifiedPressed] = useState<boolean>(false);
-  const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const inputRefs = [
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+  ];
   const [isKeyboardVisible, setKeyboardVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const translateY = useRef(new Animated.Value(80)).current;
   const opacity = useRef(new Animated.Value(0.7)).current;
-
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   useEffect(() => {
     Animated.parallel([
       Animated.timing(translateY, {
@@ -92,16 +100,16 @@ const OTP = ({route}) => {
       setResendTimer(120);
     }
   };
-  const handleOtpChange = (value, index) => {
+  const handleOtpChange = (value: string, index: number) => {
     setErrorMessage('');
     const otpArray = [...otp];
     otpArray[index] = value;
     setOtp(otpArray);
 
     if (value && index < inputRefs.length - 1) {
-      inputRefs[index + 1].current.focus();
+      inputRefs[index + 1].current?.focus();
     } else if (!value && index > 0) {
-      inputRefs[index - 1].current.focus();
+      inputRefs[index - 1].current?.focus();
     }
   };
   const handleVerify = () => {
@@ -128,7 +136,7 @@ const OTP = ({route}) => {
   };
 
   // navigate to register profile name screen when the new user login for the first time
-  const registerNewUser = async userInfo => {
+  const registerNewUser = (userInfo: UserInfo) => {
     navigation.navigate('ProfileName', {userDetail: userInfo});
   };
   const renderOtpInputs = () => {
@@ -147,7 +155,7 @@ const OTP = ({route}) => {
             // If backspace is pressed and the current input is empty, focus the previous input
             if (digit === '') {
               if (index > 0) {
-                inputRefs[index - 1].current.focus();
+                inputRefs[index - 1].current?.focus();
               }
             }
           }

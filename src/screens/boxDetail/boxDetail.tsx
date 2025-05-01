@@ -32,10 +32,15 @@ import {getBookingRatingReview} from '../../services/ratingAndReviewService';
 import {showToast} from '../../components/toastMessage';
 import ScreenWrapper from '../../components/screenWrapper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {AppStackScreenProps} from '../../navigation/navigationTypes';
+import {Sport} from '../types/sport';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
-const BoxDetail = ({navigation, route}) => {
+const BoxDetail: React.FC<AppStackScreenProps<'BoxDetail'>> = ({
+  navigation,
+  route,
+}) => {
   const {boxDetail, isBookmarked} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
@@ -86,7 +91,7 @@ const BoxDetail = ({navigation, route}) => {
     );
   };
 
-  const renderSportCategory = item => (
+  const renderSportCategory = (item: Sport) => (
     <View
       key={item.id}
       style={[
@@ -213,8 +218,10 @@ const BoxDetail = ({navigation, route}) => {
         showToast('error', 'Failed to fetch reviews');
       }
     } catch (error) {
-      console.log(error.message);
-      showToast('error', error.message);
+      if (error instanceof Error) {
+        console.log(error.message);
+        showToast('error', error.message);
+      }
     }
   };
   useEffect(() => {

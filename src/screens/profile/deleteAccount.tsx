@@ -1,12 +1,5 @@
 // DeleteAccount.js
-import {
-  View,
-  Text,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-} from 'react-native';
+import {View, Text, Image, Keyboard} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';

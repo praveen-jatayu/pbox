@@ -20,8 +20,8 @@ import ScreenWrapper from '../../components/screenWrapper';
 const HEADER_HEIGHT = verticalScale(60); // height of the header
 const SCROLL_THRESHOLD = verticalScale(150);
 const Bookmarks = () => {
-  const [search, setSearch] = useState('');
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [search, setSearch] = useState<string>('');
+  const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
   const [bookmarkedBoxData, setBookmarkedBoxData] = useState([]);
   const [filteredBookmarkedData, setFilteredBookmarkedData] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
@@ -42,7 +42,7 @@ const Bookmarks = () => {
     extrapolate: 'clamp',
   });
 
-  const handleSearchChange = text => {
+  const handleSearchChange = (text: string) => {
     setSearch(text);
     if (text.trim() === '') {
       setFilteredBookmarkedData(bookmarkedBoxData); // Show all data if search input is empty

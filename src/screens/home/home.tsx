@@ -9,6 +9,7 @@ import {
   BackHandler,
   Alert,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
@@ -30,34 +31,34 @@ import BoxCardSkeleton from '../../components/boxCardSkeleton';
 import SportsCategorySkeleton from './sportsCategorySkeleton';
 import GetLocation from 'react-native-get-location';
 import Geocoder from 'react-native-geocoding';
-import {useNavigation, useRoute} from '@react-navigation/native';
 import {requestLocationPermission} from '../../utils/permissionUtil';
 import {COLORS} from '../../constants/color';
 import ScreenWrapper from '../../components/screenWrapper';
+import {Box} from '../types/box';
+import {Sport} from '../types/sport';
+import {BottomTabScreenProps} from '../../navigation/navigationTypes';
 
 const HEADER_HEIGHT = moderateVerticalScale(60); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150);
 
-const Home = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
+const Home: React.FC<BottomTabScreenProps<'Home'>> = ({route, navigation}) => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [showAllSports, setShowAllSports] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [boxData, setBoxData] = useState([]);
-  const [sportData, setSportData] = useState([]);
-  const [filteredBoxData, setFilteredBoxData] = useState([]);
+  const [boxData, setBoxData] = useState<Box[]>([]);
+  const [sportData, setSportData] = useState<Sport[]>([]);
+  const [filteredBoxData, setFilteredBoxData] = useState<Box[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSportsLoading, setIsSportsLoading] = useState<boolean>(true);
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
-  const [location, setLocation] = useState([]);
+  const [location, setLocation] = useState<string[]>([]);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [isFetchingLocation, setIsFetchingLocation] = useState<boolean>(true);
-  const renderBoxCard = ({item}) => (
+  const renderBoxCard = ({item}: {item: Box}) => (
     <BoxCard boxData={item} onAction={fetchBoxList} />
   );
 
@@ -109,13 +110,13 @@ const Home = () => {
 
   const sportsToShow = showAllSports ? sportData : sportData.slice(0, 4);
 
-  const handleCategoryPress = item => {
+  const handleCategoryPress = (item: Sport) => {
     setIsLoading(true);
     setSelectedCategory(item.id === selectedCategory ? null : item.id);
     fetchBoxList(null, item.id === selectedCategory ? null : item.id);
   };
 
-  const handleSearchChange = text => {
+  const handleSearchChange = (text: string) => {
     setSearch(text);
     if (text.trim() === '') {
       setFilteredBoxData(boxData); // Show all data if search input is empty
@@ -127,7 +128,7 @@ const Home = () => {
     }
   };
 
-  const renderSportCategory = item => (
+  const renderSportCategory = (item: Sport) => (
     <TouchableOpacity
       key={item.id.toString()} // Ensure unique keys
       style={[
@@ -138,7 +139,7 @@ const Home = () => {
       ]}
       onPress={() => handleCategoryPress(item)}>
       <View style={homeStyles.sportLogoBackground}>
-        <Image source={{uri: item.image}} style={homeStyles.sportLogo} />
+        <Image source={{uri: item?.image}} style={homeStyles.sportLogo} />
       </View>
       <Text
         style={[
@@ -148,12 +149,15 @@ const Home = () => {
           {textAlign: 'center'},
         ]}
         numberOfLines={2}>
-        {item.name}
+        {item?.name}
       </Text>
     </TouchableOpacity>
   );
 
-  const fetchBoxList = async (boxData = null, sportId = null) => {
+  const fetchBoxList = async (
+    boxData: Box | null = null,
+    sportId: number | null = null,
+  ): Promise<void> => {
     const formData = new FormData();
     if (boxData !== null || sportId !== null) {
       if (boxData?.id) {
@@ -234,8 +238,8 @@ const Home = () => {
     if (route?.params?.location) {
       setLocation(route.params.location);
       setIsFetchingLocation(false);
-      setLatitude(route.params?.lat);
-      setLongitude(route.params?.long);
+      setLatitude(route?.params?.lat ?? null);
+      setLongitude(route?.params?.long ?? null);
     }
   }, [route.params?.location]);
 
@@ -245,7 +249,7 @@ const Home = () => {
     }
   }, []);
   // fetching current Location
-  async function fetchCurrentLocation() {
+  async function fetchCurrentLocation(): Promise<void> {
     setIsFetchingLocation(true); // Start fetching
 
     const hasPermission = await requestLocationPermission();
@@ -257,7 +261,6 @@ const Home = () => {
       const locationData = await GetLocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 30000,
-        maximumAge: 10000,
       });
 
       const {latitude, longitude} = locationData;
@@ -273,7 +276,7 @@ const Home = () => {
           component.types.includes('locality'),
         )?.long_name;
 
-        setLocation([area, city]); // Set area and city
+        setLocation([area || '', city || '']); // Set area and city
       }
     } catch (error) {
       console.error('Error fetching location:', error);
@@ -301,7 +304,7 @@ const Home = () => {
           {transform: [{scale: sliderScale}, {translateY: sliderTranslateY}]},
           {opacity: sliderOpacity},
         ]}>
-        <ImageSlider onSlidePress={() => {}} />
+        <ImageSlider />
       </Animated.View>
 
       <View style={{paddingHorizontal: scale(14), marginTop: verticalScale(4)}}>
@@ -390,7 +393,7 @@ const Home = () => {
             ref={flatListRef}
             data={filteredBoxData}
             renderItem={renderBoxCard}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id.toString()}
             contentContainerStyle={[
               homeStyles.flatListContainer,
               filteredBoxData.length <= 2 &&

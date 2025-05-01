@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
-import SubHeader from '../../components/subHeader';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {COLORS} from '../../constants/color';
 import ToggleSwitch from 'toggle-switch-react-native';

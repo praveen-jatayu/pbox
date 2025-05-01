@@ -7,12 +7,15 @@ import {
   moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
-import { images } from '../../constants/image';
-import { icons } from '../../constants/Icon';
-import { COLORS } from '../../constants/color';
+import {images} from '../../constants/image';
+import {icons} from '../../constants/Icon';
+import {COLORS} from '../../constants/color';
 
 const {width: screenWidth} = Dimensions.get('window');
-
+type CarouselItem = {
+  title: string;
+  illustration: any; // you can use ImageSourcePropType if you're using `require()` or static assets
+};
 const data = [
   {
     title: 'Beautiful Landscape',
@@ -36,12 +39,12 @@ const data = [
   },
 ];
 
-const ImageSlider = ({onSlidePress}) => {
+const ImageSlider = () => {
   const carouselRef = useRef(null);
 
-  const renderItem = ({item}) => {
+  const renderItem = ({item}: {item: CarouselItem}) => {
     return (
-      <Pressable onPress={() => onSlidePress(item)}>
+      <Pressable>
         <View style={styles.item}>
           <View style={styles.rightArrowContainer}>
             <Image source={icons.rightArrowIcon} style={{width: scale(12)}} />

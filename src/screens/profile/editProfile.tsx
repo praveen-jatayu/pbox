@@ -5,16 +5,14 @@ import {
   Image,
   Pressable,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Keyboard,
+  ViewStyle,
+  ScrollView,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import mainStyles from '../../assets/styles/mainStyles';
-import SubHeader from '../../components/subHeader';
 import {AppStackScreenProps} from '../../navigation/navigationTypes';
 import profileStyles from '../../assets/styles/profileStyles';
 import {icons} from '../../constants/Icon';
@@ -74,8 +72,8 @@ const EditProfile: React.FC<AppStackScreenProps<'EditProfile'>> = ({
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: userInfo?.name,
-      mobileNo: '+91 ' + userInfo?.mobile_no,
+      name: userInfo?.name ?? '',
+      mobileNo: userInfo?.mobile_no ? '+91 ' + userInfo.mobile_no : '',
       email: '',
       dob: '',
       profileImage: userInfo?.profile_pic,
@@ -140,7 +138,7 @@ const EditProfile: React.FC<AppStackScreenProps<'EditProfile'>> = ({
     setShowDatePicker(!showDatePicker);
   };
 
-  const formatDate = (rawDate, type: string) => {
+  const formatDate = (rawDate: Date, type: string) => {
     let date = new Date(rawDate);
     let year = date.getFullYear();
     let month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -151,6 +149,9 @@ const EditProfile: React.FC<AppStackScreenProps<'EditProfile'>> = ({
       return `${year}-${month}-${day}`;
     }
   };
+  const getScrollContainerStyle = (keyboardVisible: boolean): ViewStyle => ({
+    paddingBottom: keyboardVisible ? verticalScale(180) : verticalScale(50),
+  });
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -183,149 +184,155 @@ const EditProfile: React.FC<AppStackScreenProps<'EditProfile'>> = ({
           mainStyles.secondaryBackgroundColor,
           {paddingHorizontal: scale(0)},
         ]}>
-        <Controller
-          control={control}
-          name="profileImage"
-          render={({field: {value, onChange}}) => (
-            <>
-              <Pressable
-                style={[
-                  mainStyles.iconBackgroundColor,
-                  mainStyles.contentCenter,
-                  {
-                    alignSelf: 'center',
-                    width: moderateScale(70, 0.6),
-                    height: moderateVerticalScale(70, 0.4),
-                    borderRadius: moderateScale(50),
-                  },
-                ]}
-                onPress={() => setIsImagePickerModalVisible(true)}>
-                {value ? (
-                  <Image
-                    source={{uri: value}}
-                    style={{
-                      width: moderateScale(65, 0.6),
-                      height: moderateVerticalScale(65, 0.4),
-                      borderRadius: moderateScale(50),
-                      resizeMode: 'cover',
-                    }}
-                  />
-                ) : (
-                  <Image
-                    source={icons.userIcon}
-                    style={{width: scale(35), height: verticalScale(35)}}
-                  />
-                )}
-              </Pressable>
-
-              {/* Image Picker Modal */}
-              <BottomModal
-                isModalVisible={isImagePickerModalVisible}
-                toggleModal={toggleImagePickerModalVisible}
-                type={'imageUpload'}
-                profileImage={profileImage}
-                setProfileImage={handleImageSelection} // Pass hook form's setter
-                serverProfileImage={serverProfileImage}
-                setDisplayProfileImage={setDisplayProfileImage}
-              />
-            </>
-          )}
-        />
-
-        {/* Edit Form */}
-        <View style={{marginTop: verticalScale(12)}}>
-          {/* Name Field (Required) */}
+        <ScrollView
+          style={getScrollContainerStyle(keyboardVisible)}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
           <Controller
             control={control}
-            rules={{
-              required: true,
-            }}
-            name="name"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInputComponent
-                value={value}
-                label={'First Name'}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="Enter your name"
-                error={errors.name?.message}
-                required={true}
-              />
-            )}
-          />
-          {/* Phone Field (Optional) */}
-          <Controller
-            control={control}
-            name="mobileNo"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInputComponent
-                value={value}
-                label={'Phone'}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="Enter your phone"
-                error={errors.mobileNo?.message}
-                required={false}
-                style={mainStyles.iconBackgroundColor}
-              />
-            )}
-          />
-          {/* Email Field (Optional) */}
-          <Controller
-            control={control}
-            name="email"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInputComponent
-                value={value}
-                label={'Email'}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="Enter your email"
-                error={errors.email?.message}
-                required={false}
-              />
-            )}
-          />
-          {/* DOB Field with Date Picker */}
-          <Controller
-            control={control}
-            name="dob"
-            render={({field: {onChange, value}}) => (
+            name="profileImage"
+            render={({field: {value, onChange}}) => (
               <>
-                <Pressable onPress={toggleDatePicker}>
-                  <TextInputComponent
-                    label={'Date Of Birth'}
-                    placeholder="Select your DOB"
-                    value={dobDisplay}
-                    editable={false} // Prevent keyboard input
-                    required={false}
-                  />
+                <Pressable
+                  style={[
+                    mainStyles.iconBackgroundColor,
+                    mainStyles.contentCenter,
+                    {
+                      alignSelf: 'center',
+                      width: moderateScale(70, 0.6),
+                      height: moderateVerticalScale(70, 0.4),
+                      borderRadius: moderateScale(50),
+                    },
+                  ]}
+                  onPress={() => setIsImagePickerModalVisible(true)}>
+                  {value ? (
+                    <Image
+                      source={{uri: value}}
+                      style={{
+                        width: moderateScale(65, 0.6),
+                        height: moderateVerticalScale(65, 0.4),
+                        borderRadius: moderateScale(50),
+                        resizeMode: 'cover',
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      source={icons.userIcon}
+                      style={{width: scale(35), height: verticalScale(35)}}
+                    />
+                  )}
                 </Pressable>
 
-                {showDatePicker && (
-                  <DateTimePicker
-                    value={value ? new Date(value) : new Date()} // Convert to Date object
-                    mode="date"
-                    display={'default'}
-                    onChange={(event, selectedDate) => {
-                      setShowDatePicker(false);
-                      if (selectedDate) {
-                        const formattedDate = formatDate(
-                          selectedDate,
-                          'server',
-                        );
-                        setDobDisplay(formatDate(selectedDate, 'display'));
-                        setDobServer(formattedDate);
-                        onChange(formattedDate); // Update react-hook-form
-                      }
-                    }}
-                  />
-                )}
+                {/* Image Picker Modal */}
+                <BottomModal
+                  isModalVisible={isImagePickerModalVisible}
+                  toggleModal={toggleImagePickerModalVisible}
+                  type={'imageUpload'}
+                  profileImage={profileImage}
+                  setProfileImage={handleImageSelection} // Pass hook form's setter
+                  serverProfileImage={serverProfileImage}
+                  setDisplayProfileImage={setDisplayProfileImage}
+                />
               </>
             )}
           />
-        </View>
+
+          {/* Edit Form */}
+          <View style={{marginTop: verticalScale(12)}}>
+            {/* Name Field (Required) */}
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              name="name"
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInputComponent
+                  value={value}
+                  label={'First Name'}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Enter your name"
+                  errorLabel={errors.name?.message}
+                  required={true}
+                />
+              )}
+            />
+            {/* Phone Field (Optional) */}
+            <Controller
+              control={control}
+              name="mobileNo"
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInputComponent
+                  value={value ?? ''}
+                  label={'Phone'}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Enter your phone"
+                  errorLabel={errors.mobileNo?.message}
+                  required={false}
+                  style={mainStyles.iconBackgroundColor}
+                />
+              )}
+            />
+            {/* Email Field (Optional) */}
+            <Controller
+              control={control}
+              name="email"
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInputComponent
+                  value={value ?? ''}
+                  label={'Email'}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Enter your email"
+                  errorLabel={errors.email?.message}
+                  required={false}
+                />
+              )}
+            />
+            {/* DOB Field with Date Picker */}
+            <Controller
+              control={control}
+              name="dob"
+              render={({field: {onChange, value}}) => (
+                <>
+                  <Pressable onPress={toggleDatePicker}>
+                    <TextInputComponent
+                      label={'Date Of Birth'}
+                      placeholder="Select your DOB"
+                      value={dobDisplay}
+                      editable={false} // Prevent keyboard input
+                      required={false}
+                    />
+                  </Pressable>
+
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={value ? new Date(value) : new Date()} // Convert to Date object
+                      mode="date"
+                      display={'default'}
+                      onChange={(event, selectedDate) => {
+                        setShowDatePicker(false);
+                        if (selectedDate) {
+                          const formattedDate = formatDate(
+                            selectedDate,
+                            'server',
+                          );
+                          setDobDisplay(formatDate(selectedDate, 'display'));
+                          setDobServer(formattedDate);
+                          onChange(formattedDate); // Update react-hook-form
+                        }
+                      }}
+                    />
+                  )}
+                </>
+              )}
+            />
+          </View>
+        </ScrollView>
       </View>
+
       {/* Save Button */}
       <PrimaryButton
         title={'SAVE'}
@@ -340,9 +347,6 @@ const EditProfile: React.FC<AppStackScreenProps<'EditProfile'>> = ({
 export default EditProfile;
 
 const styles = StyleSheet.create({
-  scrollContainer: (keyboardVisible: boolean) => ({
-    paddingBottom: keyboardVisible ? verticalScale(180) : verticalScale(50),
-  }),
   saveButton: {
     position: 'relative',
     bottom: verticalScale(10),

@@ -7,7 +7,7 @@ import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 interface TextInputComponentProps extends TextInputProps {
   value: string;
   label?: string;
-  onChangeText: (text: string) => void;
+  onChangeText?: (text: string) => void;
   placeholder?: string;
   error?: boolean;
   required?: boolean;

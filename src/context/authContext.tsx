@@ -1,26 +1,28 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import React, {createContext, ReactNode, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiPost, saveAuthToken } from '../services/apiService/apiService';
-import { API_ENDPOINTS } from '../constants/apiEndPoinst';
+import {apiPost, saveAuthToken} from '../services/apiService/apiService';
+import {API_ENDPOINTS} from '../constants/apiEndPoinst';
 
 interface AuthProviderProps {
   children: ReactNode; // Accepts React children
-} 
+}
 
-interface UserInfo {
+export interface UserInfo {
   api_token: string;
-  name:string|null;
+  name: string | null;
   profile_pic: string;
   user: 'New' | 'Old';
-  email:string|null;
-  role:number;
-  mobile_no:string
-  status:number
-  
+  email: string | null;
+  role: number;
+  mobile_no: string;
+  status: number;
 }
 
 interface AuthContextType {
-  login: (mobileNo: string, registerNewUser: (userInfo: UserInfo) => void) => Promise<void>;
+  login: (
+    mobileNo: string,
+    registerNewUser: (userInfo: UserInfo) => void,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
   userToken: string | null;
@@ -30,21 +32,25 @@ interface AuthContextType {
   loginError: string;
 }
 
-export const AuthContext = createContext<AuthContextType|null>(null);
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+export const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
+  children,
+}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [userToken, setUserToken] = useState<string|null>(null);
-  const [userInfo, setUserInfo] = useState<UserInfo|null>(null);
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loginError, setLoginError] = useState<string>('');
-  
 
-  const login = async (mobileNo:string,registerNewUser: (userInfo: UserInfo) => void):Promise<void> => {
+  const login = async (
+    mobileNo: string,
+    registerNewUser: (userInfo: UserInfo) => void,
+  ): Promise<void> => {
     try {
       // let fcmToken = await AsyncStorage.getItem('fcmToken');
 
       const formData = new FormData();
       formData.append('mobile_no', mobileNo);
-     
+
       const response = await apiPost(API_ENDPOINTS.AUTH.LOGIN, formData);
 
       if (response.success) {
@@ -54,37 +60,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         if (userInfo.user === 'New') {
           await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
           registerNewUser(userInfo);
-         
+        } else {
+          // Assuming `setUserToken` is in scope
+          await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+          await saveAuthToken(userInfo.api_token);
+          setUserInfo(userInfo); // Assuming `setUserInfo` is in scope
+          setUserToken(userInfo.api_token);
         }
-        else{
-     
-        // Assuming `setUserToken` is in scope
-        await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        await saveAuthToken(userInfo.api_token);
-        setUserInfo(userInfo); // Assuming `setUserInfo` is in scope
-        setUserToken(userInfo.api_token);
-      
-        }   
       } else {
         setLoginError(response.message); // Assuming `setLoginError` is in scope
       }
-
-     
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       setLoginError('Invaild username or password');
       console.error('Login Error:', error);
-     
-    }
-    finally{
-    
-        setIsLoading(false); // Ensure loading stops only for old users
-      
+    } finally {
+      setIsLoading(false); // Ensure loading stops only for old users
     }
   };
 
-  
-  
-  const isLoggedIn = async ():Promise<void> => {
+  const isLoggedIn = async (): Promise<void> => {
     try {
       setIsLoading(true);
       let userToken = await AsyncStorage.getItem('authToken');
@@ -102,8 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
   };
 
- 
-  const logout = async ():Promise<void> => {
+  const logout = async (): Promise<void> => {
     setUserToken(null);
     setUserInfo(null);
     // await clearAuthToken();
@@ -111,7 +104,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     await AsyncStorage.removeItem('userInfo');
     setIsLoading(false);
     setLoginError('');
-    
   };
 
   useEffect(() => {
@@ -120,11 +112,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
   return (
     <AuthContext.Provider
-    value={{ login, logout, isLoading, userToken,userInfo,setUserToken,setUserInfo, loginError }}>
-    {children}
-  </AuthContext.Provider>
-  )
-}
-
-
-
+      value={{
+        login,
+        logout,
+        isLoading,
+        userToken,
+        userInfo,
+        setUserToken,
+        setUserInfo,
+        loginError,
+      }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
