@@ -8,13 +8,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
-import SubHeader from '../../components/subHeader';
-import {
-  moderateScale,
-  moderateVerticalScale,
-  scale,
-  verticalScale,
-} from 'react-native-size-matters';
+import {scale, verticalScale} from 'react-native-size-matters';
 import PrimaryButton from '../../components/primaryButton';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../../constants/color';
@@ -32,7 +26,6 @@ const BookingConfirmation: React.FC<
   AppStackScreenProps<'BookingConfirmation'>
 > = ({navigation, route}) => {
   const {slotBookingData, boxData, totalAmountToBePaid} = route?.params;
-  console.log('323232', slotBookingData);
   const [isTandCChecked, setIsTandCChecked] = useState(false);
   const [paymentOption, setPaymentOption] = useState('100%');
 

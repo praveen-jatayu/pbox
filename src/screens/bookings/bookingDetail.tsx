@@ -21,10 +21,20 @@ import {images} from '../../constants/image';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {handleShowLocation} from '../../utils/showLocationUtil';
 import ScreenWrapper from '../../components/screenWrapper';
+import {AppStackScreenProps} from '../../navigation/navigationTypes';
+import {BoxImage} from '../types/boxImage';
+import {BookingResponse} from '../types/booking';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
-const BookingDetail = ({navigation, route}) => {
+interface AnimatedHeaderProps {
+  scrollY: Animated.Value;
+  boxDetail?: BookingResponse;
+}
+const BookingDetail: React.FC<AppStackScreenProps<'BookingDetail'>> = ({
+  navigation,
+  route,
+}) => {
   const {bookingDetail} = route.params;
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = useRef(null);
@@ -37,7 +47,7 @@ const BookingDetail = ({navigation, route}) => {
     extrapolate: 'clamp',
   });
 
-  const renderItem = ({item}) => {
+  const renderItem = ({item}: {item: BoxImage}) => {
     return (
       <View>
         <Image source={{uri: item.image}} style={styles.image} />
@@ -46,7 +56,10 @@ const BookingDetail = ({navigation, route}) => {
   };
 
   // top Animated Header
-  const AnimatedHeader = ({scrollY, boxDetail, navigation}) => {
+  const AnimatedHeader: React.FC<AnimatedHeaderProps> = ({
+    scrollY,
+    boxDetail,
+  }) => {
     const headerTranslateY = scrollY.interpolate({
       inputRange: [0, sliderHeight],
       outputRange: [-150, 0],
@@ -119,11 +132,7 @@ const BookingDetail = ({navigation, route}) => {
       statusBarTranslucent
       statusBarBackgroundColor="transparent"
       statusBarStyle="light-content">
-      <AnimatedHeader
-        scrollY={scrollY}
-        boxDetail={bookingDetail}
-        navigation={navigation}
-      />
+      <AnimatedHeader scrollY={scrollY} boxDetail={bookingDetail} />
       <Animated.ScrollView
         contentContainerStyle={{flexGrow: 1, paddingBottom: verticalScale(100)}}
         showsVerticalScrollIndicator={false}

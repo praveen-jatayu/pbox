@@ -17,6 +17,7 @@ export interface BookingResponse {
   slot_count: number;
   get_bookings_details: BookingDetail[];
   get_selected_box: Box;
+  category: 'Upcoming' | 'Completed' | 'Cancelled';
 }
 
 export interface BookingDetail {
@@ -69,4 +70,11 @@ export interface Slot {
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface BookingItem {
+  id: number;
+  category: 'Upcoming' | 'Completed' | 'Cancelled';
+  slot_count: number;
+  get_selected_box: Box;
 }

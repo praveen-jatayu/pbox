@@ -21,15 +21,25 @@ import BookingCardSkeleton from './bookingCardSkeleton';
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import {COLORS} from '../../constants/color';
 import ScreenWrapper from '../../components/screenWrapper';
-import {BottomTabScreenProps} from '../../navigation/navigationTypes';
-import {BookingResponse} from '../types/booking';
+import {
+  BottomTabParamList,
+  BottomTabScreenProps,
+} from '../../navigation/navigationTypes';
+import {BookingItem, BookingResponse} from '../types/booking';
 
-const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
+const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'] as const;
 
+type BookingCategory = (typeof bookingCategories)[number];
+type BookingNavigationProp = BottomTabScreenProps<'Booking'>['navigation'];
+
+type BookingCardProps = {
+  item: BookingItem;
+  navigation: BookingNavigationProp;
+};
 const HEADER_HEIGHT = verticalScale(60); // height of the header
 const SCROLL_THRESHOLD = verticalScale(60);
 
-const BookingCard = ({item, navigation}) => {
+const BookingCard: React.FC<BookingCardProps> = ({item, navigation}) => {
   return (
     <TouchableOpacity
       style={[
@@ -129,9 +139,8 @@ const BookingCard = ({item, navigation}) => {
 const Bookings: React.FC<BottomTabScreenProps<'Booking'>> = ({navigation}) => {
   const [search, setSearch] = useState<string>('');
   const isFocused = useIsFocused();
-  const [selecedBookingCategory, setSelectedBookingCategory] = useState<
-    'Upcoming' | 'Completed' | 'Cancelled'
-  >('Upcoming');
+  const [selecedBookingCategory, setSelectedBookingCategory] =
+    useState<BookingCategory>('Upcoming');
   const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList<BookingResponse>>(null);
