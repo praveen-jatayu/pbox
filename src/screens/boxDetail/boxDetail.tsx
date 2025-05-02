@@ -33,21 +33,29 @@ import {showToast} from '../../components/toastMessage';
 import ScreenWrapper from '../../components/screenWrapper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppStackScreenProps} from '../../navigation/navigationTypes';
-import {Sport} from '../types/sport';
+import {SportCard} from '../types/sport';
+import {BookingReview} from '../types/review';
+import {SingleAmenity} from '../types/amenity';
+import {Box} from '../types/box';
+import {BoxImage} from '../types/boxImage';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
+interface AnimatedHeaderProps {
+  scrollY: Animated.Value;
+  boxDetail?: Box;
+}
 const BoxDetail: React.FC<AppStackScreenProps<'BoxDetail'>> = ({
   navigation,
   route,
 }) => {
   const {boxDetail, isBookmarked} = route.params;
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [showAllAmenities, setShowAllAmenities] = useState(false);
-  const [reviewData, setReviewData] = useState([]);
+  const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [showAllAmenities, setShowAllAmenities] = useState<boolean>(false);
+  const [reviewData, setReviewData] = useState<BookingReview[]>([]);
   const carouselRef = useRef(null);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const mapRef = useRef(null);
+  const mapRef = useRef<MapView | null>(null);
   const rotationAngle = useRef(0);
   // Animate slider (opacity and scale)
   useEffect(() => {
@@ -78,7 +86,7 @@ const BoxDetail: React.FC<AppStackScreenProps<'BoxDetail'>> = ({
     extrapolate: 'clamp',
   });
 
-  const renderImageItem = ({item}) => {
+  const renderImageItem = ({item}: {item: BoxImage}) => {
     return (
       <LazyImage
         source={{uri: item.image}}
@@ -91,7 +99,7 @@ const BoxDetail: React.FC<AppStackScreenProps<'BoxDetail'>> = ({
     );
   };
 
-  const renderSportCategory = (item: Sport) => (
+  const renderSportCategory = (item: SportCard) => (
     <View
       key={item.id}
       style={[
@@ -125,7 +133,7 @@ const BoxDetail: React.FC<AppStackScreenProps<'BoxDetail'>> = ({
     ? amenitiesData
     : amenitiesData.slice(0, 2); // Change 3 to however many you want to show initially
 
-  const renderAmenitiesList = item => (
+  const renderAmenitiesList = (item: SingleAmenity) => (
     <View key={item.id} style={[boxDetailStyles.amenityItem]}>
       <Image source={{uri: item.icon}} style={boxDetailStyles.amenityIcon} />
       <Text
@@ -139,7 +147,10 @@ const BoxDetail: React.FC<AppStackScreenProps<'BoxDetail'>> = ({
     </View>
   );
 
-  const AnimatedHeader = ({scrollY, boxDetail}) => {
+  const AnimatedHeader: React.FC<AnimatedHeaderProps> = ({
+    scrollY,
+    boxDetail,
+  }) => {
     const insets = useSafeAreaInsets();
     console.log(insets);
     const headerTranslateY = scrollY.interpolate({
@@ -255,7 +266,7 @@ const BoxDetail: React.FC<AppStackScreenProps<'BoxDetail'>> = ({
         {/* Top slider  */}
         <Animated.View
           style={[boxDetailStyles.sliderContainer, {opacity: sliderOpacity}]}>
-          <Carousel
+          <Carousel<BoxImage>
             ref={carouselRef}
             data={boxDetail?.get_selected_box_images}
             renderItem={renderImageItem}

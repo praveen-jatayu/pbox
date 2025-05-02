@@ -21,6 +21,8 @@ import BookingCardSkeleton from './bookingCardSkeleton';
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import {COLORS} from '../../constants/color';
 import ScreenWrapper from '../../components/screenWrapper';
+import {BottomTabScreenProps} from '../../navigation/navigationTypes';
+import {BookingResponse} from '../types/booking';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'];
 
@@ -28,10 +30,6 @@ const HEADER_HEIGHT = verticalScale(60); // height of the header
 const SCROLL_THRESHOLD = verticalScale(60);
 
 const BookingCard = ({item, navigation}) => {
-  console.log(
-    'boxddddddata',
-    item.get_selected_box.get_selected_available_sport.get_single_sports,
-  );
   return (
     <TouchableOpacity
       style={[
@@ -128,18 +126,22 @@ const BookingCard = ({item, navigation}) => {
   );
 };
 
-const Bookings = ({navigation}) => {
-  const [search, setSearch] = useState('');
+const Bookings: React.FC<BottomTabScreenProps<'Booking'>> = ({navigation}) => {
+  const [search, setSearch] = useState<string>('');
   const isFocused = useIsFocused();
-  const [selecedBookingCategory, setSelectedBookingCategory] =
-    useState('Upcoming');
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [selecedBookingCategory, setSelectedBookingCategory] = useState<
+    'Upcoming' | 'Completed' | 'Cancelled'
+  >('Upcoming');
+  const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const flatListRef = useRef(null);
-  const [bookingData, setBookingData] = useState([]);
-  const [filteredBookingData, setFilteredBookingData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(true);
+  const flatListRef = useRef<FlatList<BookingResponse>>(null);
+  const skeletonListRef = useRef<FlatList<number>>(null);
+  const [bookingData, setBookingData] = useState<BookingResponse[]>([]);
+  const [filteredBookingData, setFilteredBookingData] = useState<
+    BookingResponse[]
+  >([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(true);
 
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_HEIGHT],
@@ -180,7 +182,7 @@ const Bookings = ({navigation}) => {
     };
   }, [scrollY, showScrollToTop]);
 
-  const renderBookingCard = ({item}) => (
+  const renderBookingCard = ({item}: {item: BookingResponse}) => (
     <BookingCard item={item} navigation={navigation} />
   );
 
@@ -209,7 +211,7 @@ const Bookings = ({navigation}) => {
     setSearch('');
   }, [isFocused, selecedBookingCategory]);
 
-  const handleSearchChange = text => {
+  const handleSearchChange = (text: string) => {
     setSearch(text);
     if (text.trim() === '') {
       setFilteredBookingData(bookingData); // Show all data if search input is empty
@@ -225,7 +227,7 @@ const Bookings = ({navigation}) => {
     <ScreenWrapper
       safeTop={true}
       safeBottom={true}
-      scrollable={true}
+      scrollable={false}
       padding={false}
       withHeader={false}>
       <Animated.View
@@ -286,9 +288,9 @@ const Bookings = ({navigation}) => {
         </Animated.View>
         {isLoading && bookingData.length === 0 ? (
           // Show Skeleton Loader (initial data fetch)
-          <Animated.FlatList
+          <Animated.FlatList<number>
             data={[1, 1, 1, 1, 1]} // Dummy data for skeleton
-            ref={flatListRef}
+            ref={skeletonListRef}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingTop: verticalScale(50),
@@ -313,7 +315,7 @@ const Bookings = ({navigation}) => {
           <Animated.FlatList
             ref={flatListRef}
             data={filteredBookingData}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id.toString()}
             renderItem={renderBookingCard}
             contentContainerStyle={{
               paddingTop: verticalScale(50),

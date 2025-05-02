@@ -1,6 +1,7 @@
 // types/Box.ts
 
 import {Amenity} from './amenity';
+import {BookMark} from './bookmark';
 import {BoxImage} from './boxImage';
 import {CancellationPolicy} from './cancellationPolicy';
 import {Sport} from './sport';
@@ -23,5 +24,5 @@ export interface Box {
   get_selected_amenities: Amenity[];
   get_box_cancellation_policy: CancellationPolicy[];
   get_selected_box_images: BoxImage[];
-  get_selected_user_book_mark: any[]; // Update this if you know its shape
+  get_selected_user_book_mark: BookMark[]; // Update this if you know its shape
 }

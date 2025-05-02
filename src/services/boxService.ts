@@ -1,7 +1,7 @@
 import {API_ENDPOINTS} from '../constants/apiEndPoinst';
 import {apiPost} from './apiService/apiService';
 
-export const getBoxDetail = async (data: FormData) => {
+export const getBoxDetail = async (data?: FormData | Record<string, any>) => {
   try {
     const response = await apiPost(API_ENDPOINTS.BOX.GET_BOX_DETAILS, data);
 

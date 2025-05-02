@@ -4,6 +4,7 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabScreenProps as RNBottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {UserInfo} from '../context/authContext';
+import {Box} from '../screens/types/box';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -25,11 +26,18 @@ export type AppStackParamList = {
   Settings: undefined;
   DeleteAccount: undefined;
   NotificationScreen: undefined;
-  BoxDetail: undefined;
+  BoxDetail: {
+    boxDetail: Box;
+    isBookmarked: boolean;
+  };
   BookingDetail: undefined;
-  SlotBooking: undefined;
+  SlotBooking: {
+    boxInfo: Box;
+  };
   BookingConfirmation: undefined;
-  ClientReview: undefined;
+  ClientReview: {
+    boxDetail: Box;
+  };
   AddRatingAndReview: undefined;
 };
 

@@ -6,14 +6,18 @@ export interface Amenity {
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
-  get_single_amenities: SingleAmenity;
+  get_single_amenities: {
+    id: number;
+    name: string;
+    icon: string;
+    deleted_at: string | null;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export interface SingleAmenity {
   id: number;
   name: string;
   icon: string;
-  deleted_at: string | null;
-  created_at: string;
-  updated_at: string;
 }

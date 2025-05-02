@@ -289,7 +289,7 @@ const Home: React.FC<BottomTabScreenProps<'Home'>> = ({route, navigation}) => {
     <ScreenWrapper
       safeTop={true}
       safeBottom={true}
-      scrollable={true}
+      scrollable={false}
       padding={false}
       withHeader={false}>
       <MainHeader

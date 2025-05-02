@@ -18,3 +18,9 @@ export interface Sport {
     updated_at: string;
   };
 }
+
+export interface SportCard {
+  id: number;
+  name: string;
+  logo: {uri: string};
+}
