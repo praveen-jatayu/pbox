@@ -63,6 +63,7 @@ export interface BookingSlotDetail {
 }
 
 export interface Slot {
+  get_single_slot: any;
   id: number;
   name: string;
   start_time: string;

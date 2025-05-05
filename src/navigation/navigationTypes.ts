@@ -5,7 +5,8 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabScreenProps as RNBottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {UserInfo} from '../context/authContext';
 import {Box} from '../screens/types/box';
-import {BookingItem, BookingResponse} from '../screens/types/booking';
+import {BookingItem} from '../screens/types/booking';
+import {SelectedSlotType} from '../screens/types/slot';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -20,7 +21,7 @@ export type AuthStackParamList = {
 };
 
 export type AppStackParamList = {
-  BottomNav: undefined;
+  BottomNav: {screen: string};
   SelectLocation: undefined;
   ProfileScreen: undefined;
   EditProfile: undefined;
@@ -31,15 +32,21 @@ export type AppStackParamList = {
     boxDetail: Box;
     isBookmarked: boolean;
   };
-  BookingDetail: {bookingDetail: BookingResponse};
+  BookingDetail: {bookingDetail: BookingItem};
   SlotBooking: {
     boxInfo: Box;
   };
-  BookingConfirmation: undefined;
+  BookingConfirmation: {
+    slotBookingData: SelectedSlotType;
+    boxData: Box;
+    totalAmountToBePaid: string;
+  };
   ClientReview: {
     boxDetail: Box;
   };
   AddRatingAndReview: undefined;
+  TermsAndConditions: undefined;
+  PrivacyPolicy: undefined;
 };
 
 export type BottomTabParamList = {

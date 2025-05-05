@@ -18,6 +18,7 @@ import {showToast} from './toastMessage';
 import {LazyImage} from 'react-native-lazy-image-loader';
 import {images} from '../constants/image';
 import {Box} from '../screens/types/box';
+import {BoxImage} from '../screens/types/boxImage';
 const {width: screenWidth} = Dimensions.get('window');
 
 interface BoxCardProps {
@@ -26,7 +27,7 @@ interface BoxCardProps {
 }
 
 const BoxCard: React.FC<BoxCardProps> = ({boxData, onAction}) => {
-  const carouselRef = useRef<Carousel<{image: string}> | null>(null);
+  const carouselRef = useRef(null);
   const [activeSlide, setActiveSlide] = useState<number>(0);
   const [isBookmarked, setIsBookmarked] = useState<number>(
     boxData?.get_selected_user_book_mark?.length > 0 ? 1 : 0,
@@ -67,7 +68,7 @@ const BoxCard: React.FC<BoxCardProps> = ({boxData, onAction}) => {
     ).start();
   }, [pulseAnim]);
 
-  const renderImageItem = ({item}) => {
+  const renderImageItem = ({item}: {item: BoxImage}) => {
     return (
       <LazyImage
         source={{uri: item.image}}

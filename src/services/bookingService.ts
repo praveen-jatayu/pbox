@@ -1,5 +1,12 @@
 import {API_ENDPOINTS} from '../constants/apiEndPoinst';
+import {SelectedSlotType} from '../screens/types/slot';
 import {apiPost} from './apiService/apiService';
+
+interface bookingData {
+  box_id: number;
+  total_amount: string;
+  selectedSlots: SelectedSlotType;
+}
 
 export const getCourtByBoxId = async (data: FormData) => {
   try {
@@ -41,7 +48,7 @@ export const getSlotDetailByDate = async (data: FormData) => {
     throw error; // Propagate the error if needed
   }
 };
-export const addBooking = async (formData: FormData) => {
+export const addBooking = async (formData: bookingData) => {
   try {
     const response = await apiPost(API_ENDPOINTS.BOOKING.ADD_BOOKING, formData);
     console.log('eeee', response);

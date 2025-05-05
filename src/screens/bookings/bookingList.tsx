@@ -22,19 +22,18 @@ import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import {COLORS} from '../../constants/color';
 import ScreenWrapper from '../../components/screenWrapper';
 import {
-  BottomTabParamList,
-  BottomTabScreenProps,
+  AppStackParamList,
+  AppStackScreenProps,
 } from '../../navigation/navigationTypes';
 import {BookingItem, BookingResponse} from '../types/booking';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'] as const;
 
 type BookingCategory = (typeof bookingCategories)[number];
-type BookingNavigationProp = BottomTabScreenProps<'Booking'>['navigation'];
-
 type BookingCardProps = {
   item: BookingItem;
-  navigation: BookingNavigationProp;
+  navigation: NativeStackNavigationProp<AppStackParamList>;
 };
 const HEADER_HEIGHT = verticalScale(60); // height of the header
 const SCROLL_THRESHOLD = verticalScale(60);
@@ -136,7 +135,9 @@ const BookingCard: React.FC<BookingCardProps> = ({item, navigation}) => {
   );
 };
 
-const Bookings: React.FC<BottomTabScreenProps<'Booking'>> = ({navigation}) => {
+const Bookings: React.FC<AppStackScreenProps<'BookingDetail'>> = ({
+  navigation,
+}) => {
   const [search, setSearch] = useState<string>('');
   const isFocused = useIsFocused();
   const [selecedBookingCategory, setSelectedBookingCategory] =

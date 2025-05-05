@@ -23,13 +23,13 @@ import {handleShowLocation} from '../../utils/showLocationUtil';
 import ScreenWrapper from '../../components/screenWrapper';
 import {AppStackScreenProps} from '../../navigation/navigationTypes';
 import {BoxImage} from '../types/boxImage';
-import {BookingResponse} from '../types/booking';
+import {BookingItem, BookingResponse} from '../types/booking';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 
 interface AnimatedHeaderProps {
   scrollY: Animated.Value;
-  boxDetail?: BookingResponse;
+  boxDetail?: BookingItem;
 }
 const BookingDetail: React.FC<AppStackScreenProps<'BookingDetail'>> = ({
   navigation,
