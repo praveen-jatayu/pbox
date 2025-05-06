@@ -24,6 +24,7 @@ const SelectLocation: React.FC<AppStackScreenProps<'SelectLocation'>> = ({
   const inputRef = useRef<GooglePlacesAutocompleteRef | null>(null);
   const [location, setLocation] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>('');
+
   const handleSelectLocation = (
     data: GooglePlaceData,
     details: GooglePlaceDetail | null,
