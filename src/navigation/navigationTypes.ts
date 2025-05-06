@@ -5,7 +5,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabScreenProps as RNBottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {UserInfo} from '../context/authContext';
 import {Box} from '../screens/types/box';
-import {BookingItem} from '../screens/types/booking';
+import {BookingItem, BookingResponse} from '../screens/types/booking';
 import {SelectedSlotType} from '../screens/types/slot';
 
 export type AuthStackParamList = {
@@ -30,9 +30,9 @@ export type AppStackParamList = {
   NotificationScreen: undefined;
   BoxDetail: {
     boxDetail: Box;
-    isBookmarked: boolean;
+    isBookmarked: number;
   };
-  BookingDetail: {bookingDetail: BookingItem};
+  BookingDetail: {bookingDetail: BookingResponse};
   SlotBooking: {
     boxInfo: Box;
   };

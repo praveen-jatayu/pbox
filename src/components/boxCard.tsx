@@ -19,12 +19,16 @@ import {LazyImage} from 'react-native-lazy-image-loader';
 import {images} from '../constants/image';
 import {Box} from '../screens/types/box';
 import {BoxImage} from '../screens/types/boxImage';
+import {AppStackParamList} from '../navigation/navigationTypes';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 const {width: screenWidth} = Dimensions.get('window');
 
 interface BoxCardProps {
   boxData: Box;
-  onAction: (boxData?: Box | null) => void;
+  onAction?: (boxData?: Box | null) => void;
 }
+
+type NavigationProp = NativeStackNavigationProp<AppStackParamList, 'BoxDetail'>;
 
 const BoxCard: React.FC<BoxCardProps> = ({boxData, onAction}) => {
   const carouselRef = useRef(null);
@@ -32,7 +36,7 @@ const BoxCard: React.FC<BoxCardProps> = ({boxData, onAction}) => {
   const [isBookmarked, setIsBookmarked] = useState<number>(
     boxData?.get_selected_user_book_mark?.length > 0 ? 1 : 0,
   );
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   // Entrance Animation (fade in & slide up)
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -89,7 +93,9 @@ const BoxCard: React.FC<BoxCardProps> = ({boxData, onAction}) => {
       const {success, message} = await updateBookmark(formData);
       if (success) {
         setIsBookmarked(isBookmarked ? 0 : 1);
-        (await onAction) && onAction();
+        if (onAction) {
+          onAction();
+        }
       } else {
         showToast('error', message || 'Failed to update bookmark!');
         console.log(message);
@@ -105,7 +111,7 @@ const BoxCard: React.FC<BoxCardProps> = ({boxData, onAction}) => {
       boxDetail: boxData,
       isBookmarked: isBookmarked,
     });
-    onAction = {boxData};
+    onAction?.(boxData);
   };
 
   return (
@@ -172,7 +178,7 @@ const BoxCard: React.FC<BoxCardProps> = ({boxData, onAction}) => {
                 }
                 style={[
                   boxCardStyles.bookmarkIcon,
-                  isBookmarked && boxCardStyles.bookmarkIconToggled,
+                  !!isBookmarked && boxCardStyles.bookmarkIconToggled,
                 ]}
               />
             </TouchableOpacity>

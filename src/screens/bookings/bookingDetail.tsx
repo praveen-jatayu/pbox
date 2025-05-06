@@ -23,7 +23,7 @@ import {handleShowLocation} from '../../utils/showLocationUtil';
 import ScreenWrapper from '../../components/screenWrapper';
 import {AppStackScreenProps} from '../../navigation/navigationTypes';
 import {BoxImage} from '../types/boxImage';
-import {BookingItem, BookingResponse} from '../types/booking';
+import {BookingItem} from '../types/booking';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const sliderHeight = screenHeight / 3;
 

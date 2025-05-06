@@ -25,14 +25,14 @@ import {
   AppStackParamList,
   AppStackScreenProps,
 } from '../../navigation/navigationTypes';
-import {BookingItem, BookingResponse} from '../types/booking';
+import {BookingResponse} from '../types/booking';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const bookingCategories = ['Upcoming', 'Completed', 'Cancelled'] as const;
 
 type BookingCategory = (typeof bookingCategories)[number];
 type BookingCardProps = {
-  item: BookingItem;
+  item: BookingResponse;
   navigation: NativeStackNavigationProp<AppStackParamList>;
 };
 const HEADER_HEIGHT = verticalScale(60); // height of the header
