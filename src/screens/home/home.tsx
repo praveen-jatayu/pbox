@@ -2,7 +2,6 @@ import {
   View,
   Text,
   Animated,
-  StyleSheet,
   TouchableOpacity,
   Image,
   RefreshControl,
@@ -37,7 +36,8 @@ import ScreenWrapper from '../../components/screenWrapper';
 import {Box} from '../types/box';
 import {Sport} from '../types/sport';
 import {BottomTabScreenProps} from '../../navigation/navigationTypes';
-
+import Config from 'react-native-config';
+import Modal from 'react-native-modal';
 const HEADER_HEIGHT = moderateVerticalScale(60); // height of the header
 const MIN_HEADER_HEIGHT = moderateVerticalScale(150);
 
@@ -264,7 +264,7 @@ const Home: React.FC<BottomTabScreenProps<'Home'>> = ({route, navigation}) => {
       });
 
       const {latitude, longitude} = locationData;
-      Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
+      Geocoder.init(Config.GOOGLE_MAPS_API_KEY);
 
       const geoData = await Geocoder.from(23.0638066, 70.1340917);
       if (geoData.results.length > 0) {
@@ -418,7 +418,6 @@ const Home: React.FC<BottomTabScreenProps<'Home'>> = ({route, navigation}) => {
                 refreshing={refreshing}
                 onRefresh={() => {
                   fetchBoxList();
-                  // getSportList();
                 }}
               />
             }
@@ -427,31 +426,34 @@ const Home: React.FC<BottomTabScreenProps<'Home'>> = ({route, navigation}) => {
       </Animated.View>
 
       {/* error here */}
-      {/* {isFetchingLocation && (
-   
-   <Modal transparent={true} animationType="fade" visible={isFetchingLocation} style={{ justifyContent: 'flex-end',
-    margin: 0,}}
-    statusBarTranslucent={true}>
-     <View style={{
-      flex:1,
-       justifyContent: 'center', 
-       alignItems: 'center', 
-       margin:0,
-       backgroundColor: 'rgba(0,0,0,0.5)' // Semi-transparent overlay
-     }}>
-       <View style={{
-          padding:16,
-         backgroundColor: 'white', 
-         borderRadius: 10,
-         alignItems: 'center'
-       }}>
-         <ActivityIndicator size="large" color={COLORS.primary} />
-         <Text style={{ marginTop: 10 }}>Fetching Location...</Text>
-       </View>
-     </View>
-   </Modal>
-   
- )} */}
+      {isFetchingLocation && (
+        <Modal
+          visible={isFetchingLocation}
+          transparent={true}
+          animationType="fade"
+          style={{justifyContent: 'flex-end', margin: 0}}
+          statusBarTranslucent={true}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent overlay
+            }}>
+            <View
+              style={{
+                padding: 16,
+                backgroundColor: 'white',
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator size="large" color={COLORS.primary} />
+              <Text style={{marginTop: 10}}>Fetching Location...</Text>
+            </View>
+          </View>
+        </Modal>
+      )}
     </ScreenWrapper>
   );
 };

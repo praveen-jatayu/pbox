@@ -1,16 +1,12 @@
-import {
-  View,
-  TextInput,
-  ActivityIndicator,
-  TouchableOpacity,
-  Alert,
-  Text,
-} from 'react-native';
+import {View, ActivityIndicator, TouchableOpacity, Alert} from 'react-native';
 import React, {useRef, useState} from 'react';
-import mainStyles from '../../assets/styles/mainStyles';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import SubHeader from '../../components/subHeader';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {
+  GooglePlaceData,
+  GooglePlaceDetail,
+  GooglePlacesAutocomplete,
+  GooglePlacesAutocompleteRef,
+} from 'react-native-google-places-autocomplete';
 import {COLORS} from '../../constants/color';
 import {FONTS} from '../../constants/font';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -20,15 +16,19 @@ import Geocoder from 'react-native-geocoding';
 import {requestLocationPermission} from '../../utils/permissionUtil';
 import {AppStackScreenProps} from '../../navigation/navigationTypes';
 import ScreenWrapper from '../../components/screenWrapper';
+import Config from 'react-native-config';
 
 const SelectLocation: React.FC<AppStackScreenProps<'SelectLocation'>> = ({
   navigation,
 }) => {
-  const [location, setLocation] = useState([]);
-  const inputRef = useRef(null);
-
-  const handleSelectLocation = (data, details) => {
-    console.log('details lat long', details.geometry.location.lat);
+  const inputRef = useRef<GooglePlacesAutocompleteRef | null>(null);
+  const [location, setLocation] = useState<string[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
+  const handleSelectLocation = (
+    data: GooglePlaceData,
+    details: GooglePlaceDetail | null,
+  ) => {
+    if (!details) return;
     const addressComponents = details?.address_components;
 
     if (!addressComponents) return;
@@ -74,21 +74,22 @@ const SelectLocation: React.FC<AppStackScreenProps<'SelectLocation'>> = ({
       const locationData = await GetLocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 30000,
-        maximumAge: 10000,
       });
 
       const {latitude, longitude} = locationData;
-      Geocoder.init('AIzaSyBuUVyHOxiZyUIvBIvsZg6O_ZiedhxW0FA');
+      Geocoder.init(Config.GOOGLE_MAPS_API_KEY);
 
       const geoData = await Geocoder.from(latitude, longitude);
       if (geoData.results.length > 0) {
         const addressComponents = geoData.results[0].address_components;
-        const area = addressComponents.find(component =>
-          component.types.includes('sublocality'),
-        )?.long_name;
-        const city = addressComponents.find(component =>
-          component.types.includes('locality'),
-        )?.long_name;
+        const area =
+          addressComponents.find(component =>
+            component.types.includes('sublocality'),
+          )?.long_name ?? ''; // Provide fallback empty string
+        const city =
+          addressComponents.find(component =>
+            component.types.includes('locality'),
+          )?.long_name ?? ''; // Provide fallback empty string
 
         setLocation([area, city]); // Set area and city
         navigation.getParent()?.setParams({location: location});
@@ -147,7 +148,7 @@ const SelectLocation: React.FC<AppStackScreenProps<'SelectLocation'>> = ({
           }}
           textInputProps={{
             value: location,
-            onChangeText: text => setLocation(text),
+            onChangeText: setSearchText,
             placeholderTextColor: '#919191',
           }}
           listViewDisplayed="auto"
@@ -205,7 +206,8 @@ const SelectLocation: React.FC<AppStackScreenProps<'SelectLocation'>> = ({
         {location.length > 0 && (
           <TouchableOpacity
             onPress={() => {
-              setLocation('');
+              setSearchText('');
+              setLocation([]);
               inputRef.current?.setAddressText('');
             }}
             style={{marginLeft: scale(8)}}>

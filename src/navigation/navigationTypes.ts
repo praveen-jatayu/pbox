@@ -21,7 +21,12 @@ export type AuthStackParamList = {
 };
 
 export type AppStackParamList = {
-  BottomNav: {screen: string};
+  BottomNav: {
+    screen: 'Home';
+    location?: string[];
+    lat?: number;
+    long?: number;
+  };
   SelectLocation: undefined;
   ProfileScreen: undefined;
   EditProfile: undefined;
