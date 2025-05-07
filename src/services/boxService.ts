@@ -1,8 +1,7 @@
 import {API_ENDPOINTS} from '../constants/apiEndPoinst';
 import {apiPost} from './apiService/apiService';
 
-export const getBoxDetail = async (data) => {
-  console.log('filtercate',data)
+export const getBoxDetail = async (data?: FormData | Record<string, any>) => {
   try {
     const response = await apiPost(API_ENDPOINTS.BOX.GET_BOX_DETAILS, data);
 
@@ -12,7 +11,8 @@ export const getBoxDetail = async (data) => {
       return []; // Return an empty array if no data
     }
   } catch (error) {
-    console.error('Error fetching box data:', error.message);
+    if (error instanceof Error)
+      console.error('Error fetching box data:', error.message);
     throw error; // Propagate the error if needed
   }
 };

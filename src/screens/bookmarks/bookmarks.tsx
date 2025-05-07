@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
 import SearchInput from '../../components/searchInput';
@@ -16,18 +17,22 @@ import BoxCardSkeleton from '../../components/boxCardSkeleton';
 import NoDataContainer from '../../components/noDataContainer';
 import {useIsFocused} from '@react-navigation/native';
 import ScreenWrapper from '../../components/screenWrapper';
+import {Box} from '../types/box';
 
 const HEADER_HEIGHT = verticalScale(60); // height of the header
 const SCROLL_THRESHOLD = verticalScale(150);
 const Bookmarks = () => {
-  const [search, setSearch] = useState('');
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
-  const [bookmarkedBoxData, setBookmarkedBoxData] = useState([]);
-  const [filteredBookmarkedData, setFilteredBookmarkedData] = useState([]);
-  const [refreshing, setRefreshing] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState<string>('');
+  const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
+  const [bookmarkedBoxData, setBookmarkedBoxData] = useState<Box[]>([]);
+  const [filteredBookmarkedData, setFilteredBookmarkedData] = useState<Box[]>(
+    [],
+  );
+  const [refreshing, setRefreshing] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const flatListRef = useRef(null);
+  const flatListRef = useRef<FlatList<Box>>(null);
+  const skeletonListRef = useRef(null);
   const isFocused = useIsFocused();
   // Header moves up from 0 to -HEADER_HEIGHT
   const headerTranslateY = scrollY.interpolate({
@@ -42,19 +47,19 @@ const Bookmarks = () => {
     extrapolate: 'clamp',
   });
 
-  const handleSearchChange = text => {
+  const handleSearchChange = (text: string) => {
     setSearch(text);
     if (text.trim() === '') {
       setFilteredBookmarkedData(bookmarkedBoxData); // Show all data if search input is empty
     } else {
       const filteredData = bookmarkedBoxData.filter(box =>
-        box.title.toLowerCase().includes(text.toLowerCase()),
+        box?.title.toLowerCase().includes(text.toLowerCase()),
       );
       setFilteredBookmarkedData(filteredData);
     }
   };
 
-  const renderBoxCard = ({item}) => (
+  const renderBoxCard = ({item}: {item: Box}) => (
     <BoxCard boxData={item} onAction={fetchBookMarkedBoxList} />
   );
 
@@ -75,25 +80,24 @@ const Bookmarks = () => {
       flatListRef.current.scrollToOffset({offset: 0, animated: true});
   };
 
-  const fetchBookMarkedBoxList = async (boxData = null) => {
-    if (boxData !== null) {
-      const formData = new FormData();
-
+  const fetchBookMarkedBoxList = async (boxData: Box | null = null) => {
+    const formData = new FormData();
+    if (boxData !== null && boxData?.id) {
       // Conditionally add 'box_id' only when it's provided
       if (boxData?.id) {
         formData.append('box_id', boxData.id);
       }
     }
     try {
-      const response = await getBoxDetail(boxData !== null ? formData : {});
+      const response: Box[] = await getBoxDetail(
+        boxData !== null ? formData : {},
+      );
       if (response) {
         const bookmarketBoxes = response.filter(
           box => box?.get_selected_user_book_mark?.length > 0,
         );
         setBookmarkedBoxData(bookmarketBoxes);
         setFilteredBookmarkedData(bookmarketBoxes);
-      } else {
-        console.error('Error occurred:', response.error);
       }
     } catch (error) {
       console.error('Failed to fetch box data:', error);
@@ -111,7 +115,7 @@ const Bookmarks = () => {
     <ScreenWrapper
       safeTop={true}
       safeBottom={true}
-      scrollable={true}
+      scrollable={false}
       padding={false}
       withHeader={false}>
       {/* Animated Header */}
@@ -138,9 +142,9 @@ const Bookmarks = () => {
       </Animated.View>
 
       {isLoading ? (
-        <Animated.FlatList
+        <Animated.FlatList<number>
           data={[1, 1, 1, 1]}
-          ref={flatListRef}
+          ref={skeletonListRef}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[
             styles.listContainer,
@@ -160,7 +164,7 @@ const Bookmarks = () => {
           ref={flatListRef}
           data={filteredBookmarkedData}
           renderItem={renderBoxCard}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.id.toString()}
           contentContainerStyle={[styles.listContainer, {flexGrow: 1}]}
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event(

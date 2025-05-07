@@ -1,16 +1,18 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {baseURL} from './index';
-import { API_ENDPOINTS } from '../../constants/apiEndPoinst';
+// import {baseURL} from './index';
+import {API_ENDPOINTS} from '../../constants/apiEndPoinst';
+import Config from 'react-native-config';
 
-
-
-
-const PUBLIC_API_ROUTES = [API_ENDPOINTS.AUTH.LOGIN,API_ENDPOINTS.AUTH.OTP,API_ENDPOINTS.USER.UPDATE_USERNAME];
+const PUBLIC_API_ROUTES = [
+  API_ENDPOINTS.AUTH.LOGIN,
+  API_ENDPOINTS.AUTH.OTP,
+  API_ENDPOINTS.USER.UPDATE_USERNAME,
+];
 
 // Create an Axios instance
 const apiClient = axios.create({
-  baseURL: baseURL, // API base URL from environment config
+  baseURL: Config.API_DEMO_BASEURL, // API base URL from environment config
   timeout: 5000,
   headers: {
     Accept: 'application/json',
@@ -20,23 +22,20 @@ const apiClient = axios.create({
 // Request interceptor to add the auth token (if required)
 apiClient.interceptors.request.use(
   async config => {
-
     if (config.data instanceof FormData) {
       config.headers['Content-Type'] = 'multipart/form-data';
-    } 
+    }
 
     if (config.url && PUBLIC_API_ROUTES.includes(config.url)) {
       return config;
+    } else {
+      // Get the auth token from AsyncStorage
+      const token = await AsyncStorage.getItem('authToken');
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
     }
-    else{
-    // Get the auth token from AsyncStorage
-    const token = await AsyncStorage.getItem('authToken');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-
-  }
-  console.log(config)
+    console.log(config);
 
     return config;
   },
@@ -106,7 +105,7 @@ apiClient.interceptors.response.use(
 );
 
 // Generalized API methods
-export const apiGet = async (url:string, params = {}) => {
+export const apiGet = async (url: string, params = {}) => {
   try {
     const response = await apiClient.get(url, {params});
     return response.data;
@@ -115,8 +114,7 @@ export const apiGet = async (url:string, params = {}) => {
   }
 };
 
-export const apiPost = async (url:string, data = {}) => {
-
+export const apiPost = async (url: string, data = {}) => {
   try {
     console.log(`POST Request to: ${apiClient.defaults.baseURL}${url}`);
     console.log('Request Data:', data);
@@ -127,7 +125,7 @@ export const apiPost = async (url:string, data = {}) => {
   }
 };
 
-export const apiPut = async (url:string, data = {}) => {
+export const apiPut = async (url: string, data = {}) => {
   try {
     const response = await apiClient.put(url, data);
     return response.data;
@@ -136,7 +134,7 @@ export const apiPut = async (url:string, data = {}) => {
   }
 };
 
-export const apiDelete = async( url:string) => {
+export const apiDelete = async (url: string) => {
   try {
     const response = await apiClient.delete(url);
     return response.data;
@@ -146,7 +144,7 @@ export const apiDelete = async( url:string) => {
 };
 
 // Helper methods for token management
-export const saveAuthToken = async( token:string) => {
+export const saveAuthToken = async (token: string) => {
   try {
     await AsyncStorage.setItem('authToken', token);
   } catch (error) {

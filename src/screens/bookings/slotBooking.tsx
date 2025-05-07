@@ -1,27 +1,12 @@
-import {
-  View,
-  Text,
-  StatusBar,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-} from 'react-native';
+import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import mainStyles from '../../assets/styles/mainStyles';
-import SubHeader from '../../components/subHeader';
-import {
-  moderateScale,
-  moderateVerticalScale,
-  scale,
-  verticalScale,
-} from 'react-native-size-matters';
+import {moderateScale, verticalScale} from 'react-native-size-matters';
 import CustomCheckBox from '../../components/checkbox';
 import PrimaryButton from '../../components/primaryButton';
 
 import {icons} from '../../constants/Icon';
 import {
-  addBooking,
   getCourtByBoxId,
   getSlotDetailByDate,
 } from '../../services/bookingService';
@@ -31,20 +16,28 @@ import SlotContainerSkeleton from './slotContainerSkeleton';
 import DateSlider from '../../utils/dateSelectorUtil';
 import slotBookingStyles from '../../assets/styles/slotBookingStyles';
 import ScreenWrapper from '../../components/screenWrapper';
+import {AppStackScreenProps} from '../../navigation/navigationTypes';
+import {Box} from '../types/box';
+import {courtItem} from '../types/court';
+import {Slot, SlotCountMap} from '../types/slot';
+import {SelectedSlotType} from '../types/slot';
 
-const SlotBooking = ({navigation, route}) => {
+const SlotBooking: React.FC<AppStackScreenProps<'SlotBooking'>> = ({
+  navigation,
+  route,
+}) => {
   const {boxInfo} = route?.params;
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0], // Format as 'YYYY-MM-DD'
   );
-  const [selectedCourt, setSelectedCourt] = useState(null);
-  const [availableCourts, setAvailableCourts] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState({});
-  const [slotDetail, setSlotDetail] = useState([]);
-  const [bookedSlots, setBookedSlots] = useState([]);
-  const [totalBookingAmount, setTotalBookingAmount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
+  const [availableCourts, setAvailableCourts] = useState<courtItem[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<SelectedSlotType>({});
+  const [slotDetail, setSlotDetail] = useState<Slot[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<number[]>([]);
+  const [totalBookingAmount, setTotalBookingAmount] = useState<string>('0');
+  const [loading, setLoading] = useState<boolean>(true);
 
   // date slection function
   const handleDateSelection = (date: string) => {
@@ -54,7 +47,7 @@ const SlotBooking = ({navigation, route}) => {
     }
   };
   // court selection function
-  const handleCourtSelection = (court: string) => {
+  const handleCourtSelection = (court: courtItem) => {
     setSelectedCourt(court.id);
     if (selectedDate) {
       fetchAvailableAndBookedSlots(selectedDate, court.id);
@@ -63,7 +56,7 @@ const SlotBooking = ({navigation, route}) => {
   // api call to fetch available and booked slots
   const fetchAvailableAndBookedSlots = async (
     date: string,
-    courtId: string | null,
+    courtId: number | null,
   ) => {
     if (!courtId) return;
 
@@ -82,7 +75,7 @@ const SlotBooking = ({navigation, route}) => {
     }
   };
   // api call to fetch available courts
-  const fetchCourtByBoxId = async boxData => {
+  const fetchCourtByBoxId = async (boxData: Box): Promise<void> => {
     const formData = new FormData();
     formData.append('box_id', boxData.id);
 
@@ -105,7 +98,8 @@ const SlotBooking = ({navigation, route}) => {
     fetchCourtByBoxId(boxInfo);
   }, []);
 
-  const handleSlotSelection = (slotId, slotPrice) => {
+  const handleSlotSelection = (slotId: number, slotPrice: string) => {
+    if (!selectedCourt || !selectedDate) return; // ✅ guard clause for safety
     const numericPrice = parseFloat(slotPrice); // Ensure it's treated as a number
     setSelectedSlot(prevState => {
       const updatedSlots = {...prevState};
@@ -154,8 +148,8 @@ const SlotBooking = ({navigation, route}) => {
     });
   };
 
-  const isSlotSelected = slotId => {
-    console.log('eeh', selectedSlot);
+  const isSlotSelected = (slotId: number) => {
+    if (!selectedCourt || !selectedDate) return false;
     const dateEntry = selectedSlot[selectedDate];
 
     if (!dateEntry) return false; // No slots for the selected date
@@ -164,7 +158,7 @@ const SlotBooking = ({navigation, route}) => {
     return dateEntry[selectedCourt]?.includes(slotId) || false;
   };
 
-  const hasSlotsInCourt = courtId => {
+  const hasSlotsInCourt = (courtId: number) => {
     const dateEntry = selectedSlot[selectedDate];
 
     if (!dateEntry) return false; // No slots for the selected date
@@ -172,8 +166,8 @@ const SlotBooking = ({navigation, route}) => {
     return !!dateEntry[courtId] && dateEntry[courtId].length > 0;
   };
 
-  const slotCount = useMemo(() => {
-    const slotCountMap = {};
+  const slotCount: SlotCountMap = useMemo(() => {
+    const slotCountMap: SlotCountMap = {};
 
     Object.keys(selectedSlot).forEach(date => {
       const courts = selectedSlot[date];
@@ -445,7 +439,7 @@ const SlotBooking = ({navigation, route}) => {
 
         <View
           style={[mainStyles.flexContainer, {marginTop: verticalScale(16)}]}>
-          {totalBookingAmount === 0 ? (
+          {totalBookingAmount === '0' ? (
             <Text
               style={[
                 mainStyles.fontInriaSansRegular,

@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, Text, FlatList, Image, StyleSheet} from 'react-native';
 import mainStyles from '../../assets/styles/mainStyles';
-import SubHeader from '../../components/subHeader';
 import {
   moderateScale,
   moderateVerticalScale,

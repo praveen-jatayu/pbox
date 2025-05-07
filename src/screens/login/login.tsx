@@ -213,6 +213,7 @@ const Login: React.FC<AuthStackScreenProps<'Login'>> = ({navigation}) => {
                     title={'SEND OTP'}
                     onPress={handleSendOtp}
                     disabled={!(mobileNo.length === 12 && isTandCChecked)}
+                    style={{marginTop: verticalScale(20)}}
                   />
                 </Animated.View>
               </View>

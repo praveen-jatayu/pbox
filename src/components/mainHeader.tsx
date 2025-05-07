@@ -43,9 +43,9 @@ const MainHeader: React.FC<MainHeaderProps> = ({
                     style={[
                       mainStyles.fontInriaSansRegular,
                       mainStyles.darkTextColor,
-                      mainStyles.fontSize18,
+                      mainStyles.fontSize16,
                     ]}>
-                    {location[0]}
+                    {location?.[0] ?? 'Select City'}
                   </Text>
                   <Text
                     style={[
@@ -53,7 +53,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({
                       mainStyles.darkTextColor,
                       mainStyles.fontSize14,
                     ]}>
-                    {location[1]}
+                    {location?.[1] ?? 'Area'}
                   </Text>
                 </View>
               ) : (
