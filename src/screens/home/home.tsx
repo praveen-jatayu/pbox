@@ -264,6 +264,7 @@ const Home: React.FC<BottomTabScreenProps<'Home'>> = ({route, navigation}) => {
       });
 
       const {latitude, longitude} = locationData;
+      console.log('check for api key', Config);
       Geocoder.init(Config.GOOGLE_MAPS_API_KEY);
 
       const geoData = await Geocoder.from(23.0638066, 70.1340917);
