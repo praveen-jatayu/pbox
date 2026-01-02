@@ -221,7 +221,7 @@ const Home: React.FC<BottomTabScreenProps<'Home'>> = ({route, navigation}) => {
         },
         {
           text: 'YES',
-          onPress: () => BackHandler.exitApp(),
+          onPress: () =>{ BacmokHandler.exitApp()},
         },
       ]);
     });
